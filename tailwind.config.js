@@ -36,7 +36,7 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', '"Be Vietnam Pro"', 'Prompt', 'Kanit', '"Noto Sans Lao"', 'system-ui', '-apple-system', 'sans-serif'],
       },
       animation: {
         'pulse-glow': 'pulseGlow 2s infinite',

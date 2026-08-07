@@ -2,7 +2,7 @@ export const INITIAL_USERS = [
   {
     id: 'u-admin',
     username: 'admin',
-    passwordHash: 'admin123',
+    passwordHash: '123',
     name: 'Quản trị viên (Admin)',
     email: 'admin@mealmate.com',
     phone: '0901234567',
@@ -14,7 +14,7 @@ export const INITIAL_USERS = [
   {
     id: 'u-alice',
     username: 'alice',
-    passwordHash: 'alice123',
+    passwordHash: '123',
     name: 'Alice Nguyễn',
     email: 'alice@gmail.com',
     phone: '0912345678',
@@ -26,7 +26,7 @@ export const INITIAL_USERS = [
   {
     id: 'u-bob',
     username: 'bob',
-    passwordHash: 'bob123',
+    passwordHash: '123',
     name: 'Bob Trần',
     email: 'bob@gmail.com',
     phone: '0987654321',
@@ -38,7 +38,7 @@ export const INITIAL_USERS = [
   {
     id: 'u-charlie',
     username: 'charlie',
-    passwordHash: 'charlie123',
+    passwordHash: '123',
     name: 'Charlie Phạm',
     email: 'charlie@gmail.com',
     phone: '0933445566',
@@ -50,7 +50,7 @@ export const INITIAL_USERS = [
   {
     id: 'u-david',
     username: 'david',
-    passwordHash: 'david123',
+    passwordHash: '123',
     name: 'David Lê',
     email: 'david@gmail.com',
     phone: '0977889900',
@@ -80,7 +80,7 @@ export const INITIAL_GROUPS = [
     id: 'g-3',
     name: 'Team Cty TechCorp 💻',
     description: 'Ăn trưa & Cà phê chạy deadline',
-    members: ['u-alice', 'u-bob', 'u-david', 'u-admin'],
+    members: ['u-alice', 'u-bob', 'u-david', 'u-charlie'],
     createdAt: new Date(Date.now() - 2 * 86400000).toISOString()
   }
 ]

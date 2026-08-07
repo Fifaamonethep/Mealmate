@@ -68,7 +68,7 @@ function handleAddMember() {
   )
 
   if (!foundUser) {
-    memberError.value = 'User not found!'
+    memberError.value = 'Chưa tìm thấy người dùng!'
     return
   }
 

@@ -35,10 +35,10 @@ const langMenuOpen = ref(false)
 const isDark = ref(document.documentElement.classList.contains('dark'))
 
 const languagesList = [
-  { code: 'vi', label: 'Tiếng Việt', flag: '🇻🇳' },
-  { code: 'th', label: 'ภาษาไทย', flag: '🇹🇭' },
-  { code: 'lo', label: 'ພາສາລາວ', flag: '🇱🇦' },
-  { code: 'en', label: 'English', flag: '🇬🇧' }
+  { code: 'vi', label: 'Tiếng Việt', flagUrl: 'https://flagcdn.com/w40/vn.png' },
+  { code: 'th', label: 'ภาษาไทย', flagUrl: 'https://flagcdn.com/w40/th.png' },
+  { code: 'lo', label: 'ພາສາລາວ', flagUrl: 'https://flagcdn.com/w40/la.png' },
+  { code: 'en', label: 'English', flagUrl: 'https://flagcdn.com/w40/gb.png' }
 ]
 
 const currentLangObj = computed(() => {
@@ -48,6 +48,7 @@ const currentLangObj = computed(() => {
 function selectLanguage(langKey) {
   locale.value = langKey
   localStorage.setItem('mealmate_locale', langKey)
+  document.documentElement.setAttribute('lang', langKey)
   langMenuOpen.value = false
 }
 
@@ -152,19 +153,19 @@ function handleLogout() {
         </nav>
 
         <!-- Right Controls -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2.5">
           
           <!-- Notifications Bell -->
           <router-link
             v-if="authStore.currentUserId"
             to="/notifications"
-            class="relative p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 transition-all"
+            class="relative p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/80 transition-all border border-transparent hover:border-slate-700/60"
             title="Notifications"
           >
             <Bell class="w-5 h-5" />
             <span
               v-if="unreadCount > 0"
-              class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse"
+              class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse shadow-md shadow-rose-500/40"
             >
               {{ unreadCount }}
             </span>
@@ -174,31 +175,31 @@ function handleLogout() {
           <div class="relative">
             <button
               @click="langMenuOpen = !langMenuOpen"
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-700/80 hover:border-brand-500/60 text-slate-200 text-xs font-bold transition-all shadow-md"
+              class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-950/80 border border-slate-800 hover:border-brand-500/60 text-slate-200 text-xs font-bold transition-all shadow-lg hover:shadow-brand-500/10"
             >
-              <Globe class="w-4 h-4 text-brand-400" />
-              <span class="uppercase">{{ currentLangObj.code }}</span>
+              <img :src="currentLangObj.flagUrl" class="w-4 h-4 rounded-full object-cover shadow-sm shrink-0 border border-white/30" :alt="currentLangObj.code" />
+              <span class="uppercase font-extrabold tracking-wide">{{ currentLangObj.code }}</span>
               <ChevronDown class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200" :class="{ 'rotate-180': langMenuOpen }" />
             </button>
 
             <!-- Dropdown Menu -->
             <div
               v-if="langMenuOpen"
-              class="absolute right-0 mt-2 w-48 bg-slate-900/95 border border-slate-700/80 rounded-2xl shadow-2xl backdrop-blur-xl p-1.5 z-50 animate-fadeIn space-y-1"
+              class="absolute right-0 mt-2 w-52 bg-slate-900/95 border border-slate-700/80 rounded-2xl shadow-2xl backdrop-blur-2xl p-1.5 z-50 animate-fadeIn space-y-1"
             >
               <button
                 v-for="l in languagesList"
                 :key="l.code"
                 @click="selectLanguage(l.code)"
                 :class="[
-                  'w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all',
+                  'w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all',
                   locale === l.code
-                    ? 'bg-brand-600/30 text-white border border-brand-500/40 font-bold'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-brand-600/30 text-white border border-brand-500/50 shadow-md shadow-brand-500/10'
+                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
                 ]"
               >
-                <div class="flex items-center gap-2">
-                  <span class="text-sm">{{ l.flag }}</span>
+                <div class="flex items-center gap-2.5">
+                  <img :src="l.flagUrl" class="w-4 h-4 rounded-full object-cover shadow-sm shrink-0 border border-white/20" :alt="l.label" />
                   <span>{{ l.label }}</span>
                 </div>
                 <Check v-if="locale === l.code" class="w-3.5 h-3.5 text-brand-400" />
@@ -209,7 +210,7 @@ function handleLogout() {
           <!-- Theme Toggle -->
           <button
             @click="toggleTheme"
-            class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 transition-all"
+            class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/80 transition-all border border-transparent hover:border-slate-700/60"
             title="Toggle Light/Dark Theme"
           >
             <Sun v-if="isDark" class="w-4 h-4 text-amber-400" />
@@ -217,24 +218,24 @@ function handleLogout() {
           </button>
 
           <!-- Profile / Logout / Login -->
-          <div v-if="authStore.currentUserId" class="flex items-center gap-2 pl-2 border-l border-slate-800">
+          <div v-if="authStore.currentUserId" class="flex items-center gap-2 pl-2 border-l border-slate-800/80">
             <router-link
               to="/profile"
-              class="flex items-center gap-2 hover:opacity-80 transition-all"
+              class="flex items-center gap-2 p-1 pr-2 rounded-full hover:bg-slate-800/60 transition-all border border-transparent hover:border-slate-700/50"
             >
               <img
                 :src="authStore.currentUser?.avatar"
-                class="w-8 h-8 rounded-full border border-brand-500/50 bg-slate-800"
+                class="w-7 h-7 rounded-full border border-brand-500/60 bg-slate-800 object-cover shadow-sm"
                 :alt="authStore.currentUser?.name"
               />
               <span class="hidden xl:inline text-xs font-semibold text-slate-200">
-                {{ authStore.currentUser?.name }}
+                {{ authStore.currentUser?.name.split(' ')[0] }}
               </span>
             </router-link>
 
             <button
               @click="handleLogout"
-              class="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-xl transition-all"
+              class="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all border border-transparent hover:border-rose-500/30"
               title="Logout"
             >
               <LogOut class="w-4 h-4" />

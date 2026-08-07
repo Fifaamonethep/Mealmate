@@ -45,9 +45,7 @@ const availableMembers = computed(() => {
 watch(() => props.show, (newShow) => {
   if (newShow) {
     paidById.value = authStore.currentUserId || availableMembers.value[0]?.id || ''
-    if (selectedParticipants.value.length === 0 || !selectedParticipants.value.includes(authStore.currentUserId)) {
-      selectedParticipants.value = authStore.currentUserId ? [authStore.currentUserId] : []
-    }
+    selectedParticipants.value = availableMembers.value.map(u => u.id)
   }
 })
 

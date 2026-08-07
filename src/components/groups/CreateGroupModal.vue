@@ -22,7 +22,7 @@ const selectedMembers = ref([])
 
 watch(() => props.show, (newShow) => {
   if (newShow) {
-    selectedMembers.value = authStore.currentUserId ? [authStore.currentUserId] : []
+    selectedMembers.value = authStore.users.map(u => u.id)
   }
 })
 

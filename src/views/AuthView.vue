@@ -24,12 +24,17 @@ const form = ref({
 function handleAuth() {
   errorMsg.value = ''
   try {
+    let loggedUser
     if (isRegister.value) {
-      authStore.register(form.value)
+      loggedUser = authStore.register(form.value)
     } else {
-      authStore.login(form.value.username, form.value.password)
+      loggedUser = authStore.login(form.value.username, form.value.password)
     }
-    router.push('/')
+    if (loggedUser?.role === 'admin') {
+      router.push('/admin')
+    } else {
+      router.push('/')
+    }
   } catch (err) {
     errorMsg.value = err.message
   }
