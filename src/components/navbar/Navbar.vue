@@ -228,21 +228,21 @@ function handleLogout() {
           </button>
 
           <!-- Profile Badge & Logout (Unified Profile Avatar Pill) -->
-          <div v-if="authStore.currentUserId" class="flex items-center gap-1.5 pl-2 border-l border-slate-200 dark:border-slate-800">
+          <div v-if="authStore.currentUserId" class="flex items-center gap-1.5 pl-2 border-l border-slate-200 dark:border-slate-800 shrink-0">
             <router-link
               to="/profile"
               :class="[
-                'flex items-center gap-2 p-1 sm:pr-2.5 rounded-full transition-all border group',
+                'flex items-center gap-2 p-1 sm:pr-2.5 rounded-full transition-all border group shrink-0',
                 route.path === '/profile'
                   ? 'bg-brand-500/10 text-brand-600 border-brand-500/40 dark:bg-brand-600/20 dark:text-brand-300'
                   : 'bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-brand-500/50'
               ]"
               :title="t('nav.profile')"
             >
-              <div class="relative">
+              <div class="relative w-7 h-7 shrink-0">
                 <img
                   :src="authStore.currentUser?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${authStore.currentUser?.username || 'user'}`"
-                  class="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-800 object-cover border border-white dark:border-slate-700"
+                  class="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-800 object-cover border border-white dark:border-slate-700 shrink-0"
                   :alt="authStore.currentUser?.name"
                 />
                 <span class="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900"></span>
@@ -254,7 +254,7 @@ function handleLogout() {
 
             <button
               @click="handleLogout"
-              class="p-2 text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-all"
+              class="p-2 text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-all shrink-0"
               title="Logout"
             >
               <LogOut class="w-4 h-4" />
