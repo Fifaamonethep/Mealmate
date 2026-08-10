@@ -154,7 +154,12 @@
     "group_matrix_title": "Internal Group Debt Matrix",
     "debtor_vs_creditor": "Debtor ↓ \\ Creditor →",
     "group_meals": "Meals in this group",
-    "empty": "No groups created yet!"
+    "empty": "No groups created yet!",
+    "leader_badge": "Leader 👑",
+    "managed_by": "Group Leader:",
+    "only_leader_can_manage": "Only the Group Leader or Admin can add / remove members.",
+    "disband_group": "Disband Group",
+    "confirm_disband": "Are you sure you want to disband this group?"
   },
   "notifications": {
     "title": "Bill & Debt Notifications",

@@ -35,27 +35,27 @@ const filteredPayments = computed(() => {
     
     <!-- Title -->
     <div>
-      <h1 class="text-2xl font-extrabold text-white flex items-center gap-2">
-        <CreditCard class="w-6 h-6 text-brand-400" />
+      <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+        <CreditCard class="w-6 h-6 text-brand-600 dark:text-brand-400" />
         <span>{{ t('debts.title') }}</span>
       </h1>
-      <p class="text-xs text-slate-400 mt-1">
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
         {{ t('debts.sub') }}
       </p>
     </div>
 
     <!-- Main Tabs & Filter Bar -->
-    <div class="glass-card p-4 space-y-4 border border-slate-700/60">
+    <div class="glass-card p-4 space-y-4 border border-slate-200/80 dark:border-slate-700/60">
       
       <!-- Main Tabs -->
-      <div class="grid grid-cols-2 gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800 text-xs sm:text-sm font-bold">
+      <div class="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-slate-950 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs sm:text-sm font-bold">
         <button
           @click="activeTab = 'my_debts'"
           :class="[
             'py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all',
             activeTab === 'my_debts'
               ? 'bg-gradient-to-r from-rose-600 to-rose-700 text-white shadow-lg shadow-rose-600/20'
-              : 'text-slate-400 hover:text-white'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           ]"
         >
           <ArrowUpRight class="w-4 h-4" />
@@ -68,7 +68,7 @@ const filteredPayments = computed(() => {
             'py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all',
             activeTab === 'owed_to_me'
               ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-lg shadow-emerald-600/20'
-              : 'text-slate-400 hover:text-white'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           ]"
         >
           <ArrowDownLeft class="w-4 h-4" />
@@ -78,8 +78,8 @@ const filteredPayments = computed(() => {
 
       <!-- Status Sub-Filter -->
       <div class="flex items-center gap-2 overflow-x-auto text-xs pb-1">
-        <span class="text-slate-400 flex items-center gap-1 shrink-0 mr-1">
-          <Filter class="w-3.5 h-3.5 text-brand-400" /> {{ t('debts.filter_status') }}
+        <span class="text-slate-500 dark:text-slate-400 flex items-center gap-1 shrink-0 mr-1 font-semibold">
+          <Filter class="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" /> {{ t('debts.filter_status') }}
         </span>
         <button
           v-for="st in ['all', 'pending', 'slip_sent', 'confirmed', 'rejected']"
@@ -88,8 +88,8 @@ const filteredPayments = computed(() => {
           :class="[
             'px-3 py-1.5 rounded-lg transition-all font-semibold capitalize border shrink-0',
             statusFilter === st
-              ? 'bg-brand-600 text-white border-brand-400 shadow-md'
-              : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white'
+              ? 'bg-brand-600 text-white border-brand-500 shadow-md'
+              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-slate-900 dark:hover:text-white'
           ]"
         >
           {{ st === 'all' ? t('common.all') : t(`common.status_${st}`) }}

@@ -66,6 +66,8 @@ export const INITIAL_GROUPS = [
     id: 'g-1',
     name: 'Chuyến đi Đà Nẵng 🏖️',
     description: 'Du lịch hè cùng nhóm bạn thân',
+    ownerId: 'u-alice',
+    avatar: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200&auto=format&fit=crop',
     members: ['u-alice', 'u-bob', 'u-charlie', 'u-david'],
     createdAt: new Date(Date.now() - 5 * 86400000).toISOString()
   },
@@ -73,6 +75,8 @@ export const INITIAL_GROUPS = [
     id: 'g-2',
     name: 'Phòng 302 🏢',
     description: 'Chi phí sinh hoạt chung và ăn uống phòng 302',
+    ownerId: 'u-bob',
+    avatar: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&auto=format&fit=crop',
     members: ['u-alice', 'u-bob', 'u-charlie'],
     createdAt: new Date(Date.now() - 15 * 86400000).toISOString()
   },
@@ -80,6 +84,8 @@ export const INITIAL_GROUPS = [
     id: 'g-3',
     name: 'Team Cty TechCorp 💻',
     description: 'Ăn trưa & Cà phê chạy deadline',
+    ownerId: 'u-alice',
+    avatar: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=200&auto=format&fit=crop',
     members: ['u-alice', 'u-bob', 'u-david', 'u-charlie'],
     createdAt: new Date(Date.now() - 2 * 86400000).toISOString()
   }

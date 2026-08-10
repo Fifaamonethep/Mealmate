@@ -46,16 +46,16 @@ function applyDetected() {
 <template>
   <Modal :show="show" :title="t('meals.ai_title')" maxWidth="max-w-lg" @close="emit('close')">
     <template #icon>
-      <Sparkles class="w-5 h-5 text-brand-400" />
+      <Sparkles class="w-5 h-5 text-brand-600 dark:text-brand-400" />
     </template>
 
-    <div class="space-y-4 text-slate-200">
-      <p class="text-xs text-slate-400">
+    <div class="space-y-4 text-slate-800 dark:text-slate-200">
+      <p class="text-xs text-slate-500 dark:text-slate-400">
         {{ t('meals.ai_sub') }}
       </p>
 
       <!-- Image Display with Scan overlay -->
-      <div class="relative rounded-2xl overflow-hidden border border-slate-700 bg-slate-950 aspect-video shadow-inner flex items-center justify-center">
+      <div class="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-950 aspect-video shadow-inner flex items-center justify-center">
         <img :src="currentImage" class="w-full h-full object-cover" alt="Dinner Table" />
 
         <!-- AI Laser Scan Effect -->
@@ -74,7 +74,7 @@ function applyDetected() {
           <div
             v-for="(u, idx) in detectedUsers"
             :key="u.id"
-            class="animate-pulse bg-emerald-900/80 border border-emerald-400/80 text-emerald-200 px-3 py-1.5 rounded-xl text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/30"
+            class="animate-pulse bg-emerald-900/90 border border-emerald-400 text-emerald-100 px-3 py-1.5 rounded-xl text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/30"
             :style="{ marginTop: `${idx * 20 + 10}px`, marginLeft: `${idx * 30 + 10}px` }"
           >
             <img :src="u.avatar" class="w-5 h-5 rounded-full" />
@@ -86,19 +86,19 @@ function applyDetected() {
 
       <!-- Actions & Results -->
       <div v-if="!isScanning && !scanComplete" class="flex justify-center">
-        <button @click="startAiScan" class="glow-button flex items-center gap-2">
+        <button @click="startAiScan" class="glow-button text-xs flex items-center gap-2 py-2.5">
           <Scan class="w-4 h-4" />
           <span>{{ t('meals.ai_start') }}</span>
         </button>
       </div>
 
-      <div v-if="scanComplete" class="bg-slate-800/80 border border-slate-700 p-4 rounded-xl space-y-3">
+      <div v-if="scanComplete" class="bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 p-4 rounded-xl space-y-3">
         <div class="flex items-center justify-between text-sm">
-          <span class="font-semibold text-emerald-400 flex items-center gap-1.5">
+          <span class="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
             <Sparkles class="w-4 h-4" />
             {{ t('meals.ai_success') }} ({{ detectedUsers.length }}):
           </span>
-          <button @click="startAiScan" class="text-xs text-slate-400 hover:text-white flex items-center gap-1">
+          <button @click="startAiScan" class="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center gap-1 font-semibold">
             <RefreshCw class="w-3 h-3" /> {{ t('meals.ai_rescan') }}
           </button>
         </div>
@@ -107,7 +107,7 @@ function applyDetected() {
           <div
             v-for="u in detectedUsers"
             :key="u.id"
-            class="bg-slate-900 px-3 py-1.5 rounded-lg text-xs flex items-center gap-2 border border-slate-700"
+            class="bg-white dark:bg-slate-900 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 shadow-sm"
           >
             <img :src="u.avatar" class="w-4 h-4 rounded-full" />
             <span>{{ u.name }}</span>
@@ -117,13 +117,13 @@ function applyDetected() {
     </div>
 
     <template #footer>
-      <button @click="emit('close')" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800">
+      <button @click="emit('close')" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 transition-all">
         {{ t('common.cancel') }}
       </button>
       <button
         v-if="scanComplete"
         @click="applyDetected"
-        class="glow-button text-sm flex items-center gap-2"
+        class="glow-button text-xs flex items-center gap-2 py-2"
       >
         <CheckCircle2 class="w-4 h-4" />
         <span>{{ t('meals.ai_select_members') }} ({{ detectedUsers.length }})</span>

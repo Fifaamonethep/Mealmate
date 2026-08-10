@@ -34,7 +34,7 @@ function formatDate(isoStr) {
 </script>
 
 <template>
-  <div class="glass-card p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border border-slate-700/60">
+  <div class="glass-card p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border border-slate-200/80 dark:border-slate-700/60">
     
     <!-- Left Info -->
     <div class="flex items-center gap-3">
@@ -43,8 +43,8 @@ function formatDate(isoStr) {
         :class="[
           'w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border',
           isDebtor
-            ? 'bg-rose-500/10 border-rose-500/30 text-rose-400'
-            : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+            ? 'bg-rose-500/10 border-rose-500/30 text-rose-600 dark:text-rose-400'
+            : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
         ]"
       >
         <ArrowUpRight v-if="isDebtor" class="w-5 h-5" />
@@ -53,25 +53,25 @@ function formatDate(isoStr) {
 
       <div class="space-y-1">
         <div class="flex items-center gap-2">
-          <span class="font-bold text-sm text-white">
+          <span class="font-bold text-sm text-slate-900 dark:text-white">
             {{ meal?.title || t('meals.title') }}
           </span>
           <Badge :status="payment.status" />
         </div>
 
-        <div class="text-xs text-slate-400 flex flex-wrap items-center gap-x-2">
+        <div class="text-xs text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-x-2">
           <span v-if="isDebtor">
-            {{ t('debts.owe_label') }} <strong class="text-slate-200">{{ creditor?.name }}</strong>
+            {{ t('debts.owe_label') }} <strong class="text-slate-800 dark:text-slate-200">{{ creditor?.name }}</strong>
           </span>
           <span v-else>
-            <strong class="text-slate-200">{{ debtor?.name }}</strong> {{ t('debts.owes_you') }}
+            <strong class="text-slate-800 dark:text-slate-200">{{ debtor?.name }}</strong> {{ t('debts.owes_you') }}
           </span>
           <span>•</span>
           <span>{{ formatDate(payment.createdAt) }}</span>
         </div>
 
         <!-- Reject reason text if rejected -->
-        <p v-if="payment.status === 'rejected' && payment.rejectReason" class="text-xs text-rose-400 flex items-center gap-1">
+        <p v-if="payment.status === 'rejected' && payment.rejectReason" class="text-xs text-rose-600 dark:text-rose-400 font-medium flex items-center gap-1">
           <AlertCircle class="w-3.5 h-3.5" />
           <span>{{ t('debts.rejected_reason') }} "{{ payment.rejectReason }}"</span>
         </p>
@@ -79,9 +79,9 @@ function formatDate(isoStr) {
     </div>
 
     <!-- Right Amount & Action Button -->
-    <div class="flex items-center justify-between md:justify-end gap-4 border-t md:border-t-0 pt-3 md:pt-0 border-slate-800">
+    <div class="flex items-center justify-between md:justify-end gap-4 border-t md:border-t-0 pt-3 md:pt-0 border-slate-200 dark:border-slate-800">
       <div class="text-right">
-        <div :class="['text-lg font-extrabold', isDebtor ? 'text-rose-400' : 'text-emerald-400']">
+        <div :class="['text-lg font-extrabold', isDebtor ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400']">
           {{ isDebtor ? '-' : '+' }}{{ payment.amount.toLocaleString() }} VND
         </div>
       </div>
@@ -100,7 +100,7 @@ function formatDate(isoStr) {
           </button>
           <span
             v-else-if="payment.status === 'slip_sent'"
-            class="text-xs text-blue-400 bg-blue-500/10 border border-blue-500/30 px-3 py-1.5 rounded-xl font-medium inline-block"
+            class="text-xs text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 px-3 py-1.5 rounded-xl font-medium inline-block"
           >
             {{ t('debts.slip_sent_waiting') }}
           </span>

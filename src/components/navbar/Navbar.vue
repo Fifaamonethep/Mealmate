@@ -4,7 +4,6 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../../stores/auth'
 import { useNotificationsStore } from '../../stores/notifications'
-import UserSwitcher from './UserSwitcher.vue'
 import {
   UtensilsCrossed,
   LayoutDashboard,
@@ -60,9 +59,11 @@ function toggleTheme() {
   isDark.value = !isDark.value
   if (isDark.value) {
     document.documentElement.classList.add('dark')
+    document.documentElement.classList.remove('light')
     localStorage.setItem('mealmate_theme', 'dark')
   } else {
     document.documentElement.classList.remove('dark')
+    document.documentElement.classList.add('light')
     localStorage.setItem('mealmate_theme', 'light')
   }
 }
@@ -74,7 +75,7 @@ function handleLogout() {
 </script>
 
 <template>
-  <header class="glass-nav border-b border-slate-800">
+  <header class="glass-nav border-b border-slate-200/80 dark:border-slate-800/80 transition-colors duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
         
@@ -84,10 +85,10 @@ function handleLogout() {
             <UtensilsCrossed class="w-5 h-5 text-white" />
           </div>
           <div>
-            <span class="font-extrabold text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-indigo-300">
+            <span class="font-extrabold text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 dark:from-white dark:via-slate-200 dark:to-indigo-300">
               MealMate
             </span>
-            <span class="hidden sm:inline-block ml-2 text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-300 border border-brand-500/30">
+            <span class="hidden sm:inline-block ml-2 text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-600 border border-brand-500/30 dark:bg-brand-500/20 dark:text-brand-300">
               Split & Pay
             </span>
           </div>
@@ -98,8 +99,10 @@ function handleLogout() {
           <router-link
             to="/"
             :class="[
-              'flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all',
-              route.path === '/' ? 'bg-brand-600/20 text-brand-300 border border-brand-500/30' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+              'flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all',
+              route.path === '/'
+                ? 'bg-brand-500/10 text-brand-600 border border-brand-500/30 dark:bg-brand-600/20 dark:text-brand-300'
+                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
             ]"
           >
             <LayoutDashboard class="w-4 h-4" />
@@ -109,8 +112,10 @@ function handleLogout() {
           <router-link
             to="/meals"
             :class="[
-              'flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all',
-              route.path.startsWith('/meals') ? 'bg-brand-600/20 text-brand-300 border border-brand-500/30' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+              'flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all',
+              route.path.startsWith('/meals')
+                ? 'bg-brand-500/10 text-brand-600 border border-brand-500/30 dark:bg-brand-600/20 dark:text-brand-300'
+                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
             ]"
           >
             <Receipt class="w-4 h-4" />
@@ -120,8 +125,10 @@ function handleLogout() {
           <router-link
             to="/debts"
             :class="[
-              'flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all',
-              route.path === '/debts' ? 'bg-brand-600/20 text-brand-300 border border-brand-500/30' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+              'flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all',
+              route.path === '/debts'
+                ? 'bg-brand-500/10 text-brand-600 border border-brand-500/30 dark:bg-brand-600/20 dark:text-brand-300'
+                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
             ]"
           >
             <CreditCard class="w-4 h-4" />
@@ -131,8 +138,10 @@ function handleLogout() {
           <router-link
             to="/groups"
             :class="[
-              'flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all',
-              route.path === '/groups' ? 'bg-brand-600/20 text-brand-300 border border-brand-500/30' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+              'flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all',
+              route.path.startsWith('/groups')
+                ? 'bg-brand-500/10 text-brand-600 border border-brand-500/30 dark:bg-brand-600/20 dark:text-brand-300'
+                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
             ]"
           >
             <Users class="w-4 h-4" />
@@ -143,11 +152,13 @@ function handleLogout() {
             v-if="authStore.isAdmin"
             to="/admin"
             :class="[
-              'flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all',
-              route.path === '/admin' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+              'flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all',
+              route.path === '/admin'
+                ? 'bg-amber-500/15 text-amber-700 border border-amber-500/40 dark:bg-amber-500/20 dark:text-amber-300'
+                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
             ]"
           >
-            <Shield class="w-4 h-4 text-amber-400" />
+            <Shield class="w-4 h-4 text-amber-500" />
             <span>{{ t('nav.admin') }}</span>
           </router-link>
         </nav>
@@ -159,7 +170,7 @@ function handleLogout() {
           <router-link
             v-if="authStore.currentUserId"
             to="/notifications"
-            class="relative p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/80 transition-all border border-transparent hover:border-slate-700/60"
+            class="relative p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all border border-transparent"
             title="Notifications"
           >
             <Bell class="w-5 h-5" />
@@ -175,9 +186,9 @@ function handleLogout() {
           <div class="relative">
             <button
               @click="langMenuOpen = !langMenuOpen"
-              class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-950/80 border border-slate-800 hover:border-brand-500/60 text-slate-200 text-xs font-bold transition-all shadow-lg hover:shadow-brand-500/10"
+              class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 hover:border-brand-500 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all shadow-sm"
             >
-              <img :src="currentLangObj.flagUrl" class="w-4 h-4 rounded-full object-cover shadow-sm shrink-0 border border-white/30" :alt="currentLangObj.code" />
+              <img :src="currentLangObj.flagUrl" class="w-4 h-4 rounded-full object-cover shadow-sm shrink-0 border border-slate-300 dark:border-white/30" :alt="currentLangObj.code" />
               <span class="uppercase font-extrabold tracking-wide">{{ currentLangObj.code }}</span>
               <ChevronDown class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200" :class="{ 'rotate-180': langMenuOpen }" />
             </button>
@@ -185,7 +196,7 @@ function handleLogout() {
             <!-- Dropdown Menu -->
             <div
               v-if="langMenuOpen"
-              class="absolute right-0 mt-2 w-52 bg-slate-900/95 border border-slate-700/80 rounded-2xl shadow-2xl backdrop-blur-2xl p-1.5 z-50 animate-fadeIn space-y-1"
+              class="absolute right-0 mt-2 w-52 bg-white dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700/80 rounded-2xl shadow-xl backdrop-blur-2xl p-1.5 z-50 animate-fadeIn space-y-1"
             >
               <button
                 v-for="l in languagesList"
@@ -194,15 +205,15 @@ function handleLogout() {
                 :class="[
                   'w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all',
                   locale === l.code
-                    ? 'bg-brand-600/30 text-white border border-brand-500/50 shadow-md shadow-brand-500/10'
-                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+                    ? 'bg-brand-50 text-brand-700 border border-brand-200 dark:bg-brand-600/30 dark:text-white dark:border-brand-500/50'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white'
                 ]"
               >
                 <div class="flex items-center gap-2.5">
-                  <img :src="l.flagUrl" class="w-4 h-4 rounded-full object-cover shadow-sm shrink-0 border border-white/20" :alt="l.label" />
+                  <img :src="l.flagUrl" class="w-4 h-4 rounded-full object-cover shadow-sm shrink-0 border border-slate-300 dark:border-white/20" :alt="l.label" />
                   <span>{{ l.label }}</span>
                 </div>
-                <Check v-if="locale === l.code" class="w-3.5 h-3.5 text-brand-400" />
+                <Check v-if="locale === l.code" class="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
               </button>
             </div>
           </div>
@@ -210,38 +221,24 @@ function handleLogout() {
           <!-- Theme Toggle -->
           <button
             @click="toggleTheme"
-            class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/80 transition-all border border-transparent hover:border-slate-700/60"
+            class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all border border-transparent"
             title="Toggle Light/Dark Theme"
           >
             <Sun v-if="isDark" class="w-4 h-4 text-amber-400" />
-            <Moon v-else class="w-4 h-4 text-indigo-400" />
+            <Moon v-else class="w-4 h-4 text-indigo-600" />
           </button>
 
-          <!-- Profile / Logout / Login -->
-          <div v-if="authStore.currentUserId" class="flex items-center gap-2 pl-2 border-l border-slate-800/80">
-            <router-link
-              to="/profile"
-              class="flex items-center gap-2 p-1 pr-2 rounded-full hover:bg-slate-800/60 transition-all border border-transparent hover:border-slate-700/50"
-            >
-              <img
-                :src="authStore.currentUser?.avatar"
-                class="w-7 h-7 rounded-full border border-brand-500/60 bg-slate-800 object-cover shadow-sm"
-                :alt="authStore.currentUser?.name"
-              />
-              <span class="hidden xl:inline text-xs font-semibold text-slate-200">
-                {{ authStore.currentUser?.name.split(' ')[0] }}
-              </span>
-            </router-link>
-
+          <!-- Logout / Login -->
+          <div v-if="authStore.currentUserId" class="flex items-center gap-2 pl-2">
             <button
               @click="handleLogout"
-              class="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all border border-transparent hover:border-rose-500/30"
+              class="p-2 text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-all"
               title="Logout"
             >
               <LogOut class="w-4 h-4" />
             </button>
           </div>
-          <div v-else class="pl-2 border-l border-slate-800">
+          <div v-else class="pl-2">
             <router-link
               to="/auth"
               class="glow-button text-xs py-1.5 px-3 flex items-center gap-1"
@@ -250,77 +247,8 @@ function handleLogout() {
             </router-link>
           </div>
 
-          <!-- Mobile menu button -->
-          <button
-            v-if="authStore.currentUserId"
-            @click="mobileMenuOpen = !mobileMenuOpen"
-            class="md:hidden p-2 text-slate-400 hover:text-white"
-          >
-            <Menu v-if="!mobileMenuOpen" class="w-6 h-6" />
-            <X v-else class="w-6 h-6" />
-          </button>
         </div>
       </div>
-    </div>
-
-    <!-- Quick User Switcher Toolbar Sub-header -->
-    <div v-if="authStore.currentUserId" class="bg-slate-900/90 border-t border-slate-800/80 py-1.5 px-4 sm:px-6 lg:px-8">
-      <div class="max-w-7xl mx-auto flex items-center justify-between">
-        <UserSwitcher />
-      </div>
-    </div>
-
-    <!-- Mobile Drawer Navigation -->
-    <div v-if="mobileMenuOpen && authStore.currentUserId" class="md:hidden bg-slate-900 border-b border-slate-800 px-4 py-3 space-y-2">
-      <router-link
-        to="/"
-        @click="mobileMenuOpen = false"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-200 hover:bg-slate-800"
-      >
-        <LayoutDashboard class="w-5 h-5 text-brand-400" />
-        <span>{{ t('nav.dashboard') }}</span>
-      </router-link>
-      <router-link
-        to="/meals"
-        @click="mobileMenuOpen = false"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-200 hover:bg-slate-800"
-      >
-        <Receipt class="w-5 h-5 text-brand-400" />
-        <span>{{ t('nav.meals') }}</span>
-      </router-link>
-      <router-link
-        to="/debts"
-        @click="mobileMenuOpen = false"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-200 hover:bg-slate-800"
-      >
-        <CreditCard class="w-5 h-5 text-brand-400" />
-        <span>{{ t('nav.debts') }}</span>
-      </router-link>
-      <router-link
-        to="/groups"
-        @click="mobileMenuOpen = false"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-200 hover:bg-slate-800"
-      >
-        <Users class="w-5 h-5 text-brand-400" />
-        <span>{{ t('nav.groups') }}</span>
-      </router-link>
-      <router-link
-        v-if="authStore.isAdmin"
-        to="/admin"
-        @click="mobileMenuOpen = false"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-amber-300 hover:bg-slate-800"
-      >
-        <Shield class="w-5 h-5 text-amber-400" />
-        <span>{{ t('nav.admin') }}</span>
-      </router-link>
-      <router-link
-        to="/profile"
-        @click="mobileMenuOpen = false"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-200 hover:bg-slate-800"
-      >
-        <User class="w-5 h-5 text-brand-400" />
-        <span>{{ t('nav.profile') }}</span>
-      </router-link>
     </div>
   </header>
 </template>

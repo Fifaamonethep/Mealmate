@@ -43,11 +43,11 @@ const filteredMeals = computed(() => {
     <!-- Title & Action -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-extrabold text-white flex items-center gap-2">
-          <Utensils class="w-6 h-6 text-brand-400" />
+        <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+          <Utensils class="w-6 h-6 text-brand-600 dark:text-brand-400" />
           <span>{{ t('meals.title') }}</span>
         </h1>
-        <p class="text-xs text-slate-400 mt-1">{{ t('meals.sub') }}</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{ t('meals.sub') }}</p>
       </div>
 
       <button @click="showCreateMeal = true" class="glow-button text-xs flex items-center gap-1.5 py-2.5">
@@ -57,7 +57,7 @@ const filteredMeals = computed(() => {
     </div>
 
     <!-- Filters Bar -->
-    <div class="glass-card p-4 space-y-3 border border-slate-700/60">
+    <div class="glass-card p-4 space-y-3 border border-slate-200/80 dark:border-slate-700/60">
       
       <!-- Top Row: Search & Group Select -->
       <div class="flex flex-col sm:flex-row gap-3">
@@ -72,7 +72,7 @@ const filteredMeals = computed(() => {
         </div>
 
         <div class="w-full sm:w-64">
-          <select v-model="selectedGroupId" class="w-full glass-input text-xs bg-slate-900">
+          <select v-model="selectedGroupId" class="w-full glass-input text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
             <option value="">{{ t('meals.all_groups') }}</option>
             <option v-for="g in groupsStore.groups" :key="g.id" :value="g.id">
               {{ g.name }}
@@ -82,9 +82,9 @@ const filteredMeals = computed(() => {
       </div>
 
       <!-- Bottom Row: Date Range Filters -->
-      <div class="flex flex-wrap items-center gap-3 pt-2 border-t border-slate-800 text-xs">
-        <span class="text-slate-400 flex items-center gap-1 font-semibold">
-          <Calendar class="w-3.5 h-3.5 text-brand-400" /> {{ t('meals.filter_date') }}
+      <div class="flex flex-wrap items-center gap-3 pt-2 border-t border-slate-200 dark:border-slate-800 text-xs">
+        <span class="text-slate-600 dark:text-slate-400 flex items-center gap-1 font-semibold">
+          <Calendar class="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" /> {{ t('meals.filter_date') }}
         </span>
         <div class="flex items-center gap-2">
           <span class="text-slate-500">{{ t('common.from') }}</span>
@@ -97,7 +97,7 @@ const filteredMeals = computed(() => {
         <button
           v-if="startDate || endDate"
           @click="startDate = ''; endDate = ''"
-          class="text-xs text-rose-400 hover:underline"
+          class="text-xs text-rose-600 dark:text-rose-400 hover:underline font-semibold"
         >
           {{ t('meals.clear_date_filter') }}
         </button>

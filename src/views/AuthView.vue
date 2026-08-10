@@ -147,34 +147,6 @@ function resetDemoData() {
           </button>
         </form>
 
-        <!-- Quick Switch Test Accounts Bar -->
-        <div class="pt-4 border-t border-slate-800 space-y-2">
-          <div class="text-[11px] text-slate-400 font-semibold flex items-center justify-between">
-            <span>{{ t('auth.switch_test_user') }}</span>
-            <span class="text-brand-400 font-mono">Pass: 123</span>
-          </div>
-
-          <div class="grid grid-cols-3 gap-1.5 text-xs">
-            <button
-              @click="quickLogin('admin', '123')"
-              class="p-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 hover:bg-amber-500/20 font-bold transition-all truncate"
-            >
-              👑 Admin
-            </button>
-            <button
-              @click="quickLogin('alice', '123')"
-              class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 hover:bg-slate-800 font-medium transition-all truncate"
-            >
-              Alice
-            </button>
-            <button
-              @click="quickLogin('bob', '123')"
-              class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 hover:bg-slate-800 font-medium transition-all truncate"
-            >
-              Bob
-            </button>
-          </div>
-        </div>
       </div>
 
       <!-- Reset Demo Data -->

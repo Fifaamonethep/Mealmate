@@ -154,7 +154,12 @@
     "group_matrix_title": "Ma Trận Nợ Nội Bộ Nhóm",
     "debtor_vs_creditor": "Con nợ ↓ \\ Chủ nợ →",
     "group_meals": "Bữa ăn thuộc nhóm này",
-    "empty": "Chưa có nhóm bạn nào!"
+    "empty": "Chưa có nhóm bạn nào!",
+    "leader_badge": "Chủ nhóm 👑",
+    "managed_by": "Chủ nhóm:",
+    "only_leader_can_manage": "Chỉ Chủ nhóm hoặc Admin mới có quyền thêm / xóa thành viên.",
+    "disband_group": "Giải tán nhóm",
+    "confirm_disband": "Bạn có chắc muốn giải tán nhóm này không?"
   },
   "notifications": {
     "title": "Thông Báo Hóa Đơn & Nợ",

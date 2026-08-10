@@ -8,7 +8,7 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-slate-900 text-slate-100 font-sans antialiased selection:bg-brand-500 selection:text-white">
+  <div class="min-h-screen flex flex-col bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 font-sans antialiased selection:bg-brand-500 selection:text-white transition-colors duration-300">
     <!-- Navbar -->
     <Navbar />
 
@@ -28,13 +28,13 @@ const { t } = useI18n()
     <ToastContainer />
 
     <!-- Footer -->
-    <footer class="border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-500">
+    <footer class="border-t border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950 py-6 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors duration-300">
       <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
         <div class="flex items-center gap-2">
-          <span class="font-bold text-slate-300">MealMate</span>
+          <span class="font-bold text-slate-800 dark:text-slate-300">MealMate</span>
           <span>&copy; 2026 - {{ t('footer.tagline') }}</span>
         </div>
-        <div class="text-slate-400">
+        <div class="text-slate-500 dark:text-slate-400">
           Powered by Vue 3 + Pinia + Vite + Tailwind CSS + Axios
         </div>
       </div>

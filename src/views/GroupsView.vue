@@ -18,11 +18,11 @@ const showCreateGroup = ref(false)
     <!-- Title & Create Button -->
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-2xl font-extrabold text-white flex items-center gap-2">
-          <Users class="w-6 h-6 text-brand-400" />
+        <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+          <Users class="w-6 h-6 text-brand-600 dark:text-brand-400" />
           <span>{{ t('groups.title') }}</span>
         </h1>
-        <p class="text-xs text-slate-400 mt-1">{{ t('groups.sub') }}</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{ t('groups.sub') }}</p>
       </div>
 
       <button @click="showCreateGroup = true" class="glow-button text-xs flex items-center gap-1.5 py-2.5">

@@ -45,37 +45,37 @@ function handleSendSlip() {
 <template>
   <Modal :show="show" :title="t('debts.pay_modal_title')" maxWidth="max-w-md" @close="emit('close')">
     <template #icon>
-      <QrCode class="w-5 h-5 text-brand-400" />
+      <QrCode class="w-5 h-5 text-brand-600 dark:text-brand-400" />
     </template>
 
-    <div v-if="payment && creditor" class="space-y-4 text-slate-200">
+    <div v-if="payment && creditor" class="space-y-4 text-slate-800 dark:text-slate-200">
       
       <!-- Creditor Info & Amount -->
-      <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2 text-center">
-        <span class="text-xs text-slate-400">{{ t('debts.pay_modal_amount_for') }} <strong>{{ creditor.name }}</strong>:</span>
-        <div class="text-2xl font-extrabold text-emerald-400">
+      <div class="bg-slate-100 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2 text-center">
+        <span class="text-xs text-slate-500 dark:text-slate-400">{{ t('debts.pay_modal_amount_for') }} <strong class="text-slate-800 dark:text-slate-200">{{ creditor.name }}</strong>:</span>
+        <div class="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
           {{ payment.amount.toLocaleString() }} VND
         </div>
       </div>
 
       <!-- Creditor Bank QR Code -->
-      <div class="flex flex-col items-center space-y-2 bg-slate-800/60 p-4 rounded-xl border border-slate-700">
-        <span class="text-xs font-semibold text-slate-300">{{ t('debts.pay_modal_qr') }}</span>
-        <div class="p-2 bg-white rounded-xl shadow-lg">
-          <img :src="creditor.qrCodeUrl || 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=VIETQR'" class="w-40 h-40" />
+      <div class="flex flex-col items-center space-y-2 bg-slate-100 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+        <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ t('debts.pay_modal_qr') }}</span>
+        <div class="p-2 bg-white rounded-xl shadow-lg border border-slate-200">
+          <img :src="creditor.qrCodeUrl || 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=VIETQR'" class="w-40 h-40 object-contain" />
         </div>
         <button
           @click="copyAccountInfo"
-          class="text-xs bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-800 flex items-center gap-1.5 text-slate-300"
+          class="text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-1.5 text-slate-700 dark:text-slate-300 font-semibold shadow-sm"
         >
-          <component :is="copied ? Check : Copy" class="w-3.5 h-3.5 text-brand-400" />
+          <component :is="copied ? Check : Copy" class="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
           <span>{{ copied ? t('debts.copied_acc') : t('debts.copy_acc') }}</span>
         </button>
       </div>
 
       <!-- Upload Slip Photo -->
       <div class="space-y-2">
-        <label class="block text-xs font-semibold text-slate-300">{{ t('debts.upload_slip_label') }}</label>
+        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">{{ t('debts.upload_slip_label') }}</label>
         <div class="flex gap-2">
           <input
             v-model="slipUrl"
@@ -84,17 +84,17 @@ function handleSendSlip() {
             class="glass-input text-xs w-full"
           />
         </div>
-        <div class="rounded-xl overflow-hidden border border-slate-700 aspect-video bg-slate-950 flex items-center justify-center">
+        <div class="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 aspect-video bg-slate-100 dark:bg-slate-950 flex items-center justify-center">
           <img :src="slipUrl" class="w-full h-full object-cover" />
         </div>
       </div>
     </div>
 
     <template #footer>
-      <button @click="emit('close')" class="px-4 py-2 rounded-xl text-sm text-slate-400 hover:text-white hover:bg-slate-800">
+      <button @click="emit('close')" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 transition-all">
         {{ t('common.close') }}
       </button>
-      <button @click="handleSendSlip" class="glow-button text-sm flex items-center gap-2">
+      <button @click="handleSendSlip" class="glow-button text-xs flex items-center gap-2 py-2">
         <Send class="w-4 h-4" />
         <span>{{ t('debts.send_slip_btn') }}</span>
       </button>

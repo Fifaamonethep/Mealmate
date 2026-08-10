@@ -1,9 +1,15 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { INITIAL_GROUPS } from '../mock/seedData'
+import { useAuthStore } from './auth'
 
 export const useGroupsStore = defineStore('groups', () => {
-  const groups = ref(JSON.parse(localStorage.getItem('mealmate_groups')) || INITIAL_GROUPS)
+  const loadedGroups = JSON.parse(localStorage.getItem('mealmate_groups')) || INITIAL_GROUPS
+  // Migration: ensure every group has an ownerId
+  const groups = ref(loadedGroups.map(g => ({
+    ...g,
+    ownerId: g.ownerId || (g.members && g.members[0]) || 'u-alice'
+  })))
 
   function saveGroups() {
     localStorage.setItem('mealmate_groups', JSON.stringify(groups.value))
@@ -14,11 +20,24 @@ export const useGroupsStore = defineStore('groups', () => {
   }
 
   function createGroup(groupData) {
+    const authStore = useAuthStore()
+    const ownerId = groupData.ownerId || authStore.currentUserId || 'u-alice'
+    
+    // Ensure owner is in members array
+    let members = groupData.members || []
+    if (!members.includes(ownerId)) {
+      members = [ownerId, ...members]
+    }
+
+    const owner = authStore.users.find(u => u.id === ownerId)
+
     const newGroup = {
       id: `g-${Date.now()}`,
       name: groupData.name,
       description: groupData.description || '',
-      members: groupData.members || [],
+      ownerId: ownerId,
+      avatar: groupData.avatar || owner?.avatar || 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=200&auto=format&fit=crop',
+      members: members,
       createdAt: new Date().toISOString()
     }
     groups.value.unshift(newGroup)
@@ -42,12 +61,18 @@ export const useGroupsStore = defineStore('groups', () => {
     }
   }
 
+  function deleteGroup(groupId) {
+    groups.value = groups.value.filter(g => g.id !== groupId)
+    saveGroups()
+  }
+
   return {
     groups,
     getGroupById,
     createGroup,
     addMember,
     removeMember,
+    deleteGroup,
     saveGroups
   }
 })

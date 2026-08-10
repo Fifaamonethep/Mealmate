@@ -22,28 +22,28 @@ function selectUser(userId) {
 </script>
 
 <template>
-  <div class="flex items-center justify-between gap-3 bg-slate-950/80 border border-slate-800/80 rounded-2xl px-3 py-1.5 overflow-x-auto text-xs shadow-inner w-full">
+  <div class="flex items-center justify-between gap-3 bg-white/80 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/80 rounded-2xl px-3 py-1.5 overflow-x-auto text-xs shadow-sm dark:shadow-inner w-full transition-colors duration-300">
     
     <!-- Admin Portal Switch -->
-    <div v-if="adminUser" class="flex items-center gap-2 pr-3 border-r border-slate-800 shrink-0">
-      <span class="text-[10px] uppercase font-bold text-amber-400 tracking-wider hidden sm:inline">Admin Portal:</span>
+    <div v-if="adminUser" class="flex items-center gap-2 pr-3 border-r border-slate-200 dark:border-slate-800 shrink-0">
+      <span class="text-[10px] uppercase font-extrabold text-amber-600 dark:text-amber-400 tracking-wider hidden sm:inline">Admin Portal:</span>
       <button
         @click="selectUser(adminUser.id)"
         :class="[
           'flex items-center gap-1.5 px-3 py-1 rounded-full transition-all text-xs font-bold border shrink-0',
           authStore.currentUserId === adminUser.id
-            ? 'bg-amber-500/20 text-amber-300 border-amber-500/60 shadow-md shadow-amber-500/20 ring-2 ring-amber-500/30'
-            : 'bg-slate-900/80 text-amber-400/80 border-amber-500/30 hover:bg-slate-800 hover:text-amber-300'
+            ? 'bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/60 shadow-md shadow-amber-500/20 ring-2 ring-amber-500/30'
+            : 'bg-amber-50 dark:bg-slate-900/80 text-amber-700 dark:text-amber-400/80 border-amber-500/30 hover:bg-amber-100 dark:hover:bg-slate-800'
         ]"
       >
-        <ShieldCheck class="w-3.5 h-3.5 text-amber-400 shrink-0" />
+        <ShieldCheck class="w-3.5 h-3.5 text-amber-500 shrink-0" />
         <span>Admin System</span>
       </button>
     </div>
 
     <!-- Regular Members Switch -->
     <div class="flex items-center gap-2 overflow-x-auto">
-      <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider hidden md:inline shrink-0">Test Users:</span>
+      <span class="text-[10px] uppercase font-extrabold text-slate-500 dark:text-slate-400 tracking-wider hidden md:inline shrink-0">Test Users:</span>
       <button
         v-for="u in regularUsers"
         :key="u.id"
@@ -52,10 +52,10 @@ function selectUser(userId) {
           'flex items-center gap-1.5 px-3 py-1 rounded-full transition-all text-xs font-semibold border shrink-0',
           authStore.currentUserId === u.id
             ? 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white border-brand-400/80 shadow-md shadow-brand-500/25 ring-2 ring-brand-500/30'
-            : 'bg-slate-900/80 text-slate-300 border-slate-800 hover:bg-slate-800 hover:text-white hover:border-slate-700'
+            : 'bg-slate-100 dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
         ]"
       >
-        <img :src="u.avatar" class="w-4 h-4 rounded-full bg-slate-800 object-cover border border-white/20" :alt="u.name" />
+        <img :src="u.avatar" class="w-4 h-4 rounded-full bg-slate-200 dark:bg-slate-800 object-cover border border-slate-300 dark:border-white/20" :alt="u.name" />
         <span>{{ u.name.split(' ')[0] }}</span>
       </button>
     </div>
