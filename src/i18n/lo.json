@@ -50,7 +50,11 @@
     "login_sub": "ເຂົ້າສູ່ລະບົບເພື່ອຫານຄ່າອາຫານແລະຈັດການໜີ້ສິນຢ່າງງ່າຍດາຍ",
     "create_account": "ສ້າງບັນຊີໃໝ່",
     "switch_test_user": "⚡ ສັບປ່ຽນບັນຊີທົດລອງດ່ວນ:",
-    "reset_demo_data": "🔄 ຣີເຊັດຂໍ້ມູນທົດລອງຕົ້ນສະບັບ"
+    "reset_demo_data": "🔄 ຣີເຊັດຂໍ້ມູນທົດລອງຕົ້ນສະບັບ",
+    "user_not_found": "ບັນຊີນີ້ບໍ່ມີຢູ່ໃນລະບົບ!",
+    "incorrect_password": "ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!",
+    "account_locked": "ບັນຊີຖືກລະງັບໂດຍຜູ້ດູແລລະບົບ!",
+    "username_exists": "ຊື່ຜູ້ໃຊ້ນີ້ມີຢູ່ແລ້ວ!"
   },
   "dashboard": {
     "welcome": "ສະບາຍດີ",
@@ -67,7 +71,8 @@
     "create_group": "ສ້າງກຸ່ມໃໝ່",
     "pay_debts": "ຊຳລະໜີ້ທັນທີ",
     "recent_activity": "ຄາບອາຫານຫຼ້າສຸດ",
-    "view_all": "ເບິ່ງທັງໝົດ"
+    "view_all": "ເບິ່ງທັງໝົດ",
+    "hero_tag": "ແດຊບອດ MealMate"
   },
   "meals": {
     "title": "ລາຍການຄາບອາຫານ",
@@ -114,7 +119,13 @@
     "detail_creditor_label": "ຜູ້ຈ່າຍເງິນລ່ວງໜ້າ:",
     "detail_breakdown": "ລາຍລະອຽດສ່ວນແບ່ງແຕ່ລະຄົນ",
     "detail_advanced_all": "ຈ່າຍເງິນລ່ວງໜ້າເຕັມຈຳນວນແລ້ວ",
-    "confirm_success_leader": "ຢືນຢັນການຊຳລະຮຽບຮ້ອຍ (ສິດຫົວໜ້າ / ຜູ້ຈ່າຍລ່ວງໜ້າ)"
+    "confirm_success_leader": "ຢືນຢັນການຊຳລະຮຽບຮ້ອຍ (ສິດຫົວໜ້າ / ຜູ້ຈ່າຍລ່ວງໜ້າ)",
+    "delete_meal": "ລົບຄາບອາຫານ",
+    "confirm_delete": "ທ່ານແນ່ໃຈບໍວ່າຕ້ອງການລົບຄາບອາຫານນີ້? ຫນີ້ສິນທີ່ກ່ຽວຂ້ອງທັງຫມົດຈະຖືກລົບ.",
+    "deleted_success": "ລົບຄາບອາຫານສຳເລັດແລ້ວ!",
+    "management_rights": "ສິດການຈັດການ (ຫົວໜ້າ / ເຈົ້າຫນີ້)",
+    "receipt_upload_hint": "ຖ່າຍຮູບຫຼືອັບໂຫຼດໃບເສັດເພື່ອແນບກັບຄາບອາຫານ",
+    "custom_split_mismatch": "ຍອດລວມທີ່ກຳນົດເອງ ({customSum}) ບໍ່ກົງກັບຍອດລວມໃບເສັດ ({totalAmount})!"
   },
   "debts": {
     "title": "ການຈັດການໜີ້ແລະການຊຳລະເງິນ",
@@ -148,7 +159,13 @@
     "reject_reason_placeholder": "ຕົວຢ່າງ: ລະຫັດສລິບບໍ່ຖືກຕ້ອງ...",
     "btn_reject": "ປະຕິເສດສລິບ",
     "btn_confirm_reject": "ຢືນຢັນການປະຕິເສດ",
-    "btn_confirm_paid": "ຢືນຢັນໄດ້ຮັບເງິນແລ້ວ"
+    "btn_confirm_paid": "ຢືນຢັນໄດ້ຮັບເງິນແລ້ວ",
+    "phone_label": "ເບີໂທ:",
+    "upload_from_gallery": "ອັບໂຫຼດຈາກຄັງຮູບ",
+    "slip_sent_toast": "ສົ່ງສລິບການໂອນເງິນສຳເລັດແລ້ວ!",
+    "payment_approved_toast": "ອະນຸມັດສລິບຊຳລະເງິນສຳເລັດແລ້ວ!",
+    "payment_rejected_toast": "ປະຕິເສດສລິບຊຳລະເງິນສຳເລັດແລ້ວ!",
+    "admin_status_changed_toast": "ຜູ້ດູແລປ່ຽນສະຖານະໜີ້ເປັນ {status}"
   },
   "groups": {
     "title": "ກຸ່ມໝູ່ເພື່ອນ",
@@ -175,18 +192,39 @@
     "only_leader_can_manage": "ສະເພາະຫົວໜ້າກຸ່ມເທົ່ານັ້ນທີ່ສາມາດຈັດການສະມາຊິກແລະຍຸບກຸ່ມໄດ້",
     "disband_group": "ຍຸບກຸ່ມ",
     "confirm_disband": "ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການຍຸບກຸ່ມນີ້? ສະມາຊິກທັງໝົດຈະຖືກລົບອອກຈາກກຸ່ມ.",
-    "management_rights": "ສິດຈັດການ (ຫົວໜ້າ / ເຈົ້າໜີ້)",
-    "group_avatar_label": "ຮູບໂປຣໄຟລ໌ກຸ່ມ",
-    "cannot_remove_leader": "ບໍ່ສາມາດລົບຫົວໜ້າກຸ່ມໄດ້!",
+    "management_rights": "ສິດການຈັດການ (ຫົວໜ້າ / ຜູ້ດູແລ)",
+    "group_avatar_label": "ຮູບໂປຣໄຟລ໌ກຸ່ມ:",
+    "cannot_remove_leader": "ບໍ່ສາມາດລົບຫົວໜ້າກຸ່ມອອກຈາກກຸ່ມໄດ້!",
     "min_member_error": "ກຸ່ມຕ້ອງມີສະມາຊິກຢ່າງໜ້ອຍ 1 ຄົນ!",
-    "member_removed_success": "ລົບສະມາຊິກອອກຈາກກຸ່ມຮຽບຮ້ອຍແລ້ວ",
-    "disband_success": "ຍຸບກຸ່ມຮຽບຮ້ອຍແລ້ວ"
+    "member_removed_success": "ລົບສະມາຊິກອອກຈາກກຸ່ມສຳເລັດແລ້ວ!",
+    "disband_success": "ຍຸບກຸ່ມສຳເລັດແລ້ວ!",
+    "group_updated_success": "ອັບເດດຂໍ້ມູນກຸ່ມສຳເລັດແລ້ວ!",
+    "edit_group_title": "ແກ້ໄຂຂໍ້ມູນກຸ່ມ",
+    "edit_group": "ແກ້ໄຂກຸ່ມ",
+    "leave_group": "ອອກຈາກກຸ່ມ",
+    "confirm_leave": "ທ່ານແນ່ໃຈບໍວ່າຕ້ອງການອອກຈາກກຸ່ມນີ້?",
+    "user_not_found": "ບໍ່ພົບຜູ້ໃຊ້!",
+    "user_already_in_group": "ສະມາຊິກນີ້ຢູ່ໃນກຸ່ມຢູ່ແລ້ວ!",
+    "member_added_success": "ເພີ່ມ {name} ເຂົ້າກຸ່ມສຳເລັດແລ້ວ!",
+    "leave_success": "ອອກຈາກກຸ່ມສຳເລັດແລ້ວ!"
   },
   "notifications": {
     "title": "ການແຈ້ງເຕືອນການຊຳລະເງິນແລະໜີ້ສິນ",
     "sub": "ອັບເດດສລິບໂອນເງິນແລະການແຈ້ງເຕືອນໜີ້ຄ້າງຊຳລະແບບຮຽລໄທມ໌",
     "mark_all_read": "ເຮັດເຄື່ອງໝາຍວ່າອ່ານແລ້ວທັງໝົດ",
-    "empty": "ທ່ານບໍ່ມີການແຈ້ງເຕືອນ!"
+    "empty": "ທ່ານບໍ່ມີການແຈ້ງເຕືອນ!",
+    "notif_new_slip_title": "ສລິບການຊຳລະເງິນໃໝ່",
+    "notif_new_slip_msg": "{senderName} ໄດ້ສົ່ງສລິບການໂອນເງິນສຳລັບໜີ້ {amount} ກະລຸນາກວດສອບແລະຢືນຢັນ",
+    "notif_approved_title": "ການຊຳລະເງິນໄດ້ຮັບອະນຸມັດແລ້ວ! 🎉",
+    "notif_approved_msg": "ເຈົ້າໜີ້ຢືນຢັນໄດ້ຮັບເງິນຄົບຖ້ວນແລ້ວ ({amount}) ການຊຳລະເງິນເສັດສິ້ນ",
+    "notif_rejected_title": "ການຊຳລະເງິນຖືກປະຕິເສດ ⚠️",
+    "notif_rejected_msg": "ສລິບຂອງທ່ານຖືກປະຕິເສດດ້ວຍເຫດຜົນ: \"{reason}\" ກະລຸນາກວດສອບອີກຄັ້ງ!",
+    "notif_admin_update_title": "ຜູ້ດູແລອັບເດດສະຖານະໜີ້ສິນ",
+    "notif_admin_update_msg": "ຜູ້ດູແລລະບົບປ່ຽນສະຖານະໜີ້ເປັນ [{status}]",
+    "new_meal_split_title": "ຄາບອາຫານໃໝ່ຕ້ອງຫານຄ່າໃຊ້ຈ່າຍ",
+    "new_meal_split_msg": "ທ່ານຖືກເພີ່ມໃນຄາບອາຫານ \"{title}\" ທ່ານເປັນໜີ້ {amount}",
+    "overdue_reminder_title": "⏰ ແຈ້ງເຕືອນໜີ້ຄ້າງຊຳລະ (>3 ວັນ)",
+    "overdue_reminder_msg": "ທ່ານມ່ຍອດໜີ້ຄ້າງຊຳລະ {amount} ກະລຸນາຊຳລະເງິນໃຫ້ເສັດສິ້ນ!"
   },
   "profile": {
     "title": "ໂປຣໄຟລ໌ຜູ້ໃຊ້",
@@ -208,7 +246,12 @@
     "new_password": "ລະຫັດຜ່ານໃໝ່",
     "confirm_password": "ຢືນຢັນລະຫັດຜ່ານໃໝ່",
     "btn_change_password": "ປ່ຽນລະຫັດຜ່ານ",
-    "password_changed_success": "ປ່ຽນລະຫັດຜ່ານຮຽບຮ້ອຍແລ້ວ!"
+    "password_changed_success": "ປ່ຽນລະຫັດຜ່ານຮຽບຮ້ອຍແລ້ວ!",
+    "err_select_valid_image": "ກະລຸນາເລືອກໄຟລ໌ຮູບພາບທີ່ຖືກຕ້ອງ!",
+    "err_fill_all_passwords": "ກະລຸນາປ້ອນລະຫັດຜ່ານໃຫ້ຄົບຖ້ວນ!",
+    "err_current_pass_incorrect": "ລະຫັດຜ່ານປະຈຸບັນບໍ່ຖືກຕ້ອງ!",
+    "err_pass_min_length": "ລະຫັດຜ່ານໃຫມ່ຕ້ອງມີຢ່າງໜ້ອຍ 4 ຕົວອັກສອນ!",
+    "err_confirm_pass_mismatch": "ຢືນຢັນລະຫັດຜ່ານບໍ່ກົງກັນ!"
   },
   "admin": {
     "title": "ແຜງຄວບຄຸມຜູ້ດູແລລະບົບ",
@@ -232,15 +275,19 @@
     "user_modal_title": "ຈັດການຜູ້ໃຊ້ (ແອດມິນ)",
     "user": "ຜູ້ໃຊ້",
     "role": "ສິດ",
-    "role_user": "ຜູ້ໃຊ້",
+    "role_user": "ຜູ້ໃຊ້ (User)",
     "role_admin": "ຜູ້ດູແລລະບົບ (Admin)",
     "user_status": "ສະຖານະ",
     "lock": "ລະງັບ",
     "unlock": "ປົດລະງັບ",
-    "change_pass": "ຣີເຊັດລະຫັດຜ່ານ"
+    "change_pass": "ຣີເຊັດລະຫັດຜ່ານ",
+    "metric_accounts": "ບັນຊີ",
+    "metric_created": "ສ້າງແລ້ວ",
+    "metric_volume": "ປະລິມານລວມ",
+    "metric_pending": "ລໍຖ້າດຳເນີນການ"
   },
   "footer": {
     "tagline": "ການຈັດການໜີ້ແລະຫານຄ່າອາຫານທີ່ຍຸຕິທຳອັດໂນມັດ",
-    "contact_support": "ຕິດຕໍ່ສະໜັບສະໜູນ:"
+    "contact_support": "ຕິດຕໍ່ຝ່າຍຊ່ວຍເຫຼືອ:"
   }
 }

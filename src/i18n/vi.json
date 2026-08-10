@@ -50,7 +50,11 @@
     "login_sub": "Đăng nhập để bắt đầu chia tiền bữa ăn sòng phẳng",
     "create_account": "Tạo tài khoản mới",
     "switch_test_user": "⚡ Đăng nhập tài khoản Test nhanh:",
-    "reset_demo_data": "🔄 Khôi phục dữ liệu Demo gốc (Reset Data)"
+    "reset_demo_data": "🔄 Khôi phục dữ liệu Demo gốc (Reset Data)",
+    "user_not_found": "Tài khoản không tồn tại!",
+    "incorrect_password": "Mật khẩu không chính xác!",
+    "account_locked": "Tài khoản đã bị khóa bởi Admin!",
+    "username_exists": "Tên đăng nhập đã tồn tại!"
   },
   "dashboard": {
     "welcome": "Xin chào",
@@ -67,7 +71,8 @@
     "create_group": "Tạo nhóm mới",
     "pay_debts": "Trả nợ ngay",
     "recent_activity": "Bữa ăn gần đây",
-    "view_all": "Xem tất cả"
+    "view_all": "Xem tất cả",
+    "hero_tag": "MealMate Bảng điều khiển"
   },
   "meals": {
     "title": "Danh sách Bữa ăn",
@@ -114,7 +119,13 @@
     "detail_creditor_label": "Người thanh toán trước:",
     "detail_breakdown": "Chi tiết phần tiền từng thành viên",
     "detail_advanced_all": "Đã ứng trả toàn bộ",
-    "confirm_success_leader": "Đã xác nhận thanh toán (Quyền Chủ nhóm / Người ứng tiền)"
+    "confirm_success_leader": "Đã xác nhận thanh toán (Quyền Chủ nhóm / Người ứng tiền)",
+    "delete_meal": "Xóa bữa ăn",
+    "confirm_delete": "Bạn có chắc chắn muốn xóa bữa ăn này không? Toàn bộ khoản nợ liên quan sẽ bị xóa.",
+    "deleted_success": "Đã xóa bữa ăn thành công!",
+    "management_rights": "Quyền Quản Lý (Leader / Creditor)",
+    "receipt_upload_hint": "Chụp hoặc tải ảnh hóa đơn / bill thanh toán để đính kèm bữa ăn",
+    "custom_split_mismatch": "Tổng tiền nhập tùy chỉnh ({customSum}) không khớp với tổng tiền hóa đơn ({totalAmount})!"
   },
   "debts": {
     "title": "Quản lý Công Nợ & Thanh Toán",
@@ -148,7 +159,13 @@
     "reject_reason_placeholder": "Ví dụ: Không thấy mã giao dịch, số tiền sai...",
     "btn_reject": "Từ Chối Bill",
     "btn_confirm_reject": "Xác nhận Từ Chối",
-    "btn_confirm_paid": "Xác Nhận Đã Nhận Tiền"
+    "btn_confirm_paid": "Xác Nhận Đã Nhận Tiền",
+    "phone_label": "SĐT:",
+    "upload_from_gallery": "Tải ảnh từ thư viện",
+    "slip_sent_toast": "Đã gửi ảnh bill chuyển khoản thành công!",
+    "payment_approved_toast": "Đã xác nhận duyệt bill thanh toán!",
+    "payment_rejected_toast": "Đã từ chối bill thanh toán!",
+    "admin_status_changed_toast": "Admin đã đổi trạng thái nợ sang {status}"
   },
   "groups": {
     "title": "Nhóm Bạn Bè",
@@ -175,18 +192,39 @@
     "only_leader_can_manage": "Chỉ Chủ nhóm hoặc Admin mới có quyền thêm / xóa thành viên.",
     "disband_group": "Giải tán nhóm",
     "confirm_disband": "Bạn có chắc muốn giải tán nhóm này không?",
-    "management_rights": "Quyền Quản Lý (Leader / Creditor)",
-    "group_avatar_label": "Ảnh đại diện nhóm",
-    "cannot_remove_leader": "Không thể xóa Chủ nhóm!",
+    "management_rights": "Quyền quản lý (Leader / Admin)",
+    "group_avatar_label": "Ảnh đại diện nhóm:",
+    "cannot_remove_leader": "Không thể xóa chủ nhóm ra khỏi nhóm!",
     "min_member_error": "Nhóm phải có ít nhất 1 thành viên!",
-    "member_removed_success": "Đã xóa thành viên khỏi nhóm",
-    "disband_success": "Đã giải tán nhóm thành công"
+    "member_removed_success": "Đã xóa thành viên khỏi nhóm thành công!",
+    "disband_success": "Đã giải tán nhóm thành công!",
+    "group_updated_success": "Đã cập nhật thông tin nhóm thành công!",
+    "edit_group_title": "Chỉnh sửa thông tin nhóm",
+    "edit_group": "Sửa nhóm",
+    "leave_group": "Rời nhóm",
+    "confirm_leave": "Bạn có chắc chắn muốn rời khỏi nhóm này không?",
+    "user_not_found": "Chưa tìm thấy người dùng!",
+    "user_already_in_group": "Thành viên này đã có trong nhóm!",
+    "member_added_success": "Đã thêm {name} vào nhóm thành công!",
+    "leave_success": "Đã rời nhóm thành công!"
   },
   "notifications": {
     "title": "Thông Báo Hóa Đơn & Nợ",
     "sub": "Cập nhật thời gian thực về bill chuyển khoản và nhắc nợ quá hạn",
     "mark_all_read": "Đánh dấu tất cả đã đọc",
-    "empty": "Bạn không có thông báo nào!"
+    "empty": "Bạn không có thông báo nào!",
+    "notif_new_slip_title": "Hóa đơn thanh toán mới",
+    "notif_new_slip_msg": "{senderName} vừa gửi ảnh bill chuyển khoản cho khoản nợ {amount}. Vui lòng kiểm tra và xác nhận.",
+    "notif_approved_title": "Thanh toán đã được duyệt! 🎉",
+    "notif_approved_msg": "Chủ nợ đã xác nhận nhận đủ tiền chuyển khoản ({amount}). Khoản nợ đã hoàn tất.",
+    "notif_rejected_title": "Thanh toán bị từ chối ⚠️",
+    "notif_rejected_msg": "Bill chuyển khoản của bạn bị từ chối với lý do: \"{reason}\". Vui lòng kiểm tra lại!",
+    "notif_admin_update_title": "Admin đã cập nhật trạng thái nợ",
+    "notif_admin_update_msg": "Admin đã thay đổi trạng thái khoản nợ sang [{status}].",
+    "new_meal_split_title": "Bữa ăn mới cần chia tiền",
+    "new_meal_split_msg": "Bạn được thêm vào bữa ăn \"{title}\". Bạn nợ {amount}.",
+    "overdue_reminder_title": "⏰ Nhắc nợ tự động (>3 ngày)",
+    "overdue_reminder_msg": "Bạn chưa thanh toán khoản nợ {amount}. Vui lòng hoàn tất trả nợ!"
   },
   "profile": {
     "title": "Hồ Sơ Cá Nhân",
@@ -208,7 +246,12 @@
     "new_password": "Mật khẩu mới",
     "confirm_password": "Xác nhận mật khẩu mới",
     "btn_change_password": "Đổi Mật Khẩu",
-    "password_changed_success": "Đã đổi mật khẩu thành công!"
+    "password_changed_success": "Đã đổi mật khẩu thành công!",
+    "err_select_valid_image": "Vui lòng chọn một tệp hình ảnh hợp lệ!",
+    "err_fill_all_passwords": "Vui lòng điền đầy đủ các trường mật khẩu!",
+    "err_current_pass_incorrect": "Mật khẩu hiện tại không chính xác!",
+    "err_pass_min_length": "Mật khẩu mới phải có ít nhất 4 ký tự!",
+    "err_confirm_pass_mismatch": "Xác nhận mật khẩu không trùng khớp!"
   },
   "admin": {
     "title": "Bảng Điều Khiển Admin",
@@ -232,14 +275,19 @@
     "user_modal_title": "Quản Lý Người Dùng (Admin)",
     "user": "Người dùng",
     "role": "Role",
-    "role_user": "Người dùng",
+    "role_user": "Thành viên (User)",
     "role_admin": "Quản trị viên (Admin)",
     "user_status": "Trạng thái",
     "lock": "Khóa",
     "unlock": "Mở khóa",
-    "change_pass": "Đổi Pass"
+    "change_pass": "Đổi Pass",
+    "metric_accounts": "Tài khoản",
+    "metric_created": "Đã tạo",
+    "metric_volume": "Tổng chi tiêu",
+    "metric_pending": "Chờ xử lý"
   },
   "footer": {
-    "tagline": "Quản lý nợ & tự động chia tiền bữa ăn sòng phẳng"
+    "tagline": "Quản lý nợ & tự động chia tiền bữa ăn sòng phẳng",
+    "contact_support": "Liên hệ hỗ trợ:"
   }
 }

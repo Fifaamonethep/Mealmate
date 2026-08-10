@@ -50,7 +50,11 @@
     "login_sub": "Log in to start fair meal splitting and debt management",
     "create_account": "Create New Account",
     "switch_test_user": "⚡ Switch Test Account:",
-    "reset_demo_data": "🔄 Reset Demo Data"
+    "reset_demo_data": "🔄 Reset Demo Data",
+    "user_not_found": "Account does not exist!",
+    "incorrect_password": "Incorrect password!",
+    "account_locked": "Account has been locked by Admin!",
+    "username_exists": "Username already exists!"
   },
   "dashboard": {
     "welcome": "Hello",
@@ -67,7 +71,8 @@
     "create_group": "New Group",
     "pay_debts": "Pay Debts Now",
     "recent_activity": "Recent Activity",
-    "view_all": "View All"
+    "view_all": "View All",
+    "hero_tag": "MealMate Dashboard"
   },
   "meals": {
     "title": "Meal List",
@@ -114,7 +119,13 @@
     "detail_creditor_label": "Paid Upfront By:",
     "detail_breakdown": "Individual Breakdown",
     "detail_advanced_all": "Paid full upfront",
-    "confirm_success_leader": "Payment confirmed (Leader / Creditor privilege)"
+    "confirm_success_leader": "Payment confirmed (Leader / Creditor privilege)",
+    "delete_meal": "Delete Meal",
+    "confirm_delete": "Are you sure you want to delete this meal? All associated debts will be removed.",
+    "deleted_success": "Meal deleted successfully!",
+    "management_rights": "Management Rights (Leader / Creditor)",
+    "receipt_upload_hint": "Snap or upload receipt/bill photo to attach to meal",
+    "custom_split_mismatch": "Custom split total ({customSum}) does not match the bill total ({totalAmount})!"
   },
   "debts": {
     "title": "Debt & Payment Management",
@@ -148,7 +159,13 @@
     "reject_reason_placeholder": "E.g. Invalid reference ID, wrong amount...",
     "btn_reject": "Reject Slip",
     "btn_confirm_reject": "Confirm Rejection",
-    "btn_confirm_paid": "Confirm Received Payment"
+    "btn_confirm_paid": "Confirm Received Payment",
+    "phone_label": "Phone:",
+    "upload_from_gallery": "Upload from gallery",
+    "slip_sent_toast": "Payment slip sent successfully!",
+    "payment_approved_toast": "Payment slip approved successfully!",
+    "payment_rejected_toast": "Payment slip rejected!",
+    "admin_status_changed_toast": "Admin changed debt status to {status}"
   },
   "groups": {
     "title": "Friend Groups",
@@ -175,18 +192,39 @@
     "only_leader_can_manage": "Only the Group Leader or Admin can add / remove members.",
     "disband_group": "Disband Group",
     "confirm_disband": "Are you sure you want to disband this group?",
-    "management_rights": "Management Rights (Leader / Creditor)",
-    "group_avatar_label": "Group Avatar",
-    "cannot_remove_leader": "Cannot remove the Group Leader!",
+    "management_rights": "Management Rights (Leader / Admin)",
+    "group_avatar_label": "Group Avatar:",
+    "cannot_remove_leader": "Cannot remove the group leader!",
     "min_member_error": "Group must have at least 1 member!",
-    "member_removed_success": "Removed member from group",
-    "disband_success": "Disbanded group successfully"
+    "member_removed_success": "Member removed from group successfully!",
+    "disband_success": "Group disbanded successfully!",
+    "group_updated_success": "Group updated successfully!",
+    "edit_group_title": "Edit Group Info",
+    "edit_group": "Edit Group",
+    "leave_group": "Leave Group",
+    "confirm_leave": "Are you sure you want to leave this group?",
+    "user_not_found": "User not found!",
+    "user_already_in_group": "This member is already in the group!",
+    "member_added_success": "Added {name} to the group successfully!",
+    "leave_success": "Left the group successfully!"
   },
   "notifications": {
     "title": "Bill & Debt Notifications",
     "sub": "Real-time updates on payment slips and overdue debt reminders",
     "mark_all_read": "Mark All as Read",
-    "empty": "You have no notifications!"
+    "empty": "You have no notifications!",
+    "notif_new_slip_title": "New Payment Slip",
+    "notif_new_slip_msg": "{senderName} sent a payment slip for debt {amount}. Please review and confirm.",
+    "notif_approved_title": "Payment Approved! 🎉",
+    "notif_approved_msg": "The creditor confirmed receiving full payment ({amount}). Debt completed.",
+    "notif_rejected_title": "Payment Rejected ⚠️",
+    "notif_rejected_msg": "Your payment slip was rejected with reason: \"{reason}\". Please check again!",
+    "notif_admin_update_title": "Admin updated debt status",
+    "notif_admin_update_msg": "Admin changed debt status to [{status}].",
+    "new_meal_split_title": "New Meal Bill Split",
+    "new_meal_split_msg": "You were added to meal \"{title}\". You owe {amount}.",
+    "overdue_reminder_title": "⏰ Overdue Debt Reminder (>3 days)",
+    "overdue_reminder_msg": "You have unpaid debt of {amount}. Please complete the payment!"
   },
   "profile": {
     "title": "User Profile",
@@ -208,7 +246,12 @@
     "new_password": "New Password",
     "confirm_password": "Confirm New Password",
     "btn_change_password": "Change Password",
-    "password_changed_success": "Password changed successfully!"
+    "password_changed_success": "Password changed successfully!",
+    "err_select_valid_image": "Please select a valid image file!",
+    "err_fill_all_passwords": "Please fill out all password fields!",
+    "err_current_pass_incorrect": "Current password incorrect!",
+    "err_pass_min_length": "New password must be at least 4 characters!",
+    "err_confirm_pass_mismatch": "Confirm password does not match!"
   },
   "admin": {
     "title": "Admin Dashboard",
@@ -233,11 +276,15 @@
     "user": "User",
     "role": "Role",
     "role_user": "User",
-    "role_admin": "Administrator (Admin)",
+    "role_admin": "Administrator",
     "user_status": "Status",
     "lock": "Lock",
     "unlock": "Unlock",
-    "change_pass": "Reset Password"
+    "change_pass": "Reset Password",
+    "metric_accounts": "Accounts",
+    "metric_created": "Created",
+    "metric_volume": "Volume",
+    "metric_pending": "Pending"
   },
   "footer": {
     "tagline": "Fair & automated meal splitting & debt management",

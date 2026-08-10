@@ -7,13 +7,14 @@ import { useAuthStore } from '../stores/auth'
 import { useDebtsStore } from '../stores/debts'
 import { useGroupsStore } from '../stores/groups'
 import { useToastStore } from '../stores/toast'
+import { formatCurrency } from '../utils/currency'
 import Badge from '../components/common/Badge.vue'
 import ReviewSlipModal from '../components/debts/ReviewSlipModal.vue'
 import { ArrowLeft, Calendar, Receipt, Users, CheckCircle2, Crown, ShieldCheck, Eye, Trash2 } from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const mealsStore = useMealsStore()
 const authStore = useAuthStore()
 const debtsStore = useDebtsStore()
@@ -46,9 +47,9 @@ function handleForceConfirm(paymentId) {
 
 function handleDeleteMeal() {
   if (!meal.value) return
-  if (confirm('Bạn có chắc chắn muốn xóa bữa ăn này không? Toàn bộ khoản nợ liên quan sẽ bị xóa.')) {
+  if (confirm(t('meals.confirm_delete'))) {
     mealsStore.deleteMeal(meal.value.id)
-    toastStore.showToast('Đã xóa bữa ăn thành công!', 'info')
+    toastStore.showToast(t('meals.deleted_success'), 'info')
     router.push('/meals')
   }
 }
@@ -74,7 +75,7 @@ function formatDate(isoStr) {
         class="bg-rose-50 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-500/40 hover:bg-rose-100 dark:hover:bg-rose-500/30 text-xs px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-all shadow-sm"
       >
         <Trash2 class="w-3.5 h-3.5" />
-        <span>Xóa bữa ăn</span>
+        <span>{{ t('meals.delete_meal') }}</span>
       </button>
     </div>
 
@@ -99,7 +100,7 @@ function formatDate(isoStr) {
         <div class="text-right">
           <span class="text-xs text-slate-500 dark:text-slate-400">{{ t('meals.detail_total') }}</span>
           <div class="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">
-            {{ meal.totalAmount.toLocaleString() }} {{ meal.currency }}
+            {{ formatCurrency(meal.totalAmount, meal.currency, locale) }}
           </div>
         </div>
       </div>
@@ -147,7 +148,7 @@ function formatDate(isoStr) {
               <Users class="w-4 h-4 text-brand-600 dark:text-brand-400" /> {{ t('meals.detail_breakdown') }}
             </h4>
             <span v-if="isLeaderOrCreditor" class="text-[11px] text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-200 dark:border-amber-500/30 font-semibold flex items-center gap-1">
-              <ShieldCheck class="w-3.5 h-3.5 text-amber-500" /> Quyền Quản Lý (Leader / Creditor)
+              <ShieldCheck class="w-3.5 h-3.5 text-amber-500" /> {{ t('meals.management_rights') }}
             </span>
           </div>
 
@@ -182,7 +183,7 @@ function formatDate(isoStr) {
 
               <div class="flex items-center gap-3">
                 <span class="font-bold text-slate-900 dark:text-slate-100">
-                  {{ p.amount.toLocaleString() }} {{ meal.currency }}
+                  {{ formatCurrency(p.amount, meal.currency, locale) }}
                 </span>
                 
                 <Badge :status="p.status" />

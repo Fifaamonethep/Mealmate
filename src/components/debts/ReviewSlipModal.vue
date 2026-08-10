@@ -4,6 +4,8 @@ import { useI18n } from 'vue-i18n'
 import Modal from '../common/Modal.vue'
 import { useAuthStore } from '../../stores/auth'
 import { useDebtsStore } from '../../stores/debts'
+import { useMealsStore } from '../../stores/meals'
+import { formatCurrency } from '../../utils/currency'
 import { Eye, CheckCircle2, XCircle, AlertTriangle } from 'lucide-vue-next'
 
 const props = defineProps({
@@ -13,9 +15,10 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 const debtsStore = useDebtsStore()
+const mealsStore = useMealsStore()
 
 const showRejectReasonInput = ref(false)
 const rejectReason = ref('')
@@ -29,6 +32,10 @@ watch(() => props.show, (newVal) => {
 
 const debtor = computed(() => {
   return props.payment ? authStore.users.find(u => u.id === props.payment.debtorId) : null
+})
+
+const meal = computed(() => {
+  return props.payment ? mealsStore.getMealById(props.payment.mealId) : null
 })
 
 function handleConfirm() {
@@ -70,7 +77,7 @@ function handleReject() {
         <div class="text-right">
           <span class="text-xs text-slate-500 dark:text-slate-400">{{ t('debts.bill_amount') }}</span>
           <div class="text-xl font-extrabold text-emerald-600 dark:text-emerald-400">
-            {{ payment.amount.toLocaleString() }} VND
+            {{ formatCurrency(payment.amount, meal?.currency || 'VND', locale) }}
           </div>
         </div>
       </div>

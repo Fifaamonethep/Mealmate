@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import { INITIAL_MEALS } from '../mock/seedData'
 import { useDebtsStore } from './debts'
 import { useNotificationsStore } from './notifications'
+import { formatCurrency } from '../utils/currency'
+import i18n from '../i18n'
 
 export const useMealsStore = defineStore('meals', () => {
   const meals = ref(JSON.parse(localStorage.getItem('mealmate_meals')) || INITIAL_MEALS)
@@ -45,6 +47,8 @@ export const useMealsStore = defineStore('meals', () => {
       amountPerPerson = Math.round(Number(mealData.totalAmount) / mealData.participants.length)
     }
 
+    const locale = i18n.global.locale.value || 'vi'
+
     debtors.forEach(debtorId => {
       const debtAmount = mealData.splitType === 'equal' 
         ? amountPerPerson 
@@ -61,8 +65,11 @@ export const useMealsStore = defineStore('meals', () => {
         // Send notification to debtor
         notificationsStore.addNotification({
           userId: debtorId,
-          title: 'Bữa ăn mới cần chia tiền',
-          message: `Bạn được thêm vào bữa ăn "${newMeal.title}". Bạn nợ ${debtAmount.toLocaleString()} ${newMeal.currency}.`
+          title: i18n.global.t('notifications.new_meal_split_title'),
+          message: i18n.global.t('notifications.new_meal_split_msg', {
+            title: newMeal.title,
+            amount: formatCurrency(debtAmount, newMeal.currency, locale)
+          })
         })
       }
     })

@@ -4,6 +4,8 @@ import { useI18n } from 'vue-i18n'
 import Modal from '../common/Modal.vue'
 import { useAuthStore } from '../../stores/auth'
 import { useDebtsStore } from '../../stores/debts'
+import { useMealsStore } from '../../stores/meals'
+import { formatCurrency } from '../../utils/currency'
 import { QrCode, Upload, Send, Copy, Check, Phone, Mail } from 'lucide-vue-next'
 
 const props = defineProps({
@@ -13,9 +15,10 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 const debtsStore = useDebtsStore()
+const mealsStore = useMealsStore()
 
 const copied = ref(false)
 const sampleSlips = [
@@ -27,6 +30,11 @@ const slipUrl = ref(sampleSlips[0])
 const creditor = computed(() => {
   if (!props.payment) return null
   return authStore.users.find(u => u.id === props.payment.creditorId)
+})
+
+const meal = computed(() => {
+  if (!props.payment) return null
+  return mealsStore.getMealById(props.payment.mealId)
 })
 
 const slipFileInput = ref(null)
@@ -49,7 +57,7 @@ function handleSlipFileUpload(event) {
 
 function copyAccountInfo() {
   if (!creditor.value) return
-  const info = `${creditor.value.name} - SĐT: ${creditor.value.phone} - ${creditor.value.qrCodeUrl}`
+  const info = `${creditor.value.name} - ${t('debts.phone_label')} ${creditor.value.phone || ''} - ${creditor.value.qrCodeUrl || ''}`
   navigator.clipboard.writeText(info)
   copied.value = true
   setTimeout(() => (copied.value = false), 2000)
@@ -81,7 +89,7 @@ function handleSendSlip() {
       <div class="bg-slate-100 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2 text-center">
         <span class="text-xs text-slate-500 dark:text-slate-400">{{ t('debts.pay_modal_amount_for') }} <strong class="text-slate-800 dark:text-slate-200">{{ creditor.name }}</strong>:</span>
         <div class="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
-          {{ payment.amount.toLocaleString() }} VND
+          {{ formatCurrency(payment.amount, meal?.currency || 'VND', locale) }}
         </div>
         <!-- Creditor Phone & Email -->
         <div v-if="creditor.phone || creditor.email" class="pt-2 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex flex-wrap items-center justify-center gap-3">
@@ -89,7 +97,7 @@ function handleSendSlip() {
             <Phone class="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" /> {{ creditor.phone }}
           </span>
           <span v-if="creditor.email" class="flex items-center gap-1 font-semibold text-slate-700 dark:text-slate-300">
-            <Mail class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" /> {{ creditor.email }}
+            <Mail class="w-3.5 h-3.5 text-indigo-600 dark:indigo-400" /> {{ creditor.email }}
           </span>
         </div>
       </div>
@@ -119,7 +127,7 @@ function handleSendSlip() {
             class="text-[11px] font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
           >
             <Upload class="w-3.5 h-3.5" />
-            <span>Tải ảnh từ thư viện</span>
+            <span>{{ t('debts.upload_from_gallery') }}</span>
           </button>
         </label>
         <div class="flex gap-2">

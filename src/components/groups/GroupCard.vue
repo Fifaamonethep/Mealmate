@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../../stores/auth'
 import { useMealsStore } from '../../stores/meals'
+import { formatCurrency } from '../../utils/currency'
 import { Users, Receipt, ArrowRight } from 'lucide-vue-next'
 
 const props = defineProps({
@@ -14,7 +15,7 @@ const props = defineProps({
 })
 
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 const mealsStore = useMealsStore()
 
@@ -79,7 +80,7 @@ const totalExpenses = computed(() => {
       <div>
         <span class="text-slate-500 dark:text-slate-400">{{ t('groups.total_expenses') }}</span>
         <div class="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm mt-0.5">
-          {{ totalExpenses.toLocaleString() }} VND
+          {{ formatCurrency(totalExpenses, 'VND', locale) }}
         </div>
       </div>
       <div>

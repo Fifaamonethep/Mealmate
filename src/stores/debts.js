@@ -4,6 +4,9 @@ import { INITIAL_PAYMENTS } from '../mock/seedData'
 import { useNotificationsStore } from './notifications'
 import { useAuthStore } from './auth'
 import { useToastStore } from './toast'
+import { useMealsStore } from './meals'
+import { formatCurrency } from '../utils/currency'
+import i18n from '../i18n'
 
 export const useDebtsStore = defineStore('debts', () => {
   const payments = ref(JSON.parse(localStorage.getItem('mealmate_payments')) || INITIAL_PAYMENTS)
@@ -33,6 +36,7 @@ export const useDebtsStore = defineStore('debts', () => {
     const notifStore = useNotificationsStore()
     const authStore = useAuthStore()
     const toastStore = useToastStore()
+    const mealsStore = useMealsStore()
     const p = payments.value.find(item => item.id === paymentId)
     if (!p) return
 
@@ -41,30 +45,39 @@ export const useDebtsStore = defineStore('debts', () => {
     p.rejectReason = null
     savePayments()
 
-    const senderName = authStore.users.find(u => u.id === p.debtorId)?.name || 'Bạn bè'
+    const meal = mealsStore.getMealById(p.mealId)
+    const currency = meal?.currency || 'VND'
+    const locale = i18n.global.locale.value || 'vi'
+
+    const senderName = authStore.users.find(u => u.id === p.debtorId)?.name || 'Friends'
     notifStore.addNotification({
       userId: p.creditorId,
-      title: 'Hóa đơn thanh toán mới',
-      message: `${senderName} vừa gửi ảnh bill chuyển khoản cho khoản nợ ${p.amount.toLocaleString()} VND. Vui lòng kiểm tra và xác nhận.`
+      title: i18n.global.t('notifications.notif_new_slip_title'),
+      message: i18n.global.t('notifications.notif_new_slip_msg', { senderName, amount: formatCurrency(p.amount, currency, locale) })
     })
-    toastStore.showToast('Đã gửi ảnh bill chuyển khoản thành công!', 'success')
+    toastStore.showToast(i18n.global.t('debts.slip_sent_toast'), 'success')
   }
 
   function confirmPayment(paymentId) {
     const notifStore = useNotificationsStore()
     const toastStore = useToastStore()
+    const mealsStore = useMealsStore()
     const p = payments.value.find(item => item.id === paymentId)
     if (!p) return
 
     p.status = 'confirmed'
     savePayments()
 
+    const meal = mealsStore.getMealById(p.mealId)
+    const currency = meal?.currency || 'VND'
+    const locale = i18n.global.locale.value || 'vi'
+
     notifStore.addNotification({
       userId: p.debtorId,
-      title: 'Thanh toán đã được duyệt! 🎉',
-      message: `Chủ nợ đã xác nhận nhận đủ tiền chuyển khoản (${p.amount.toLocaleString()} VND). Khoản nợ đã hoàn tất.`
+      title: i18n.global.t('notifications.notif_approved_title'),
+      message: i18n.global.t('notifications.notif_approved_msg', { amount: formatCurrency(p.amount, currency, locale) })
     })
-    toastStore.showToast('Đã xác nhận duyệt bill thanh toán!', 'success')
+    toastStore.showToast(i18n.global.t('debts.payment_approved_toast'), 'success')
   }
 
   function rejectPayment(paymentId, reason) {
@@ -74,15 +87,15 @@ export const useDebtsStore = defineStore('debts', () => {
     if (!p) return
 
     p.status = 'rejected'
-    p.rejectReason = reason || 'Thông tin chuyển khoản không trùng khớp.'
+    p.rejectReason = reason || i18n.global.t('debts.payment_rejected_toast')
     savePayments()
 
     notifStore.addNotification({
       userId: p.debtorId,
-      title: 'Thanh toán bị từ chối ⚠️',
-      message: `Bill chuyển khoản của bạn bị từ chối với lý do: "${p.rejectReason}". Vui lòng kiểm tra lại!`
+      title: i18n.global.t('notifications.notif_rejected_title'),
+      message: i18n.global.t('notifications.notif_rejected_msg', { reason: p.rejectReason })
     })
-    toastStore.showToast('Đã từ chối bill thanh toán', 'warning')
+    toastStore.showToast(i18n.global.t('debts.payment_rejected_toast'), 'warning')
   }
 
   function forceAdminAction(paymentId, status, reason = '') {
@@ -93,7 +106,7 @@ export const useDebtsStore = defineStore('debts', () => {
 
     p.status = status
     if (status === 'rejected') {
-      p.rejectReason = reason || 'Admin đã can thiệp từ chối giao dịch.'
+      p.rejectReason = reason || 'Admin action'
     } else {
       p.rejectReason = null
     }
@@ -101,15 +114,15 @@ export const useDebtsStore = defineStore('debts', () => {
 
     notifStore.addNotification({
       userId: p.debtorId,
-      title: 'Admin đã cập nhật trạng thái nợ',
-      message: `Admin đã thay đổi trạng thái khoản nợ sang [${status.toUpperCase()}].`
+      title: i18n.global.t('notifications.notif_admin_update_title'),
+      message: i18n.global.t('notifications.notif_admin_update_msg', { status: status.toUpperCase() })
     })
     notifStore.addNotification({
       userId: p.creditorId,
-      title: 'Admin đã cập nhật trạng thái nợ',
-      message: `Admin đã thay đổi trạng thái khoản nợ sang [${status.toUpperCase()}].`
+      title: i18n.global.t('notifications.notif_admin_update_title'),
+      message: i18n.global.t('notifications.notif_admin_update_msg', { status: status.toUpperCase() })
     })
-    toastStore.showToast(`Admin đã đổi trạng thái nợ sang ${status.toUpperCase()}`, 'info')
+    toastStore.showToast(i18n.global.t('debts.admin_status_changed_toast', { status: status.toUpperCase() }), 'info')
   }
 
   function deletePaymentsByMealId(mealId) {

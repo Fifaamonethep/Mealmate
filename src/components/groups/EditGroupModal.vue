@@ -52,7 +52,7 @@ function handleSubmit() {
 </script>
 
 <template>
-  <Modal :show="show" title="Chỉnh sửa thông tin nhóm" maxWidth="max-w-md" @close="emit('close')">
+  <Modal :show="show" :title="t('groups.edit_group_title')" maxWidth="max-w-md" @close="emit('close')">
     <template #icon>
       <Edit3 class="w-5 h-5 text-brand-600 dark:text-brand-400" />
     </template>

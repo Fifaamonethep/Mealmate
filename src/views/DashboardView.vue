@@ -6,6 +6,7 @@ import { useAuthStore } from '../stores/auth'
 import { useMealsStore } from '../stores/meals'
 import { useDebtsStore } from '../stores/debts'
 import { useNotificationsStore } from '../stores/notifications'
+import { formatCurrency } from '../utils/currency'
 import MealCard from '../components/meals/MealCard.vue'
 import CreateMealModal from '../components/meals/CreateMealModal.vue'
 import CreateGroupModal from '../components/groups/CreateGroupModal.vue'
@@ -26,7 +27,7 @@ import {
 } from 'lucide-vue-next'
 
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 const mealsStore = useMealsStore()
 const debtsStore = useDebtsStore()
@@ -78,7 +79,7 @@ const userDisplayName = computed(() => {
       <div>
         <div class="flex items-center gap-2 text-brand-300 font-bold text-xs tracking-wider uppercase">
           <Sparkles class="w-4 h-4 text-brand-400" />
-          <span>MealMate Dashboard</span>
+          <span>{{ t('dashboard.hero_tag') }}</span>
         </div>
         <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">
           {{ t('dashboard.welcome') }}, {{ userDisplayName }}! 👋
@@ -119,7 +120,7 @@ const userDisplayName = computed(() => {
             {{ t('dashboard.total_my_debt') }}
           </span>
           <div class="text-2xl font-extrabold text-rose-600 dark:text-rose-400">
-            {{ totalMyDebt.toLocaleString() }} VND
+            {{ formatCurrency(totalMyDebt, authStore.currentUser?.currency || 'VND', locale) }}
           </div>
           <span class="text-[11px] text-slate-500 dark:text-slate-400 block">{{ t('dashboard.total_my_debt_sub') }}</span>
         </div>
@@ -135,7 +136,7 @@ const userDisplayName = computed(() => {
             {{ t('dashboard.total_owed_me') }}
           </span>
           <div class="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
-            {{ totalOwedToMe.toLocaleString() }} VND
+            {{ formatCurrency(totalOwedToMe, authStore.currentUser?.currency || 'VND', locale) }}
           </div>
           <span class="text-[11px] text-slate-500 dark:text-slate-400 block">{{ t('dashboard.total_owed_me_sub') }}</span>
         </div>
@@ -151,7 +152,7 @@ const userDisplayName = computed(() => {
             {{ t('dashboard.net_balance') }}
           </span>
           <div :class="['text-2xl font-extrabold', netBalance >= 0 ? 'text-indigo-600 dark:text-indigo-400' : 'text-amber-600 dark:text-amber-400']">
-            {{ netBalance >= 0 ? '+' : '' }}{{ netBalance.toLocaleString() }} VND
+            {{ netBalance >= 0 ? '+' : '' }}{{ formatCurrency(netBalance, authStore.currentUser?.currency || 'VND', locale) }}
           </div>
           <span class="text-[11px] text-slate-500 dark:text-slate-400 block">{{ t('dashboard.net_balance_sub') }}</span>
         </div>

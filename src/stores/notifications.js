@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { INITIAL_NOTIFICATIONS } from '../mock/seedData'
+import { formatCurrency } from '../utils/currency'
+import i18n from '../i18n'
 
 export const useNotificationsStore = defineStore('notifications', () => {
   const notifications = ref(JSON.parse(localStorage.getItem('mealmate_notifications')) || INITIAL_NOTIFICATIONS)
@@ -43,18 +45,21 @@ export const useNotificationsStore = defineStore('notifications', () => {
   // Trigger auto reminder simulation for debts older than 3 days
   function triggerOverdueReminderCheck(payments, currentUserId) {
     const threeDaysAgo = Date.now() - 3 * 86400000
+    const locale = i18n.global.locale.value || 'vi'
+
     payments.forEach(p => {
       if (p.debtorId === currentUserId && p.status === 'pending') {
         const createdTime = new Date(p.createdAt).getTime()
         if (createdTime < threeDaysAgo) {
+          const formattedAmt = formatCurrency(p.amount, 'VND', locale)
           const exists = notifications.value.some(
-            n => n.userId === currentUserId && n.message.includes(`khoản nợ ${p.amount.toLocaleString()}`)
+            n => n.userId === currentUserId && (n.message.includes(`${p.amount}`) || n.message.includes(formattedAmt))
           )
           if (!exists) {
             addNotification({
               userId: currentUserId,
-              title: '⏰ Nhắc nợ tự động (>3 ngày)',
-              message: `Bạn chưa thanh toán khoản nợ ${p.amount.toLocaleString()} VND. Vui lòng hoàn tất trả nợ!`
+              title: i18n.global.t('notifications.overdue_reminder_title'),
+              message: i18n.global.t('notifications.overdue_reminder_msg', { amount: formattedAmt })
             })
           }
         }

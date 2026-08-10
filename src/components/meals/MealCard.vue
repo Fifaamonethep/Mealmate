@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../../stores/auth'
 import { useGroupsStore } from '../../stores/groups'
+import { formatCurrency } from '../../utils/currency'
 import { Calendar, Users, Receipt, UserCheck } from 'lucide-vue-next'
 
 const props = defineProps({
@@ -14,7 +15,7 @@ const props = defineProps({
 })
 
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 const groupsStore = useGroupsStore()
 
@@ -69,10 +70,7 @@ function formatDate(isoStr) {
       <!-- Amount Display -->
       <div class="flex items-baseline gap-1.5">
         <span class="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
-          {{ meal.totalAmount.toLocaleString() }}
-        </span>
-        <span class="text-xs font-bold text-emerald-700 dark:text-emerald-300 uppercase">
-          {{ meal.currency }}
+          {{ formatCurrency(meal.totalAmount, meal.currency, locale) }}
         </span>
         <span class="text-xs text-slate-500 dark:text-slate-400 ml-2">
           ({{ meal.splitType === 'equal' ? t('meals.equal_split') : t('meals.custom_split') }})

@@ -72,8 +72,8 @@ function handleResetPassword() {
                   @change="adminStore.changeUserRole(u.id, $event.target.value)"
                   class="glass-input text-xs py-1 px-2 bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100"
                 >
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
+                  <option value="user">{{ t('admin.role_user') }}</option>
+                  <option value="admin">{{ t('admin.role_admin') }}</option>
                 </select>
               </td>
               <td class="p-3">

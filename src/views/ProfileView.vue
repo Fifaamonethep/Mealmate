@@ -44,7 +44,7 @@ function handleAvatarFileUpload(event) {
   const file = event.target.files[0]
   if (!file) return
   if (!file.type.startsWith('image/')) {
-    toastStore.showToast('Please select a valid image file!', 'warning')
+    toastStore.showToast(t('profile.err_select_valid_image'), 'warning')
     return
   }
 
@@ -64,22 +64,22 @@ function handleSave() {
 function handleChangePassword() {
   passError.value = ''
   if (!passForm.value.currentPassword || !passForm.value.newPassword) {
-    passError.value = 'Please fill out all password fields!'
+    passError.value = t('profile.err_fill_all_passwords')
     return
   }
 
   if (passForm.value.currentPassword !== authStore.currentUser?.passwordHash) {
-    passError.value = 'Current password incorrect!'
+    passError.value = t('profile.err_current_pass_incorrect')
     return
   }
 
   if (passForm.value.newPassword.length < 4) {
-    passError.value = 'New password must be at least 4 characters!'
+    passError.value = t('profile.err_pass_min_length')
     return
   }
 
   if (passForm.value.newPassword !== passForm.value.confirmPassword) {
-    passError.value = 'Confirm password does not match!'
+    passError.value = t('profile.err_confirm_pass_mismatch')
     return
   }
 
@@ -114,7 +114,7 @@ function handleChangePassword() {
       
       <!-- User Avatar header with Camera overlay -->
       <div class="flex items-center gap-4 p-4 bg-slate-100 dark:bg-slate-950/60 rounded-2xl border border-slate-200 dark:border-slate-800">
-        <div class="relative group cursor-pointer shrink-0" @click="triggerAvatarFileSelect" title="Click to upload from gallery">
+        <div class="relative group cursor-pointer shrink-0" @click="triggerAvatarFileSelect" :title="t('profile.upload_gallery')">
           <img :src="form.avatar || authStore.currentUser?.avatar" class="w-16 h-16 rounded-full border-2 border-brand-500/60 bg-slate-200 dark:bg-slate-900 object-cover shadow-md transition-transform group-hover:scale-105" />
           <div class="absolute inset-0 bg-slate-950/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
             <Camera class="w-5 h-5 text-white" />

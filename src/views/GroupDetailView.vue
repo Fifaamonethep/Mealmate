@@ -7,13 +7,14 @@ import { useAuthStore } from '../stores/auth'
 import { useMealsStore } from '../stores/meals'
 import { useDebtsStore } from '../stores/debts'
 import { useToastStore } from '../stores/toast'
+import { formatCurrency } from '../utils/currency'
 import MealCard from '../components/meals/MealCard.vue'
 import EditGroupModal from '../components/groups/EditGroupModal.vue'
 import { Users, ArrowLeft, UserPlus, UserX, Receipt, Crown, Trash2, Shield, Edit3, LogOut } from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const groupsStore = useGroupsStore()
 const authStore = useAuthStore()
 const mealsStore = useMealsStore()
@@ -89,17 +90,17 @@ function handleAddMember() {
   )
 
   if (!foundUser) {
-    memberError.value = 'Chưa tìm thấy người dùng!'
+    memberError.value = t('groups.user_not_found')
     return
   }
 
   if (group.value.members.includes(foundUser.id)) {
-    memberError.value = 'Thành viên này đã có trong nhóm!'
+    memberError.value = t('groups.user_already_in_group')
     return
   }
 
   groupsStore.addMember(group.value.id, foundUser.id)
-  toastStore.showToast(`Đã thêm ${foundUser.name}`, 'success')
+  toastStore.showToast(t('groups.member_added_success', { name: foundUser.name }), 'success')
   searchMemberInput.value = ''
 }
 
@@ -123,10 +124,10 @@ function handleRemoveMember(userId) {
 
 function handleLeaveGroup() {
   if (!group.value) return
-  if (confirm('Bạn có chắc chắn muốn rời khỏi nhóm này không?')) {
+  if (confirm(t('groups.confirm_leave'))) {
     try {
       groupsStore.leaveGroup(group.value.id, authStore.currentUserId)
-      toastStore.showToast('Đã rời nhóm thành công!', 'info')
+      toastStore.showToast(t('groups.leave_success'), 'info')
       router.push('/groups')
     } catch (err) {
       toastStore.showToast(err.message, 'warning')
@@ -191,7 +192,7 @@ function handleDisbandGroup() {
             <div>
               <span class="text-slate-500 dark:text-slate-400">{{ t('groups.total_expenses') }}</span>
               <div class="font-extrabold text-emerald-600 dark:text-emerald-400 text-base">
-                {{ totalExpenses.toLocaleString() }} VND
+                {{ formatCurrency(totalExpenses, 'VND', locale) }}
               </div>
             </div>
             <div class="pl-4 border-l border-slate-200 dark:border-slate-800">
@@ -209,7 +210,7 @@ function handleDisbandGroup() {
             class="bg-brand-50 dark:bg-brand-500/20 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-500/40 hover:bg-brand-100 dark:hover:bg-brand-500/30 text-xs px-3.5 py-2.5 rounded-xl font-bold flex items-center gap-1.5 transition-all shadow-sm"
           >
             <Edit3 class="w-4 h-4 text-brand-600 dark:text-brand-400" />
-            <span>Sửa nhóm</span>
+            <span>{{ t('groups.edit_group') }}</span>
           </button>
 
           <!-- Leave Group Button for Non-Owner Members -->
@@ -219,7 +220,7 @@ function handleDisbandGroup() {
             class="bg-amber-50 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-500/40 hover:bg-amber-100 dark:hover:bg-amber-500/30 text-xs px-3.5 py-2.5 rounded-xl font-bold flex items-center gap-1.5 transition-all shadow-sm"
           >
             <LogOut class="w-4 h-4 text-amber-500" />
-            <span>Rời nhóm</span>
+            <span>{{ t('groups.leave_group') }}</span>
           </button>
 
           <!-- Disband Group button for Owner/Admin -->

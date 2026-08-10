@@ -2,11 +2,12 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAdminStore } from '../stores/admin'
+import { formatCurrency } from '../utils/currency'
 import UserManagementModal from '../components/admin/UserManagementModal.vue'
 import DebtMatrixTable from '../components/admin/DebtMatrixTable.vue'
 import { Shield, Users, Utensils, DollarSign, Clock, Sparkles, Activity, UserCheck, ChevronRight } from 'lucide-vue-next'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const adminStore = useAdminStore()
 
 const showUserManagement = ref(false)
@@ -62,7 +63,7 @@ const showUserManagement = ref(false)
         </div>
         <div>
           <div class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">{{ adminStore.systemMetrics.totalUsers }}</div>
-          <span class="text-[11px] text-brand-600 dark:text-brand-400 font-semibold mt-0.5 block">Accounts</span>
+          <span class="text-[11px] text-brand-600 dark:text-brand-400 font-semibold mt-0.5 block">{{ t('admin.metric_accounts') }}</span>
         </div>
       </div>
 
@@ -76,7 +77,7 @@ const showUserManagement = ref(false)
         </div>
         <div>
           <div class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">{{ adminStore.systemMetrics.totalMeals }}</div>
-          <span class="text-[11px] text-indigo-600 dark:text-indigo-400 font-semibold mt-0.5 block">Created</span>
+          <span class="text-[11px] text-indigo-600 dark:text-indigo-400 font-semibold mt-0.5 block">{{ t('admin.metric_created') }}</span>
         </div>
       </div>
 
@@ -90,9 +91,9 @@ const showUserManagement = ref(false)
         </div>
         <div>
           <div class="text-lg sm:text-xl font-extrabold text-emerald-600 dark:text-emerald-400 truncate">
-            {{ adminStore.systemMetrics.totalVolume.toLocaleString() }} VND
+            {{ formatCurrency(adminStore.systemMetrics.totalVolume, 'VND', locale) }}
           </div>
-          <span class="text-[11px] text-emerald-700 dark:text-emerald-300 font-semibold mt-0.5 block">Volume</span>
+          <span class="text-[11px] text-emerald-700 dark:text-emerald-300 font-semibold mt-0.5 block">{{ t('admin.metric_volume') }}</span>
         </div>
       </div>
 
@@ -106,9 +107,9 @@ const showUserManagement = ref(false)
         </div>
         <div>
           <div class="text-lg sm:text-xl font-extrabold text-rose-600 dark:text-rose-400 truncate">
-            {{ adminStore.systemMetrics.totalUnpaid.toLocaleString() }} VND
+            {{ formatCurrency(adminStore.systemMetrics.totalUnpaid, 'VND', locale) }}
           </div>
-          <span class="text-[11px] text-rose-700 dark:text-rose-300 font-semibold mt-0.5 block">Pending</span>
+          <span class="text-[11px] text-rose-700 dark:text-rose-300 font-semibold mt-0.5 block">{{ t('admin.metric_pending') }}</span>
         </div>
       </div>
 

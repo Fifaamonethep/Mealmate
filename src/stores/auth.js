@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { INITIAL_USERS } from '../mock/seedData'
+import i18n from '../i18n'
 
 export const useAuthStore = defineStore('auth', () => {
   const users = ref(JSON.parse(localStorage.getItem('mealmate_users')) || INITIAL_USERS)
@@ -19,9 +20,9 @@ export const useAuthStore = defineStore('auth', () => {
 
   function login(username, password) {
     const user = users.value.find(u => u.username.toLowerCase() === username.toLowerCase())
-    if (!user) throw new Error('Tài khoản không tồn tại!')
-    if (user.passwordHash !== password && password !== '123' && user.passwordHash !== `${username}123`) throw new Error('Mật khẩu không chính xác!')
-    if (user.isLocked) throw new Error('Tài khoản đã bị khóa bởi Admin!')
+    if (!user) throw new Error(i18n.global.t('auth.user_not_found'))
+    if (user.passwordHash !== password && password !== '123' && user.passwordHash !== `${username}123`) throw new Error(i18n.global.t('auth.incorrect_password'))
+    if (user.isLocked) throw new Error(i18n.global.t('auth.account_locked'))
 
     currentUserId.value = user.id
     token.value = `mock_jwt_token_${user.id}_${Date.now()}`
@@ -32,7 +33,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   function register(userData) {
     const exists = users.value.some(u => u.username.toLowerCase() === userData.username.toLowerCase())
-    if (exists) throw new Error('Tên đăng nhập đã tồn tại!')
+    if (exists) throw new Error(i18n.global.t('auth.username_exists'))
 
     const newUser = {
       id: `u-${Date.now()}`,

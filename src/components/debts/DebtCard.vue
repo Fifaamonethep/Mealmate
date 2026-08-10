@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import Badge from '../common/Badge.vue'
 import { useAuthStore } from '../../stores/auth'
 import { useMealsStore } from '../../stores/meals'
+import { formatCurrency } from '../../utils/currency'
 import { CreditCard, Eye, AlertCircle, ArrowUpRight, ArrowDownLeft } from 'lucide-vue-next'
 
 const props = defineProps({
@@ -15,7 +16,7 @@ const props = defineProps({
 
 const emit = defineEmits(['pay', 'review'])
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 const mealsStore = useMealsStore()
 
@@ -82,7 +83,7 @@ function formatDate(isoStr) {
     <div class="flex items-center justify-between md:justify-end gap-4 border-t md:border-t-0 pt-3 md:pt-0 border-slate-200 dark:border-slate-800">
       <div class="text-right">
         <div :class="['text-lg font-extrabold', isDebtor ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400']">
-          {{ isDebtor ? '-' : '+' }}{{ payment.amount.toLocaleString() }} VND
+          {{ isDebtor ? '-' : '+' }}{{ formatCurrency(payment.amount, meal?.currency || 'VND', locale) }}
         </div>
       </div>
 

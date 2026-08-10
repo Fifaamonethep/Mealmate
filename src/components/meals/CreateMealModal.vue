@@ -8,13 +8,15 @@ import { useGroupsStore } from '../../stores/groups'
 import { useMealsStore } from '../../stores/meals'
 import { PlusCircle, Sparkles, Users, Receipt, DollarSign, Camera, Image } from 'lucide-vue-next'
 
+import { formatCurrency } from '../../utils/currency'
+
 const props = defineProps({
   show: Boolean
 })
 
 const emit = defineEmits(['close', 'created'])
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 const groupsStore = useGroupsStore()
 const mealsStore = useMealsStore()
@@ -33,6 +35,11 @@ const receiptUrl = ref('https://images.unsplash.com/photo-1555396273-367ea4eb4db
 
 const showInlineGroupInput = ref(false)
 const newGroupName = ref('')
+
+const perPersonEqualAmount = computed(() => {
+  if (!totalAmount.value || !selectedParticipants.value.length) return 0
+  return Math.round(Number(totalAmount.value) / selectedParticipants.value.length)
+})
 
 function triggerReceiptFileSelect() {
   receiptFileInput.value?.click()
@@ -126,7 +133,10 @@ const isCustomSplitValid = computed(() => {
 function handleSubmit() {
   if (!title.value || !totalAmount.value) return
   if (splitType.value === 'custom' && !isCustomSplitValid.value) {
-    alert(`Tổng tiền nhập tùy chỉnh (${customTotalSum.value.toLocaleString()} ${currency.value}) không khớp với tổng tiền hóa đơn (${Number(totalAmount.value).toLocaleString()} ${currency.value})!`)
+    alert(t('meals.custom_split_mismatch', {
+      customSum: formatCurrency(customTotalSum.value, currency.value, locale.value),
+      totalAmount: formatCurrency(totalAmount.value, currency.value, locale.value)
+    }))
     return
   }
 
@@ -215,7 +225,7 @@ function handleSubmit() {
             <input
               v-model="newGroupName"
               type="text"
-              :placeholder="t('groups.name_placeholder')"
+              :placeholder="t('groups.group_name_placeholder')"
               class="w-full glass-input text-xs"
               @keyup.enter="handleCreateInlineGroup"
             />
@@ -280,7 +290,7 @@ function handleSubmit() {
               <Camera class="w-4 h-4" />
               <span>{{ t('meals.upload_receipt') }}</span>
             </button>
-            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Chụp hoặc tải ảnh hóa đơn / bill thanh toán để đính kèm bữa ăn</p>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">{{ t('meals.receipt_upload_hint') }}</p>
           </div>
         </div>
       </div>
@@ -349,7 +359,7 @@ function handleSubmit() {
         <div v-if="splitType === 'equal'" class="bg-slate-100 dark:bg-slate-800/60 p-3 rounded-xl text-xs flex items-center justify-between text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
           <span>{{ t('meals.each_pays') }}</span>
           <span class="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">
-            {{ perPersonEqualAmount.toLocaleString() }} {{ currency }}
+            {{ formatCurrency(perPersonEqualAmount, currency, locale) }}
           </span>
         </div>
 
