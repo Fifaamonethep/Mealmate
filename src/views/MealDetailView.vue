@@ -41,7 +41,7 @@ const mealPayments = computed(() => {
 
 function handleForceConfirm(paymentId) {
   debtsStore.confirmPayment(paymentId)
-  toastStore.showToast('Đã xác nhận thanh toán (Quyền Chủ nhóm / Người ứng tiền)', 'success')
+  toastStore.showToast(t('meals.confirm_success_leader'), 'success')
 }
 
 function formatDate(isoStr) {
@@ -181,9 +181,9 @@ function formatDate(isoStr) {
                     v-else
                     @click="handleForceConfirm(p.id)"
                     class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 flex items-center gap-1 font-semibold transition-all"
-                    title="Xác nhận đã nhận tiền"
+                    :title="t('debts.btn_confirm_paid')"
                   >
-                    <CheckCircle2 class="w-3.5 h-3.5" /> Duyệt
+                    <CheckCircle2 class="w-3.5 h-3.5" /> {{ t('common.confirm') }}
                   </button>
                 </template>
               </div>

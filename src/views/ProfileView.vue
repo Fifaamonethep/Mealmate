@@ -3,19 +3,30 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { useToastStore } from '../stores/toast'
-import { User, Key, Save, Check, Lock } from 'lucide-vue-next'
+import { User, Key, Save, Check, Lock, Camera, Image, Upload } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
 const toastStore = useToastStore()
+
+const avatarFileInput = ref(null)
 
 const form = ref({
   name: authStore.currentUser?.name || '',
   email: authStore.currentUser?.email || '',
   phone: authStore.currentUser?.phone || '',
   currency: authStore.currentUser?.currency || 'VND',
+  avatar: authStore.currentUser?.avatar || '',
   qrCodeUrl: authStore.currentUser?.qrCodeUrl || ''
 })
+
+const sampleAvatars = [
+  'https://api.dicebear.com/7.x/bottts/svg?seed=Admin',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Alice',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Bob',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=David'
+]
 
 const passForm = ref({
   currentPassword: '',
@@ -25,9 +36,29 @@ const passForm = ref({
 
 const passError = ref('')
 
+function triggerAvatarFileSelect() {
+  avatarFileInput.value?.click()
+}
+
+function handleAvatarFileUpload(event) {
+  const file = event.target.files[0]
+  if (!file) return
+  if (!file.type.startsWith('image/')) {
+    toastStore.showToast('Please select a valid image file!', 'warning')
+    return
+  }
+
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    form.value.avatar = e.target.result
+    toastStore.showToast(t('profile.updated_success'), 'success')
+  }
+  reader.readAsDataURL(file)
+}
+
 function handleSave() {
   authStore.updateProfile(form.value)
-  toastStore.showToast('Profile updated!', 'success')
+  toastStore.showToast(t('profile.updated_success'), 'success')
 }
 
 function handleChangePassword() {
@@ -53,7 +84,7 @@ function handleChangePassword() {
   }
 
   authStore.updateProfile({ passwordHash: passForm.value.newPassword })
-  toastStore.showToast('Password changed successfully!', 'success')
+  toastStore.showToast(t('profile.password_changed_success'), 'success')
   passForm.value = { currentPassword: '', newPassword: '', confirmPassword: '' }
 }
 </script>
@@ -61,6 +92,15 @@ function handleChangePassword() {
 <template>
   <div class="max-w-2xl mx-auto space-y-6 pb-12">
     
+    <!-- Hidden File Input for Device Gallery Selection -->
+    <input
+      ref="avatarFileInput"
+      type="file"
+      accept="image/*"
+      class="hidden"
+      @change="handleAvatarFileUpload"
+    />
+
     <div>
       <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
         <User class="w-6 h-6 text-brand-600 dark:text-brand-400" />
@@ -72,16 +112,61 @@ function handleChangePassword() {
     <!-- Main Profile Card -->
     <div class="glass-card p-6 border border-slate-200/80 dark:border-slate-700/60 space-y-6">
       
-      <!-- User Avatar header -->
+      <!-- User Avatar header with Camera overlay -->
       <div class="flex items-center gap-4 p-4 bg-slate-100 dark:bg-slate-950/60 rounded-2xl border border-slate-200 dark:border-slate-800">
-        <img :src="authStore.currentUser?.avatar" class="w-16 h-16 rounded-full border-2 border-brand-500/60 bg-slate-200 dark:bg-slate-900" />
+        <div class="relative group cursor-pointer shrink-0" @click="triggerAvatarFileSelect" title="Click to upload from gallery">
+          <img :src="form.avatar || authStore.currentUser?.avatar" class="w-16 h-16 rounded-full border-2 border-brand-500/60 bg-slate-200 dark:bg-slate-900 object-cover shadow-md transition-transform group-hover:scale-105" />
+          <div class="absolute inset-0 bg-slate-950/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <Camera class="w-5 h-5 text-white" />
+          </div>
+        </div>
         <div>
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ authStore.currentUser?.name }}</h3>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+            {{ authStore.currentUser?.id === 'u-admin' ? t('admin.role_admin') : authStore.currentUser?.name }}
+          </h3>
           <p class="text-xs text-slate-500 dark:text-slate-400">@{{ authStore.currentUser?.username }} • Role: {{ authStore.currentUser?.role }}</p>
+          <button
+            type="button"
+            @click="triggerAvatarFileSelect"
+            class="text-[11px] font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1 mt-1"
+          >
+            <Camera class="w-3.5 h-3.5" /> {{ t('profile.upload_gallery') }}
+          </button>
         </div>
       </div>
 
       <form @submit.prevent="handleSave" class="space-y-4 text-slate-800 dark:text-slate-200">
+        <!-- Avatar Change Input & Gallery Picker Button -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ t('profile.avatar_url') }}</label>
+          <div class="flex items-center gap-2">
+            <input v-model="form.avatar" type="text" class="w-full glass-input text-xs" placeholder="https://..." />
+            <button
+              type="button"
+              @click="triggerAvatarFileSelect"
+              class="px-3 py-2 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-300 border border-brand-500/30 rounded-xl text-xs font-bold flex items-center gap-1.5 shrink-0 transition-all shadow-sm"
+            >
+              <Image class="w-4 h-4" />
+              <span class="hidden sm:inline">{{ t('profile.upload_gallery') }}</span>
+            </button>
+          </div>
+          <div class="flex items-center gap-2 mt-2">
+            <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">{{ t('common.suggestions') }}</span>
+            <div class="flex items-center gap-1.5">
+              <img
+                v-for="(img, idx) in sampleAvatars"
+                :key="idx"
+                :src="img"
+                @click="form.avatar = img"
+                :class="[
+                  'w-7 h-7 rounded-full object-cover cursor-pointer border transition-all bg-slate-200 dark:bg-slate-800',
+                  form.avatar === img ? 'border-brand-500 ring-2 ring-brand-500/30 scale-110' : 'border-slate-300 dark:border-slate-700 opacity-70 hover:opacity-100'
+                ]"
+              />
+            </div>
+          </div>
+        </div>
+
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ t('profile.display_name') }}</label>
@@ -103,10 +188,10 @@ function handleChangePassword() {
           <div>
             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ t('profile.default_currency') }}</label>
             <select v-model="form.currency" class="w-full glass-input text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
-              <option value="VND">VND (Việt Nam Đổng)</option>
-              <option value="THB">THB (Baht Thái)</option>
-              <option value="USD">USD (Đô la Mỹ)</option>
-              <option value="LAK">LAK (Kip Lào)</option>
+              <option value="VND">{{ t('common.currency_vnd') }}</option>
+              <option value="THB">{{ t('common.currency_thb') }}</option>
+              <option value="USD">{{ t('common.currency_usd') }}</option>
+              <option value="LAK">{{ t('common.currency_lak') }}</option>
             </select>
           </div>
 

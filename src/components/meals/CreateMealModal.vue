@@ -6,7 +6,7 @@ import AiFaceScannerModal from './AiFaceScannerModal.vue'
 import { useAuthStore } from '../../stores/auth'
 import { useGroupsStore } from '../../stores/groups'
 import { useMealsStore } from '../../stores/meals'
-import { PlusCircle, Sparkles, Users, Receipt, DollarSign } from 'lucide-vue-next'
+import { PlusCircle, Sparkles, Users, Receipt, DollarSign, Camera, Image } from 'lucide-vue-next'
 
 const props = defineProps({
   show: Boolean
@@ -19,6 +19,7 @@ const authStore = useAuthStore()
 const groupsStore = useGroupsStore()
 const mealsStore = useMealsStore()
 
+const receiptFileInput = ref(null)
 const showAiScanner = ref(false)
 const title = ref('')
 const totalAmount = ref('')
@@ -29,6 +30,38 @@ const splitType = ref('equal')
 const selectedParticipants = ref([authStore.currentUserId])
 const customSplits = ref({})
 const receiptUrl = ref('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop')
+
+const showInlineGroupInput = ref(false)
+const newGroupName = ref('')
+
+function triggerReceiptFileSelect() {
+  receiptFileInput.value?.click()
+}
+
+function handleReceiptFileUpload(event) {
+  const file = event.target.files[0]
+  if (!file) return
+  if (!file.type.startsWith('image/')) {
+    return
+  }
+
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    receiptUrl.value = e.target.result
+  }
+  reader.readAsDataURL(file)
+}
+
+function handleCreateInlineGroup() {
+  if (!newGroupName.value.trim()) return
+  const newGroup = groupsStore.createGroup({
+    name: newGroupName.value.trim(),
+    members: selectedParticipants.value.length ? [...selectedParticipants.value] : [authStore.currentUserId]
+  })
+  groupId.value = newGroup.id
+  newGroupName.value = ''
+  showInlineGroupInput.value = false
+}
 
 // Available members depending on selected group or all users
 const availableMembers = computed(() => {
@@ -143,14 +176,43 @@ function handleSubmit() {
         <div>
           <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ t('meals.currency') }}</label>
           <select v-model="currency" class="w-full glass-input text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
-            <option value="VND">VND (Việt Nam Đổng)</option>
-            <option value="THB">THB (Baht Thái)</option>
-            <option value="USD">USD (Đô la Mỹ)</option>
-            <option value="LAK">LAK (Kip Lào)</option>
+            <option value="VND">{{ t('common.currency_vnd') }}</option>
+            <option value="THB">{{ t('common.currency_thb') }}</option>
+            <option value="USD">{{ t('common.currency_usd') }}</option>
+            <option value="LAK">{{ t('common.currency_lak') }}</option>
           </select>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ t('meals.select_group') }}</label>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">{{ t('meals.select_group') }}</label>
+            <button
+              type="button"
+              @click="showInlineGroupInput = !showInlineGroupInput"
+              class="text-[11px] font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+            >
+              <PlusCircle class="w-3.5 h-3.5" />
+              <span>+ {{ t('groups.create_group') }}</span>
+            </button>
+          </div>
+
+          <!-- Inline New Group Input -->
+          <div v-if="showInlineGroupInput" class="flex gap-2 mb-2 p-2 bg-brand-50/50 dark:bg-brand-500/10 rounded-xl border border-brand-200 dark:border-brand-500/30">
+            <input
+              v-model="newGroupName"
+              type="text"
+              :placeholder="t('groups.name_placeholder')"
+              class="w-full glass-input text-xs"
+              @keyup.enter="handleCreateInlineGroup"
+            />
+            <button
+              type="button"
+              @click="handleCreateInlineGroup"
+              class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold text-xs shrink-0 shadow-sm"
+            >
+              {{ t('common.save') }}
+            </button>
+          </div>
+
           <select v-model="groupId" class="w-full glass-input text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
             <option value="">{{ t('meals.all_groups') }}</option>
             <option v-for="g in groupsStore.groups" :key="g.id" :value="g.id">
@@ -160,6 +222,15 @@ function handleSubmit() {
         </div>
       </div>
 
+      <!-- Hidden Receipt File Input -->
+      <input
+        ref="receiptFileInput"
+        type="file"
+        accept="image/*"
+        class="hidden"
+        @change="handleReceiptFileUpload"
+      />
+
       <!-- Paid By Creditor -->
       <div>
         <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ t('meals.creditor') }}</label>
@@ -168,6 +239,35 @@ function handleSubmit() {
             {{ u.name }} ({{ u.username }})
           </option>
         </select>
+      </div>
+
+      <!-- Receipt Image Photo Upload / Capture Section -->
+      <div class="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center justify-between">
+          <span class="flex items-center gap-1.5">
+            <Camera class="w-4 h-4 text-brand-600 dark:text-brand-400" />
+            {{ t('meals.receipt_image') }}
+          </span>
+        </label>
+
+        <div class="flex items-center gap-3 bg-slate-50 dark:bg-slate-950/60 p-3 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <img
+            v-if="receiptUrl"
+            :src="receiptUrl"
+            class="w-16 h-16 rounded-xl object-cover border-2 border-brand-500/40 bg-slate-200 dark:bg-slate-900 shadow-md shrink-0"
+          />
+          <div class="space-y-1.5 flex-1">
+            <button
+              type="button"
+              @click="triggerReceiptFileSelect"
+              class="px-3.5 py-2 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white rounded-xl text-xs font-extrabold flex items-center gap-2 shadow-md shadow-brand-500/20 transition-all transform active:scale-95"
+            >
+              <Camera class="w-4 h-4" />
+              <span>{{ t('meals.upload_receipt') }}</span>
+            </button>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Chụp hoặc tải ảnh hóa đơn / bill thanh toán để đính kèm bữa ăn</p>
+          </div>
+        </div>
       </div>
 
       <!-- Participants selection header & AI Scanner Button -->

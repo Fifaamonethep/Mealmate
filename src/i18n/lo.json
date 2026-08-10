@@ -12,6 +12,12 @@
     "from": "ຈາກ:",
     "to": "ຫາ:",
     "clear_filter": "ລ້າງການຕອງ",
+    "suggestions": "ຂໍ້ແນະນຳ:",
+    "admin_user": "ຜູ້ດູແລລະບົບ (Admin)",
+    "currency_vnd": "VND (ກີບວຽດນາມ)",
+    "currency_thb": "THB (ບາດໄທ)",
+    "currency_usd": "USD (ໂດລາສະຫະລັດ)",
+    "currency_lak": "LAK (ກີບລາວ)",
     "status_pending": "ລໍຖ້າການຊຳລະ",
     "status_slip_sent": "ສົ່ງສລິບແລ້ວ",
     "status_confirmed": "ຢືນຢັນແລ້ວ",
@@ -26,6 +32,11 @@
     "admin": "ຜູ້ດູແລລະບົບ",
     "profile": "ໂປຣໄຟລ໌",
     "logout": "ອອກຈາກລະບົບ"
+  },
+  "navbar": {
+    "admin_portal": "ພອດທັລຜູ້ດູແລ:",
+    "admin_system": "ລະບົບຜູ້ດູແລ",
+    "test_users": "ຜູ້ໃຊ້ທົດລອງ:"
   },
   "auth": {
     "login": "ເຂົ້າສູ່ລະບົບ",
@@ -51,6 +62,7 @@
     "net_balance": "ຍອດເຫຼືອສຸດທິ",
     "net_balance_sub": "ສົມດຸນໜີ້ສ່ວນບຸກຄົນ",
     "quick_actions": "ການດຳເນີນການດ່ວນ",
+    "create_new": "+ ສ້າງໃໝ່",
     "create_meal": "ສ້າງຄາບອາຫານໃໝ່",
     "create_group": "ສ້າງກຸ່ມໃໝ່",
     "pay_debts": "ຊຳລະໜີ້ທັນທີ",
@@ -80,6 +92,8 @@
     "meal_name_placeholder": "ຕົວຢ່າງ: ເຂົ້າສາຍ, ກາເຟ...",
     "total_price": "ຈຳນວນເງິນທັງໝົດ *",
     "currency": "ສະກຸນເງິນ",
+    "receipt_image": "ຮູບໃບເສັດ / ບິນຄ່າອາຫານ",
+    "upload_receipt": "ຖ່າຍຮູບ / ອັບໂຫຼດບິນ",
     "select_group": "ເລືອກກຸ່ມ (ຕົວເລືອກ)",
     "creditor": "ຜູ້ຈ່າຍເງິນລ່ວງໜ້າ",
     "participants_count": "ຜູ້ຮ່ວມຄາບອາຫານ",
@@ -99,7 +113,8 @@
     "detail_receipt": "ຮູບໃບເສັດ:",
     "detail_creditor_label": "ຜູ້ຈ່າຍເງິນລ່ວງໜ້າ:",
     "detail_breakdown": "ລາຍລະອຽດສ່ວນແບ່ງແຕ່ລະຄົນ",
-    "detail_advanced_all": "ຈ່າຍເງິນລ່ວງໜ້າເຕັມຈຳນວນແລ້ວ"
+    "detail_advanced_all": "ຈ່າຍເງິນລ່ວງໜ້າເຕັມຈຳນວນແລ້ວ",
+    "confirm_success_leader": "ຢືນຢັນການຊຳລະຮຽບຮ້ອຍ (ສິດຫົວໜ້າ / ຜູ້ຈ່າຍລ່ວງໜ້າ)"
   },
   "debts": {
     "title": "ການຈັດການໜີ້ແລະການຊຳລະເງິນ",
@@ -154,7 +169,18 @@
     "group_matrix_title": "ຕາຕະລາງສະຫຼຸບໜີ້ສິນພາຍໃນກຸ່ມ",
     "debtor_vs_creditor": "ລູກໜີ້ ↓ \\ ເຈົ້າໜີ້ →",
     "group_meals": "ຄາບອາຫານໃນກຸ່ມນີ້",
-    "empty": "ຍັງບໍ່ທັນມີກຸ່ມທີ່ສ້າງຂຶ້ນ!"
+    "empty": "ຍັງບໍ່ທັນມີກຸ່ມທີ່ສ້າງຂຶ້ນ!",
+    "leader_badge": "ຫົວໜ້າກຸ່ມ 👑",
+    "managed_by": "ຫົວໜ້າກຸ່ມ:",
+    "only_leader_can_manage": "ສະເພາະຫົວໜ້າກຸ່ມເທົ່ານັ້ນທີ່ສາມາດຈັດການສະມາຊິກແລະຍຸບກຸ່ມໄດ້",
+    "disband_group": "ຍຸບກຸ່ມ",
+    "confirm_disband": "ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການຍຸບກຸ່ມນີ້? ສະມາຊິກທັງໝົດຈະຖືກລົບອອກຈາກກຸ່ມ.",
+    "management_rights": "ສິດຈັດການ (ຫົວໜ້າ / ເຈົ້າໜີ້)",
+    "group_avatar_label": "ຮູບໂປຣໄຟລ໌ກຸ່ມ",
+    "cannot_remove_leader": "ບໍ່ສາມາດລົບຫົວໜ້າກຸ່ມໄດ້!",
+    "min_member_error": "ກຸ່ມຕ້ອງມີສະມາຊິກຢ່າງໜ້ອຍ 1 ຄົນ!",
+    "member_removed_success": "ລົບສະມາຊິກອອກຈາກກຸ່ມຮຽບຮ້ອຍແລ້ວ",
+    "disband_success": "ຍຸບກຸ່ມຮຽບຮ້ອຍແລ້ວ"
   },
   "notifications": {
     "title": "ການແຈ້ງເຕືອນການຊຳລະເງິນແລະໜີ້ສິນ",
@@ -165,6 +191,9 @@
   "profile": {
     "title": "ໂປຣໄຟລ໌ຜູ້ໃຊ້",
     "sub": "ອັບເດດຂໍ້ມູນສ່ວນຕົວ, ລະຫັດຜ່ານ ແລະ ຄິວອາດໂຄດຮັບເງິນ",
+    "avatar_url": "ລິ້ງຮູບໂປຣໄຟລ໌ (Avatar)",
+    "upload_gallery": "ເລືອກຮູບຈາກຄັງຮູບພາບ",
+    "change_avatar": "ປ່ຽນຮູບໂປຣໄຟລ໌",
     "display_name": "ຊື່ທີ່ສະແດງ *",
     "phone": "ເບີໂທລະສັບ",
     "email": "ອີເມວ",
@@ -173,11 +202,13 @@
     "your_qr_title": "ຄິວອາດໂຄດຮັບເງິນຂອງທ່ານ",
     "your_qr_sub": "ຄິວອາດໂຄດນີ້ຈະສະແດງໃຫ້ໝູ່ເຫັນເມື່ອພວກເຂົາກົດຊຳລະໜີ້ໃຫ້ທ່ານ",
     "save_profile": "ບັນທຶກໂປຣໄຟລ໌",
+    "updated_success": "ອັບເດດໂປຣໄຟລ໌ຮຽບຮ້ອຍແລ້ວ!",
     "change_password_title": "ປ່ຽນລະຫັດຜ່ານ",
     "current_password": "ລະຫັດຜ່ານປັດຈຸບັນ",
     "new_password": "ລະຫັດຜ່ານໃໝ່",
     "confirm_password": "ຢືນຢັນລະຫັດຜ່ານໃໝ່",
-    "btn_change_password": "ປ່ຽນລະຫັດຜ່ານ"
+    "btn_change_password": "ປ່ຽນລະຫັດຜ່ານ",
+    "password_changed_success": "ປ່ຽນລະຫັດຜ່ານຮຽບຮ້ອຍແລ້ວ!"
   },
   "admin": {
     "title": "ແຜງຄວບຄຸມຜູ້ດູແລລະບົບ",
@@ -201,12 +232,15 @@
     "user_modal_title": "ຈັດການຜູ້ໃຊ້ (ແອດມິນ)",
     "user": "ຜູ້ໃຊ້",
     "role": "ສິດ",
+    "role_user": "ຜູ້ໃຊ້",
+    "role_admin": "ຜູ້ດູແລລະບົບ (Admin)",
     "user_status": "ສະຖານະ",
     "lock": "ລະງັບ",
     "unlock": "ປົດລະງັບ",
     "change_pass": "ຣີເຊັດລະຫັດຜ່ານ"
   },
   "footer": {
-    "tagline": "ການຈັດການໜີ້ແລະຫານຄ່າອາຫານທີ່ຍຸຕິທຳອັດໂນມັດ"
+    "tagline": "ການຈັດການໜີ້ແລະຫານຄ່າອາຫານທີ່ຍຸຕິທຳອັດໂນມັດ",
+    "contact_support": "ຕິດຕໍ່ສະໜັບສະໜູນ:"
   }
 }

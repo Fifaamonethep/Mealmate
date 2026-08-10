@@ -103,15 +103,15 @@ function handleRemoveMember(userId) {
   }
   if (!group.value) return
   if (userId === group.value.ownerId) {
-    toastStore.showToast('Không thể xóa Chủ nhóm!', 'warning')
+    toastStore.showToast(t('groups.cannot_remove_leader'), 'warning')
     return
   }
   if (group.value.members.length <= 1) {
-    toastStore.showToast('Nhóm phải có ít nhất 1 thành viên!', 'warning')
+    toastStore.showToast(t('groups.min_member_error'), 'warning')
     return
   }
   groupsStore.removeMember(group.value.id, userId)
-  toastStore.showToast('Đã xóa thành viên khỏi nhóm', 'info')
+  toastStore.showToast(t('groups.member_removed_success'), 'info')
 }
 
 function handleDisbandGroup() {
@@ -121,7 +121,7 @@ function handleDisbandGroup() {
   }
   if (confirm(t('groups.confirm_disband'))) {
     groupsStore.deleteGroup(group.value.id)
-    toastStore.showToast('Đã giải tán nhóm thành công', 'info')
+    toastStore.showToast(t('groups.disband_success'), 'info')
     router.push('/groups')
   }
 }

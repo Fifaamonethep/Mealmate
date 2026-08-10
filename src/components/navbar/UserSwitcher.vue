@@ -1,10 +1,12 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../../stores/auth'
 import { Users, ShieldCheck, User } from 'lucide-vue-next'
 
 const router = useRouter()
+const { t } = useI18n()
 const authStore = useAuthStore()
 
 const adminUser = computed(() => authStore.users.find(u => u.role === 'admin'))
@@ -26,7 +28,7 @@ function selectUser(userId) {
     
     <!-- Admin Portal Switch -->
     <div v-if="adminUser" class="flex items-center gap-2 pr-3 border-r border-slate-200 dark:border-slate-800 shrink-0">
-      <span class="text-[10px] uppercase font-extrabold text-amber-600 dark:text-amber-400 tracking-wider hidden sm:inline">Admin Portal:</span>
+      <span class="text-[10px] uppercase font-extrabold text-amber-600 dark:text-amber-400 tracking-wider hidden sm:inline">{{ t('navbar.admin_portal') }}</span>
       <button
         @click="selectUser(adminUser.id)"
         :class="[
@@ -37,13 +39,13 @@ function selectUser(userId) {
         ]"
       >
         <ShieldCheck class="w-3.5 h-3.5 text-amber-500 shrink-0" />
-        <span>Admin System</span>
+        <span>{{ t('navbar.admin_system') }}</span>
       </button>
     </div>
 
     <!-- Regular Members Switch -->
     <div class="flex items-center gap-2 overflow-x-auto">
-      <span class="text-[10px] uppercase font-extrabold text-slate-500 dark:text-slate-400 tracking-wider hidden md:inline shrink-0">Test Users:</span>
+      <span class="text-[10px] uppercase font-extrabold text-slate-500 dark:text-slate-400 tracking-wider hidden md:inline shrink-0">{{ t('navbar.test_users') }}</span>
       <button
         v-for="u in regularUsers"
         :key="u.id"

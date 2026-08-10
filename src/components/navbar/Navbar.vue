@@ -218,6 +218,16 @@ function handleLogout() {
             </div>
           </div>
 
+          <!-- Admin Quick Access Badge (Visible on Mobile) -->
+          <router-link
+            v-if="authStore.isAdmin"
+            to="/admin"
+            class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/50 hover:bg-amber-500/30 text-xs font-bold flex items-center gap-1.5 shrink-0 transition-all shadow-sm"
+          >
+            <Shield class="w-3.5 h-3.5 text-amber-500 shrink-0" />
+            <span class="truncate max-w-[70px] sm:max-w-none">{{ t('nav.admin') }}</span>
+          </router-link>
+
           <!-- Theme Toggle -->
           <button
             @click="toggleTheme"

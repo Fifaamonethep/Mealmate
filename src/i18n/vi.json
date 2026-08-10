@@ -12,6 +12,12 @@
     "from": "Từ:",
     "to": "Đến:",
     "clear_filter": "Xóa lọc",
+    "suggestions": "Gợi ý:",
+    "admin_user": "Quản trị viên (Admin)",
+    "currency_vnd": "VND (Đồng Việt Nam)",
+    "currency_thb": "THB (Baht Thái)",
+    "currency_usd": "USD (Đô la Mỹ)",
+    "currency_lak": "LAK (Kip Lào)",
     "status_pending": "Chưa trả",
     "status_slip_sent": "Đã gửi bill",
     "status_confirmed": "Đã hoàn tất",
@@ -26,6 +32,11 @@
     "admin": "Quản trị Admin",
     "profile": "Hồ sơ cá nhân",
     "logout": "Đăng xuất"
+  },
+  "navbar": {
+    "admin_portal": "Cổng Admin:",
+    "admin_system": "Hệ thống Admin",
+    "test_users": "Tài khoản Test:"
   },
   "auth": {
     "login": "Đăng nhập",
@@ -51,6 +62,7 @@
     "net_balance": "Số dư ròng",
     "net_balance_sub": "Cân bằng thu nợ cá nhân",
     "quick_actions": "Thao tác nhanh",
+    "create_new": "+ Tạo mới",
     "create_meal": "Tạo bữa ăn mới",
     "create_group": "Tạo nhóm mới",
     "pay_debts": "Trả nợ ngay",
@@ -78,9 +90,11 @@
     "create_title": "Tạo Bữa Ăn Mới & Chia Tiền",
     "meal_name": "Tên bữa ăn *",
     "meal_name_placeholder": "Ví dụ: Ăn trưa Cơm Tấm, Đi cà phê...",
-    "total_price": "Tổng số tiền *",
+    "total_price": "Tổng tiền bữa ăn *",
     "currency": "Loại tiền tệ",
-    "select_group": "Chọn Nhóm (Tùy chọn)",
+    "receipt_image": "Ảnh hóa đơn / Bill bữa ăn",
+    "upload_receipt": "Chụp / Tải ảnh bill",
+    "select_group": "Chọn nhóm (Tùy chọn)",
     "creditor": "Người ứng tiền trả trước (Creditor)",
     "participants_count": "Người tham gia bữa ăn",
     "split_method": "Phương thức chia tiền",
@@ -99,7 +113,8 @@
     "detail_receipt": "Hóa đơn / Bill chụp:",
     "detail_creditor_label": "Người thanh toán trước:",
     "detail_breakdown": "Chi tiết phần tiền từng thành viên",
-    "detail_advanced_all": "Đã ứng trả toàn bộ"
+    "detail_advanced_all": "Đã ứng trả toàn bộ",
+    "confirm_success_leader": "Đã xác nhận thanh toán (Quyền Chủ nhóm / Người ứng tiền)"
   },
   "debts": {
     "title": "Quản lý Công Nợ & Thanh Toán",
@@ -159,7 +174,13 @@
     "managed_by": "Chủ nhóm:",
     "only_leader_can_manage": "Chỉ Chủ nhóm hoặc Admin mới có quyền thêm / xóa thành viên.",
     "disband_group": "Giải tán nhóm",
-    "confirm_disband": "Bạn có chắc muốn giải tán nhóm này không?"
+    "confirm_disband": "Bạn có chắc muốn giải tán nhóm này không?",
+    "management_rights": "Quyền Quản Lý (Leader / Creditor)",
+    "group_avatar_label": "Ảnh đại diện nhóm",
+    "cannot_remove_leader": "Không thể xóa Chủ nhóm!",
+    "min_member_error": "Nhóm phải có ít nhất 1 thành viên!",
+    "member_removed_success": "Đã xóa thành viên khỏi nhóm",
+    "disband_success": "Đã giải tán nhóm thành công"
   },
   "notifications": {
     "title": "Thông Báo Hóa Đơn & Nợ",
@@ -170,6 +191,9 @@
   "profile": {
     "title": "Hồ Sơ Cá Nhân",
     "sub": "Cập nhật thông tin tài khoản, mật khẩu và Mã QR Ngân hàng để bạn bè chuyển khoản trả nợ",
+    "avatar_url": "Link Ảnh đại diện (Avatar)",
+    "upload_gallery": "Chọn ảnh từ thư viện",
+    "change_avatar": "Đổi avatar",
     "display_name": "Tên hiển thị *",
     "phone": "Số điện thoại",
     "email": "Email",
@@ -178,11 +202,13 @@
     "your_qr_title": "Mã QR Thanh Toán Của Bạn",
     "your_qr_sub": "Mã QR này sẽ hiển thị cho bạn bè khi họ bấm nút Trả nợ ngay cho các khoản nợ của bạn.",
     "save_profile": "Lưu Hồ Sơ",
+    "updated_success": "Đã cập nhật hồ sơ cá nhân thành công!",
     "change_password_title": "Đổi Mật Khẩu",
     "current_password": "Mật khẩu hiện tại",
     "new_password": "Mật khẩu mới",
     "confirm_password": "Xác nhận mật khẩu mới",
-    "btn_change_password": "Đổi Mật Khẩu"
+    "btn_change_password": "Đổi Mật Khẩu",
+    "password_changed_success": "Đã đổi mật khẩu thành công!"
   },
   "admin": {
     "title": "Bảng Điều Khiển Admin",
@@ -206,6 +232,8 @@
     "user_modal_title": "Quản Lý Người Dùng (Admin)",
     "user": "Người dùng",
     "role": "Role",
+    "role_user": "Người dùng",
+    "role_admin": "Quản trị viên (Admin)",
     "user_status": "Trạng thái",
     "lock": "Khóa",
     "unlock": "Mở khóa",

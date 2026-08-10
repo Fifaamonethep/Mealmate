@@ -82,7 +82,7 @@ function handleSubmit() {
 
       <!-- Group Avatar Picker -->
       <div>
-        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Ảnh đại diện nhóm (Group Avatar)</label>
+        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ t('groups.group_avatar_label') }}</label>
         <div class="flex items-center gap-3 mb-2">
           <img :src="avatar" class="w-12 h-12 rounded-xl object-cover border-2 border-brand-500/50 shadow-sm" />
           <input
@@ -93,7 +93,7 @@ function handleSubmit() {
           />
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Gợi ý:</span>
+          <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">{{ t('common.suggestions') }}</span>
           <div class="flex items-center gap-1.5">
             <img
               v-for="(img, idx) in presetAvatars"

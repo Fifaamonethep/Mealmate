@@ -4,12 +4,12 @@ export const INITIAL_USERS = [
     username: 'admin',
     passwordHash: '123',
     name: 'Quản trị viên (Admin)',
-    email: 'admin@mealmate.com',
-    phone: '0901234567',
+    email: 'sokeskesannouanlaty@gmail.com',
+    phone: '2098667856',
     role: 'admin',
     currency: 'VND',
     avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Admin',
-    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=VIETQR-ADMIN-123456789'
+    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=VIETQR-ADMIN-2098667856'
   },
   {
     id: 'u-alice',

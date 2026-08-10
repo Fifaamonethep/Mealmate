@@ -19,7 +19,10 @@ import {
   Users,
   CreditCard,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  Shield,
+  ChevronDown,
+  Receipt
 } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -29,6 +32,7 @@ const mealsStore = useMealsStore()
 const debtsStore = useDebtsStore()
 const notificationsStore = useNotificationsStore()
 
+const showCreateMenu = ref(false)
 const showCreateMeal = ref(false)
 const showCreateGroup = ref(false)
 const selectedPaymentToPay = ref(null)
@@ -57,6 +61,13 @@ const totalOwedToMe = computed(() => {
 const netBalance = computed(() => totalOwedToMe.value - totalMyDebt.value)
 
 const recentMeals = computed(() => mealsStore.meals.slice(0, 4))
+
+const userDisplayName = computed(() => {
+  if (authStore.currentUser?.id === 'u-admin') {
+    return t('admin.role_admin')
+  }
+  return authStore.currentUser?.name || ''
+})
 </script>
 
 <template>
@@ -70,7 +81,7 @@ const recentMeals = computed(() => mealsStore.meals.slice(0, 4))
           <span>MealMate Dashboard</span>
         </div>
         <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">
-          {{ t('dashboard.welcome') }}, {{ authStore.currentUser?.name }}! 👋
+          {{ t('dashboard.welcome') }}, {{ userDisplayName }}! 👋
         </h1>
         <p class="text-xs sm:text-sm text-slate-300 mt-1">
           {{ t('dashboard.sub') }}
@@ -79,13 +90,21 @@ const recentMeals = computed(() => mealsStore.meals.slice(0, 4))
 
       <!-- Quick Action Buttons -->
       <div class="flex flex-wrap items-center gap-2">
-        <button @click="showCreateMeal = true" class="glow-button text-xs flex items-center gap-1.5 py-2.5">
+        <router-link
+          v-if="authStore.isAdmin"
+          to="/admin"
+          class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 transition-all shadow-lg shadow-amber-500/30"
+        >
+          <Shield class="w-4 h-4 text-slate-950 shrink-0" />
+          <span>{{ t('nav.admin') }}</span>
+        </router-link>
+        <!-- Single Primary Action Button: Create Meal -->
+        <button
+          @click="showCreateMeal = true"
+          class="glow-button text-xs flex items-center gap-2 py-2.5 px-4 font-extrabold shadow-lg transform active:scale-95 transition-all"
+        >
           <Plus class="w-4 h-4" />
           <span>{{ t('dashboard.create_meal') }}</span>
-        </button>
-        <button @click="showCreateGroup = true" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs px-3.5 py-2.5 rounded-xl font-semibold flex items-center gap-1.5 transition-all shadow-md">
-          <Users class="w-4 h-4 text-brand-300" />
-          <span>{{ t('dashboard.create_group') }}</span>
         </button>
       </div>
     </div>
