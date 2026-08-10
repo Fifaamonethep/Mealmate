@@ -70,10 +70,18 @@ export const useMealsStore = defineStore('meals', () => {
     return newMeal
   }
 
+  function deleteMeal(mealId) {
+    const debtsStore = useDebtsStore()
+    meals.value = meals.value.filter(m => m.id !== mealId)
+    saveMeals()
+    debtsStore.deletePaymentsByMealId(mealId)
+  }
+
   return {
     meals,
     getMealById,
     createMeal,
+    deleteMeal,
     saveMeals
   }
 })

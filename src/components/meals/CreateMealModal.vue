@@ -74,9 +74,14 @@ const availableMembers = computed(() => {
   return authStore.users
 })
 
-// Reset paidById & participants when modal opens
+// Reset form fields when modal opens
 watch(() => props.show, (newShow) => {
   if (newShow) {
+    title.value = ''
+    totalAmount.value = ''
+    splitType.value = 'equal'
+    customSplits.value = {}
+    receiptUrl.value = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop'
     paidById.value = authStore.currentUserId || availableMembers.value[0]?.id || ''
     selectedParticipants.value = availableMembers.value.map(u => u.id)
   }
@@ -107,13 +112,23 @@ function handleAiFacesDetected(detectedIds) {
   selectedParticipants.value = uniqueIds
 }
 
-const perPersonEqualAmount = computed(() => {
-  if (!totalAmount.value || selectedParticipants.value.length === 0) return 0
-  return Math.round(Number(totalAmount.value) / selectedParticipants.value.length)
+const customTotalSum = computed(() => {
+  if (splitType.value !== 'custom') return 0
+  return selectedParticipants.value.reduce((sum, pid) => sum + (Number(customSplits.value[pid]) || 0), 0)
+})
+
+const isCustomSplitValid = computed(() => {
+  if (splitType.value !== 'custom') return true
+  if (!totalAmount.value) return true
+  return customTotalSum.value === Number(totalAmount.value)
 })
 
 function handleSubmit() {
   if (!title.value || !totalAmount.value) return
+  if (splitType.value === 'custom' && !isCustomSplitValid.value) {
+    alert(`Tổng tiền nhập tùy chỉnh (${customTotalSum.value.toLocaleString()} ${currency.value}) không khớp với tổng tiền hóa đơn (${Number(totalAmount.value).toLocaleString()} ${currency.value})!`)
+    return
+  }
 
   const meal = mealsStore.createMeal({
     title: title.value,
@@ -351,6 +366,11 @@ function handleSubmit() {
               placeholder="0"
               class="glass-input text-xs py-1 px-3 w-2/3"
             />
+          </div>
+
+          <div :class="['p-2 rounded-lg text-xs font-bold flex items-center justify-between border mt-2', isCustomSplitValid ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30']">
+            <span>Tổng tiền tự nhập: {{ customTotalSum.toLocaleString() }} {{ currency }}</span>
+            <span>{{ isCustomSplitValid ? '✓ Khớp tổng tiền' : `⚠️ Lệch ${(Number(totalAmount || 0) - customTotalSum).toLocaleString()} ${currency}` }}</span>
           </div>
         </div>
       </div>

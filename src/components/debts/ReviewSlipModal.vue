@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Modal from '../common/Modal.vue'
 import { useAuthStore } from '../../stores/auth'
@@ -19,6 +19,13 @@ const debtsStore = useDebtsStore()
 
 const showRejectReasonInput = ref(false)
 const rejectReason = ref('')
+
+watch(() => props.show, (newVal) => {
+  if (newVal) {
+    showRejectReasonInput.value = false
+    rejectReason.value = ''
+  }
+})
 
 const debtor = computed(() => {
   return props.payment ? authStore.users.find(u => u.id === props.payment.debtorId) : null

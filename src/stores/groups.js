@@ -61,6 +61,25 @@ export const useGroupsStore = defineStore('groups', () => {
     }
   }
 
+  function updateGroup(groupId, updatedData) {
+    const idx = groups.value.findIndex(g => g.id === groupId)
+    if (idx !== -1) {
+      groups.value[idx] = { ...groups.value[idx], ...updatedData }
+      saveGroups()
+    }
+  }
+
+  function leaveGroup(groupId, userId) {
+    const g = groups.value.find(item => item.id === groupId)
+    if (g) {
+      if (g.ownerId === userId) {
+        throw new Error('Chủ nhóm không thể rời nhóm khi chưa chuyển quyền hoặc giải tán nhóm!')
+      }
+      g.members = g.members.filter(id => id !== userId)
+      saveGroups()
+    }
+  }
+
   function deleteGroup(groupId) {
     groups.value = groups.value.filter(g => g.id !== groupId)
     saveGroups()
@@ -72,6 +91,8 @@ export const useGroupsStore = defineStore('groups', () => {
     createGroup,
     addMember,
     removeMember,
+    updateGroup,
+    leaveGroup,
     deleteGroup,
     saveGroups
   }

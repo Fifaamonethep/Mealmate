@@ -9,7 +9,7 @@ import { useGroupsStore } from '../stores/groups'
 import { useToastStore } from '../stores/toast'
 import Badge from '../components/common/Badge.vue'
 import ReviewSlipModal from '../components/debts/ReviewSlipModal.vue'
-import { ArrowLeft, Calendar, Receipt, Users, CheckCircle2, Crown, ShieldCheck, Eye } from 'lucide-vue-next'
+import { ArrowLeft, Calendar, Receipt, Users, CheckCircle2, Crown, ShieldCheck, Eye, Trash2 } from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
@@ -44,6 +44,15 @@ function handleForceConfirm(paymentId) {
   toastStore.showToast(t('meals.confirm_success_leader'), 'success')
 }
 
+function handleDeleteMeal() {
+  if (!meal.value) return
+  if (confirm('Bạn có chắc chắn muốn xóa bữa ăn này không? Toàn bộ khoản nợ liên quan sẽ bị xóa.')) {
+    mealsStore.deleteMeal(meal.value.id)
+    toastStore.showToast('Đã xóa bữa ăn thành công!', 'info')
+    router.push('/meals')
+  }
+}
+
 function formatDate(isoStr) {
   if (!isoStr) return ''
   return new Date(isoStr).toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
@@ -53,10 +62,21 @@ function formatDate(isoStr) {
 <template>
   <div v-if="meal" class="max-w-4xl mx-auto space-y-6 pb-12">
     
-    <!-- Back button -->
-    <button @click="router.back()" class="flex items-center gap-1 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
-      <ArrowLeft class="w-4 h-4" /> {{ t('common.back') }}
-    </button>
+    <!-- Back button & Delete button -->
+    <div class="flex items-center justify-between">
+      <button @click="router.back()" class="flex items-center gap-1 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+        <ArrowLeft class="w-4 h-4" /> {{ t('common.back') }}
+      </button>
+
+      <button
+        v-if="isLeaderOrCreditor"
+        @click="handleDeleteMeal"
+        class="bg-rose-50 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-500/40 hover:bg-rose-100 dark:hover:bg-rose-500/30 text-xs px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-all shadow-sm"
+      >
+        <Trash2 class="w-3.5 h-3.5" />
+        <span>Xóa bữa ăn</span>
+      </button>
+    </div>
 
     <!-- Header Card -->
     <div class="glass-card p-6 border border-slate-200/80 dark:border-slate-700/60 space-y-4">

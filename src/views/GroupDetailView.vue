@@ -8,7 +8,8 @@ import { useMealsStore } from '../stores/meals'
 import { useDebtsStore } from '../stores/debts'
 import { useToastStore } from '../stores/toast'
 import MealCard from '../components/meals/MealCard.vue'
-import { Users, ArrowLeft, UserPlus, UserX, Receipt, Crown, Trash2, Shield } from 'lucide-vue-next'
+import EditGroupModal from '../components/groups/EditGroupModal.vue'
+import { Users, ArrowLeft, UserPlus, UserX, Receipt, Crown, Trash2, Shield, Edit3, LogOut } from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
@@ -21,6 +22,7 @@ const toastStore = useToastStore()
 
 const searchMemberInput = ref('')
 const memberError = ref('')
+const showEditGroup = ref(false)
 
 const group = computed(() => groupsStore.getGroupById(route.params.id))
 
@@ -32,6 +34,11 @@ const owner = computed(() => {
 const isOwnerOrAdmin = computed(() => {
   if (!group.value) return false
   return authStore.currentUserId === group.value.ownerId || authStore.currentUser?.role === 'admin'
+})
+
+const isMemberNotOwner = computed(() => {
+  if (!group.value) return false
+  return group.value.members.includes(authStore.currentUserId) && authStore.currentUserId !== group.value.ownerId
 })
 
 const groupMembers = computed(() => {
@@ -59,7 +66,7 @@ const groupDebtMatrix = computed(() => {
 
   const groupMealIds = groupMeals.value.map(m => m.id)
   debtsStore.payments.forEach(p => {
-    if (groupMealIds.includes(p.mealId) && (p.status === 'pending' || p.status === 'slip_sent')) {
+    if (groupMealIds.includes(p.mealId) && p.status !== 'confirmed') {
       if (matrix[p.debtorId] && matrix[p.debtorId][p.creditorId] !== undefined) {
         matrix[p.debtorId][p.creditorId] += Number(p.amount)
       }
@@ -114,6 +121,19 @@ function handleRemoveMember(userId) {
   toastStore.showToast(t('groups.member_removed_success'), 'info')
 }
 
+function handleLeaveGroup() {
+  if (!group.value) return
+  if (confirm('Bạn có chắc chắn muốn rời khỏi nhóm này không?')) {
+    try {
+      groupsStore.leaveGroup(group.value.id, authStore.currentUserId)
+      toastStore.showToast('Đã rời nhóm thành công!', 'info')
+      router.push('/groups')
+    } catch (err) {
+      toastStore.showToast(err.message, 'warning')
+    }
+  }
+}
+
 function handleDisbandGroup() {
   if (!isOwnerOrAdmin.value) {
     toastStore.showToast(t('groups.only_leader_can_manage'), 'warning')
@@ -166,7 +186,7 @@ function handleDisbandGroup() {
           </div>
         </div>
 
-        <div class="flex flex-wrap items-center gap-4">
+        <div class="flex flex-wrap items-center gap-3">
           <div class="flex items-center gap-4 bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs">
             <div>
               <span class="text-slate-500 dark:text-slate-400">{{ t('groups.total_expenses') }}</span>
@@ -181,6 +201,26 @@ function handleDisbandGroup() {
               </div>
             </div>
           </div>
+
+          <!-- Edit Group Button for Owner/Admin -->
+          <button
+            v-if="isOwnerOrAdmin"
+            @click="showEditGroup = true"
+            class="bg-brand-50 dark:bg-brand-500/20 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-500/40 hover:bg-brand-100 dark:hover:bg-brand-500/30 text-xs px-3.5 py-2.5 rounded-xl font-bold flex items-center gap-1.5 transition-all shadow-sm"
+          >
+            <Edit3 class="w-4 h-4 text-brand-600 dark:text-brand-400" />
+            <span>Sửa nhóm</span>
+          </button>
+
+          <!-- Leave Group Button for Non-Owner Members -->
+          <button
+            v-if="isMemberNotOwner"
+            @click="handleLeaveGroup"
+            class="bg-amber-50 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-500/40 hover:bg-amber-100 dark:hover:bg-amber-500/30 text-xs px-3.5 py-2.5 rounded-xl font-bold flex items-center gap-1.5 transition-all shadow-sm"
+          >
+            <LogOut class="w-4 h-4 text-amber-500" />
+            <span>Rời nhóm</span>
+          </button>
 
           <!-- Disband Group button for Owner/Admin -->
           <button
@@ -304,5 +344,8 @@ function handleDisbandGroup() {
         {{ t('meals.empty') }}
       </div>
     </div>
+
+    <!-- Edit Group Modal -->
+    <EditGroupModal :show="showEditGroup" :group="group" @close="showEditGroup = false" />
   </div>
 </template>

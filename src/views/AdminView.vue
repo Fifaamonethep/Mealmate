@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAdminStore } from '../stores/admin'
 import UserManagementModal from '../components/admin/UserManagementModal.vue'
+import DebtMatrixTable from '../components/admin/DebtMatrixTable.vue'
 import { Shield, Users, Utensils, DollarSign, Clock, Sparkles, Activity, UserCheck, ChevronRight } from 'lucide-vue-next'
 
 const { t } = useI18n()
@@ -112,6 +113,9 @@ const showUserManagement = ref(false)
       </div>
 
     </div>
+
+    <!-- Admin Cross-User Debt Matrix Table -->
+    <DebtMatrixTable />
 
     <!-- User Management Modal -->
     <UserManagementModal :show="showUserManagement" @close="showUserManagement = false" />

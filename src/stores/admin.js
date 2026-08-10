@@ -14,7 +14,7 @@ export const useAdminStore = defineStore('admin', () => {
     const totalMeals = mealsStore.meals.length
     const totalVolume = mealsStore.meals.reduce((sum, m) => sum + (Number(m.totalAmount) || 0), 0)
     const totalUnpaid = debtsStore.payments
-      .filter(p => p.status === 'pending' || p.status === 'slip_sent')
+      .filter(p => p.status !== 'confirmed')
       .reduce((sum, p) => sum + (Number(p.amount) || 0), 0)
 
     return {
@@ -38,7 +38,7 @@ export const useAdminStore = defineStore('admin', () => {
     })
 
     debtsStore.payments.forEach(p => {
-      if (p.status === 'pending' || p.status === 'slip_sent') {
+      if (p.status !== 'confirmed') {
         if (matrix[p.debtorId] && matrix[p.debtorId][p.creditorId] !== undefined) {
           matrix[p.debtorId][p.creditorId] += Number(p.amount)
         }

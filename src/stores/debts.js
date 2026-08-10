@@ -112,6 +112,11 @@ export const useDebtsStore = defineStore('debts', () => {
     toastStore.showToast(`Admin đã đổi trạng thái nợ sang ${status.toUpperCase()}`, 'info')
   }
 
+  function deletePaymentsByMealId(mealId) {
+    payments.value = payments.value.filter(p => p.mealId !== mealId)
+    savePayments()
+  }
+
   return {
     payments,
     createPayment,
@@ -119,6 +124,7 @@ export const useDebtsStore = defineStore('debts', () => {
     confirmPayment,
     rejectPayment,
     forceAdminAction,
+    deletePaymentsByMealId,
     savePayments
   }
 })
