@@ -10,6 +10,7 @@ const authStore = useAuthStore()
 const toastStore = useToastStore()
 
 const avatarFileInput = ref(null)
+const qrFileInput = ref(null)
 
 const form = ref({
   name: authStore.currentUser?.name || '',
@@ -56,6 +57,26 @@ function handleAvatarFileUpload(event) {
   reader.readAsDataURL(file)
 }
 
+function triggerQrFileSelect() {
+  qrFileInput.value?.click()
+}
+
+function handleQrFileUpload(event) {
+  const file = event.target.files[0]
+  if (!file) return
+  if (!file.type.startsWith('image/')) {
+    toastStore.showToast(t('profile.err_select_valid_image'), 'warning')
+    return
+  }
+
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    form.value.qrCodeUrl = e.target.result
+    toastStore.showToast(t('profile.updated_success'), 'success')
+  }
+  reader.readAsDataURL(file)
+}
+
 function handleSave() {
   authStore.updateProfile(form.value)
   toastStore.showToast(t('profile.updated_success'), 'success')
@@ -92,13 +113,20 @@ function handleChangePassword() {
 <template>
   <div class="max-w-2xl mx-auto space-y-6 pb-12">
     
-    <!-- Hidden File Input for Device Gallery Selection -->
+    <!-- Hidden File Inputs for Device Gallery Selection -->
     <input
       ref="avatarFileInput"
       type="file"
       accept="image/*"
       class="hidden"
       @change="handleAvatarFileUpload"
+    />
+    <input
+      ref="qrFileInput"
+      type="file"
+      accept="image/*"
+      class="hidden"
+      @change="handleQrFileUpload"
     />
 
     <div>
@@ -121,36 +149,15 @@ function handleChangePassword() {
           </div>
         </div>
         <div>
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white">
-            {{ authStore.currentUser?.id === 'u-admin' ? t('admin.role_admin') : authStore.currentUser?.name }}
-          </h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400">@{{ authStore.currentUser?.username }} • Role: {{ authStore.currentUser?.role }}</p>
-          <button
-            type="button"
-            @click="triggerAvatarFileSelect"
-            class="text-[11px] font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1 mt-1"
-          >
-            <Camera class="w-3.5 h-3.5" /> {{ t('profile.upload_gallery') }}
-          </button>
+          <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">{{ form.name || authStore.currentUser?.name }}</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">@{{ authStore.currentUser?.username }}</p>
         </div>
       </div>
 
       <form @submit.prevent="handleSave" class="space-y-4 text-slate-800 dark:text-slate-200">
-        <!-- Avatar Change Input & Gallery Picker Button -->
-        <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ t('profile.avatar_url') }}</label>
+        <!-- Avatar Preset & Gallery Selection Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-3 p-3 bg-slate-100 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800">
           <div class="flex items-center gap-2">
-            <input v-model="form.avatar" type="text" class="w-full glass-input text-xs" placeholder="https://..." />
-            <button
-              type="button"
-              @click="triggerAvatarFileSelect"
-              class="px-3 py-2 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-300 border border-brand-500/30 rounded-xl text-xs font-bold flex items-center gap-1.5 shrink-0 transition-all shadow-sm"
-            >
-              <Image class="w-4 h-4" />
-              <span class="hidden sm:inline">{{ t('profile.upload_gallery') }}</span>
-            </button>
-          </div>
-          <div class="flex items-center gap-2 mt-2">
             <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">{{ t('common.suggestions') }}</span>
             <div class="flex items-center gap-1.5">
               <img
@@ -159,12 +166,21 @@ function handleChangePassword() {
                 :src="img"
                 @click="form.avatar = img"
                 :class="[
-                  'w-7 h-7 rounded-full object-cover cursor-pointer border transition-all bg-slate-200 dark:bg-slate-800',
+                  'w-7.5 h-7.5 rounded-full object-cover cursor-pointer border transition-all bg-slate-200 dark:bg-slate-800',
                   form.avatar === img ? 'border-brand-500 ring-2 ring-brand-500/30 scale-110' : 'border-slate-300 dark:border-slate-700 opacity-70 hover:opacity-100'
                 ]"
               />
             </div>
           </div>
+
+          <button
+            type="button"
+            @click="triggerAvatarFileSelect"
+            class="px-3.5 py-2 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-300 border border-brand-500/30 rounded-xl text-xs font-bold flex items-center gap-2 shrink-0 transition-all shadow-sm"
+          >
+            <Image class="w-4 h-4" />
+            <span>{{ t('profile.upload_gallery') }}</span>
+          </button>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -184,35 +200,39 @@ function handleChangePassword() {
           <input v-model="form.email" type="email" class="w-full glass-input text-xs" />
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ t('profile.default_currency') }}</label>
-            <select v-model="form.currency" class="w-full glass-input text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
-              <option value="VND">{{ t('common.currency_vnd') }}</option>
-              <option value="THB">{{ t('common.currency_thb') }}</option>
-              <option value="USD">{{ t('common.currency_usd') }}</option>
-              <option value="LAK">{{ t('common.currency_lak') }}</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ t('profile.qr_link') }}</label>
-            <input v-model="form.qrCodeUrl" type="text" class="w-full glass-input text-xs" placeholder="https://..." />
-          </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ t('profile.default_currency') }}</label>
+          <select v-model="form.currency" class="w-full glass-input text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+            <option value="VND">{{ t('common.currency_vnd') }}</option>
+            <option value="THB">{{ t('common.currency_thb') }}</option>
+            <option value="USD">{{ t('common.currency_usd') }}</option>
+            <option value="LAK">{{ t('common.currency_lak') }}</option>
+          </select>
         </div>
 
-        <!-- Bank QR Preview -->
-        <div class="space-y-2 bg-slate-100 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center gap-4">
-          <div class="p-1.5 bg-white rounded-xl border border-slate-200 shrink-0">
-            <img :src="form.qrCodeUrl || 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=VIETQR'" class="w-24 h-24 object-contain" />
+        <!-- Bank QR Section (Upload Button + Preview) -->
+        <div class="bg-slate-100 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <div class="p-1.5 bg-white rounded-xl border border-slate-200 shrink-0">
+                <img :src="form.qrCodeUrl || 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=VIETQR'" class="w-20 h-20 object-contain" />
+              </div>
+              <div class="text-xs space-y-1">
+                <span class="font-bold text-slate-800 dark:text-slate-200 block">{{ t('profile.your_qr_title') }}</span>
+                <p class="text-slate-500 dark:text-slate-400">
+                  {{ t('profile.your_qr_sub') }}
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              @click="triggerQrFileSelect"
+              class="w-full sm:w-auto px-4 py-2.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-300 border border-brand-500/30 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shrink-0 transition-all shadow-sm"
+            >
+              <Upload class="w-4 h-4" />
+              <span>{{ t('profile.upload_gallery') }}</span>
+            </button>
           </div>
-          <div class="text-xs space-y-1">
-            <span class="font-bold text-slate-800 dark:text-slate-200 block">{{ t('profile.your_qr_title') }}</span>
-            <p class="text-slate-500 dark:text-slate-400">
-              {{ t('profile.your_qr_sub') }}
-            </p>
-          </div>
-        </div>
 
         <div class="flex items-center justify-end">
           <button type="submit" class="glow-button text-xs flex items-center gap-2 py-2.5">

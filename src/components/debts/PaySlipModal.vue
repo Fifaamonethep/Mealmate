@@ -119,34 +119,25 @@ function handleSendSlip() {
 
       <!-- Upload Slip Photo -->
       <div class="space-y-2">
-        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center justify-between">
-          <span>{{ t('debts.upload_slip_label') }}</span>
+        <div class="flex items-center justify-between">
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">
+            {{ t('debts.slip_image_label') }}
+          </label>
           <button
             type="button"
             @click="triggerSlipFileSelect"
-            class="text-[11px] font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+            class="px-3 py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-300 border border-brand-500/30 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm"
           >
             <Upload class="w-3.5 h-3.5" />
             <span>{{ t('debts.upload_from_gallery') }}</span>
           </button>
-        </label>
-        <div class="flex gap-2">
-          <input
-            v-model="slipUrl"
-            type="text"
-            placeholder="https://..."
-            class="glass-input text-xs w-full"
-          />
-          <button
-            type="button"
-            @click="triggerSlipFileSelect"
-            class="px-3 py-2 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-300 border border-brand-500/30 rounded-xl text-xs font-bold shrink-0 flex items-center gap-1 transition-all"
-          >
-            <Upload class="w-3.5 h-3.5" />
-          </button>
         </div>
-        <div class="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 aspect-video bg-slate-100 dark:bg-slate-950 flex items-center justify-center">
+        <div class="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 aspect-video bg-slate-100 dark:bg-slate-950 flex items-center justify-center relative group cursor-pointer" @click="triggerSlipFileSelect">
           <img :src="slipUrl" class="w-full h-full object-cover" />
+          <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold gap-1.5">
+            <Upload class="w-4 h-4" />
+            <span>{{ t('debts.upload_from_gallery') }}</span>
+          </div>
         </div>
       </div>
     </div>

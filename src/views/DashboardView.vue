@@ -23,7 +23,11 @@ import {
   ArrowRight,
   Shield,
   ChevronDown,
-  Receipt
+  Receipt,
+  UtensilsCrossed,
+  Zap,
+  Clock,
+  CheckCircle2
 } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -33,11 +37,8 @@ const mealsStore = useMealsStore()
 const debtsStore = useDebtsStore()
 const notificationsStore = useNotificationsStore()
 
-const showCreateMenu = ref(false)
 const showCreateMeal = ref(false)
 const showCreateGroup = ref(false)
-const selectedPaymentToPay = ref(null)
-const selectedPaymentToReview = ref(null)
 
 onMounted(() => {
   if (authStore.currentUserId) {
@@ -74,101 +75,158 @@ const userDisplayName = computed(() => {
 <template>
   <div class="space-y-6 pb-12">
     
-    <!-- Welcome Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-brand-900 via-indigo-950 to-slate-950 p-6 md:p-8 rounded-2xl border border-brand-500/30 shadow-xl text-white">
-      <div>
-        <div class="flex items-center gap-2 text-brand-300 font-bold text-xs tracking-wider uppercase">
-          <Sparkles class="w-4 h-4 text-brand-400" />
-          <span>{{ t('dashboard.hero_tag') }}</span>
+    <!-- Ultra-Clean Modern Hero Banner -->
+    <div class="glass-card p-6 sm:p-8 border border-brand-500/40 bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-700 dark:from-brand-950 dark:via-indigo-950 dark:to-slate-900 rounded-3xl shadow-2xl text-white relative overflow-hidden space-y-6">
+      
+      <!-- Glowing Ambient Background Lights -->
+      <div class="absolute -top-20 -right-20 w-72 h-72 bg-brand-400/25 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-20 -left-20 w-72 h-72 bg-purple-400/25 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+        <div class="space-y-2">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="bg-white/20 text-white border border-white/30 text-[11px] uppercase font-black px-3 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-md shadow-sm">
+              <Sparkles class="w-3.5 h-3.5 text-yellow-300" />
+              <span>{{ t('dashboard.hero_tag') }}</span>
+            </span>
+          </div>
+
+          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
+            {{ t('dashboard.welcome') }}, {{ userDisplayName }}! 👋
+          </h1>
+          
+          <p class="text-xs sm:text-sm text-slate-100/90 dark:text-slate-300 max-w-xl leading-relaxed">
+            {{ t('dashboard.sub') }}
+          </p>
         </div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">
-          {{ t('dashboard.welcome') }}, {{ userDisplayName }}! 👋
-        </h1>
-        <p class="text-xs sm:text-sm text-slate-300 mt-1">
-          {{ t('dashboard.sub') }}
-        </p>
+
+        <!-- Quick Action Button -->
+        <div class="flex items-center gap-3 shrink-0">
+          <button
+            @click="showCreateMeal = true"
+            class="bg-white text-brand-700 hover:bg-slate-100 font-black text-xs px-5 py-3.5 rounded-2xl flex items-center justify-center gap-2.5 transition-all shadow-xl shadow-slate-950/20 transform active:scale-95 hover:scale-105"
+          >
+            <Plus class="w-4.5 h-4.5 text-brand-600" />
+            <span>{{ t('dashboard.create_meal') }}</span>
+          </button>
+        </div>
       </div>
 
-      <!-- Quick Action Buttons -->
-      <div class="flex flex-wrap items-center gap-2">
-        <router-link
-          v-if="authStore.isAdmin"
-          to="/admin"
-          class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 transition-all shadow-lg shadow-amber-500/30"
-        >
-          <Shield class="w-4 h-4 text-slate-950 shrink-0" />
-          <span>{{ t('nav.admin') }}</span>
-        </router-link>
-        <!-- Single Primary Action Button: Create Meal -->
-        <button
-          @click="showCreateMeal = true"
-          class="glow-button text-xs flex items-center gap-2 py-2.5 px-4 font-extrabold shadow-lg transform active:scale-95 transition-all"
-        >
-          <Plus class="w-4 h-4" />
-          <span>{{ t('dashboard.create_meal') }}</span>
-        </button>
-      </div>
     </div>
 
-    <!-- Summary Metrics Cards Grid -->
+    <!-- Vibrant & Easy-to-Understand Summary Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
       
-      <!-- Total My Debt -->
-      <div class="glass-card p-5 border border-slate-200/80 dark:border-slate-700/60 flex items-center justify-between">
-        <div class="space-y-1">
-          <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-            {{ t('dashboard.total_my_debt') }}
-          </span>
-          <div class="text-2xl font-extrabold text-rose-600 dark:text-rose-400">
+      <!-- Total My Debt (Tôi cần trả) -->
+      <div class="glass-card p-6 border border-rose-200 dark:border-rose-900/50 bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent dark:bg-slate-900/90 rounded-2xl flex items-center justify-between hover:border-rose-500/60 hover:shadow-xl hover:shadow-rose-500/10 transition-all group">
+        <div class="space-y-1.5">
+          <div class="flex items-center gap-1.5 text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">
+            <TrendingDown class="w-4 h-4 text-rose-500" />
+            <span>{{ t('dashboard.total_my_debt') }}</span>
+          </div>
+          <div class="text-2xl sm:text-3xl font-black text-rose-600 dark:text-rose-400">
             {{ formatCurrency(totalMyDebt, authStore.currentUser?.currency || 'VND', locale) }}
           </div>
-          <span class="text-[11px] text-slate-500 dark:text-slate-400 block">{{ t('dashboard.total_my_debt_sub') }}</span>
+          <span class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold block">
+            {{ t('dashboard.total_my_debt_sub') }}
+          </span>
         </div>
-        <div class="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-600 dark:text-rose-400 shadow-lg shadow-rose-500/10">
+        <div class="w-13 h-13 rounded-2xl bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center shadow-lg shadow-rose-500/20 group-hover:scale-110 transition-transform shrink-0">
           <TrendingDown class="w-6 h-6" />
         </div>
       </div>
 
-      <!-- Total Owed to Me -->
-      <div class="glass-card p-5 border border-slate-200/80 dark:border-slate-700/60 flex items-center justify-between">
-        <div class="space-y-1">
-          <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-            {{ t('dashboard.total_owed_me') }}
-          </span>
-          <div class="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
+      <!-- Total Owed to Me (Người khác nợ tôi) -->
+      <div class="glass-card p-6 border border-emerald-200 dark:border-emerald-900/50 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent dark:bg-slate-900/90 rounded-2xl flex items-center justify-between hover:border-emerald-500/60 hover:shadow-xl hover:shadow-emerald-500/10 transition-all group">
+        <div class="space-y-1.5">
+          <div class="flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+            <TrendingUp class="w-4 h-4 text-emerald-500" />
+            <span>{{ t('dashboard.total_owed_me') }}</span>
+          </div>
+          <div class="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400">
             {{ formatCurrency(totalOwedToMe, authStore.currentUser?.currency || 'VND', locale) }}
           </div>
-          <span class="text-[11px] text-slate-500 dark:text-slate-400 block">{{ t('dashboard.total_owed_me_sub') }}</span>
+          <span class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold block">
+            {{ t('dashboard.total_owed_me_sub') }}
+          </span>
         </div>
-        <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-lg shadow-emerald-500/10">
+        <div class="w-13 h-13 rounded-2xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform shrink-0">
           <TrendingUp class="w-6 h-6" />
         </div>
       </div>
 
-      <!-- Net Balance -->
-      <div class="glass-card p-5 border border-slate-200/80 dark:border-slate-700/60 flex items-center justify-between">
-        <div class="space-y-1">
-          <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-            {{ t('dashboard.net_balance') }}
-          </span>
-          <div :class="['text-2xl font-extrabold', netBalance >= 0 ? 'text-indigo-600 dark:text-indigo-400' : 'text-amber-600 dark:text-amber-400']">
+      <!-- Net Balance (Cân bằng tài chính) -->
+      <div class="glass-card p-6 border border-indigo-200 dark:border-indigo-900/50 bg-gradient-to-br from-indigo-500/10 via-indigo-500/5 to-transparent dark:bg-slate-900/90 rounded-2xl flex items-center justify-between hover:border-indigo-500/60 hover:shadow-xl hover:shadow-indigo-500/10 transition-all group">
+        <div class="space-y-1.5">
+          <div class="flex items-center gap-1.5 text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
+            <Wallet class="w-4 h-4 text-indigo-500" />
+            <span>{{ t('dashboard.net_balance') }}</span>
+          </div>
+          <div :class="['text-2xl sm:text-3xl font-black', netBalance >= 0 ? 'text-indigo-600 dark:text-indigo-400' : 'text-amber-600 dark:text-amber-400']">
             {{ netBalance >= 0 ? '+' : '' }}{{ formatCurrency(netBalance, authStore.currentUser?.currency || 'VND', locale) }}
           </div>
-          <span class="text-[11px] text-slate-500 dark:text-slate-400 block">{{ t('dashboard.net_balance_sub') }}</span>
+          <span class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold block">
+            {{ t('dashboard.net_balance_sub') }}
+          </span>
         </div>
-        <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shadow-lg shadow-indigo-500/10">
+        <div class="w-13 h-13 rounded-2xl bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform shrink-0">
           <Wallet class="w-6 h-6" />
         </div>
+      </div>
+
+    </div>
+
+    <!-- Navigation Shortcuts Bar -->
+    <div class="flex flex-wrap items-center justify-between gap-3 p-4 glass-card border border-slate-200/80 dark:border-slate-800 rounded-2xl">
+      <div class="flex items-center gap-2 font-extrabold text-xs text-slate-700 dark:text-slate-300">
+        <Zap class="w-4 h-4 text-brand-500" />
+        <span>Thao tác nhanh:</span>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <button
+          @click="showCreateMeal = true"
+          class="px-3.5 py-2 rounded-xl bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-300 border border-brand-500/30 text-xs font-bold flex items-center gap-1.5 transition-all"
+        >
+          <Plus class="w-3.5 h-3.5" />
+          <span>Bữa ăn mới</span>
+        </button>
+
+        <router-link
+          to="/groups"
+          class="px-3.5 py-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-300 border border-purple-500/30 text-xs font-bold flex items-center gap-1.5 transition-all"
+        >
+          <Users class="w-3.5 h-3.5" />
+          <span>Nhóm của tôi</span>
+        </router-link>
+
+        <router-link
+          to="/debts"
+          class="px-3.5 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5 transition-all"
+        >
+          <CreditCard class="w-3.5 h-3.5" />
+          <span>Sổ khoản nợ</span>
+        </router-link>
+
+        <router-link
+          v-if="authStore.isAdmin"
+          to="/admin"
+          class="px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5 transition-all"
+        >
+          <Shield class="w-3.5 h-3.5" />
+          <span>Admin Portal</span>
+        </router-link>
       </div>
     </div>
 
     <!-- Recent Meals Section -->
     <div class="space-y-4">
       <div class="flex items-center justify-between">
-        <h2 class="text-lg font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+        <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+          <UtensilsCrossed class="w-5 h-5 text-brand-600 dark:text-brand-400" />
           <span>{{ t('dashboard.recent_activity') }}</span>
         </h2>
-        <router-link to="/meals" class="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-500 flex items-center gap-1">
+        <router-link to="/meals" class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:text-brand-500 flex items-center gap-1 transition-colors">
           {{ t('dashboard.view_all') }} <ArrowRight class="w-3.5 h-3.5" />
         </router-link>
       </div>
