@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import Modal from '../common/Modal.vue'
 import { useAuthStore } from '../../stores/auth'
 import { useDebtsStore } from '../../stores/debts'
-import { QrCode, Upload, Send, Copy, Check } from 'lucide-vue-next'
+import { QrCode, Upload, Send, Copy, Check, Phone, Mail } from 'lucide-vue-next'
 
 const props = defineProps({
   show: Boolean,
@@ -25,14 +25,16 @@ const sampleSlips = [
 const slipUrl = ref(sampleSlips[0])
 
 const creditor = computed(() => {
-  return props.payment ? authStore.users.find(u => u.id === props.payment.creditorId) : null
+  if (!props.payment) return null
+  return authStore.users.find(u => u.id === props.payment.creditorId)
 })
 
 function copyAccountInfo() {
   if (!creditor.value) return
-  navigator.clipboard.writeText(`STK: 19030099882211 - ${creditor.value.name}`)
+  const info = `${creditor.value.name} - SĐT: ${creditor.value.phone} - ${creditor.value.qrCodeUrl}`
+  navigator.clipboard.writeText(info)
   copied.value = true
-  setTimeout(() => copied.value = false, 2000)
+  setTimeout(() => (copied.value = false), 2000)
 }
 
 function handleSendSlip() {
@@ -50,11 +52,20 @@ function handleSendSlip() {
 
     <div v-if="payment && creditor" class="space-y-4 text-slate-800 dark:text-slate-200">
       
-      <!-- Creditor Info & Amount -->
+      <!-- Creditor Info & Amount & Contact -->
       <div class="bg-slate-100 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2 text-center">
         <span class="text-xs text-slate-500 dark:text-slate-400">{{ t('debts.pay_modal_amount_for') }} <strong class="text-slate-800 dark:text-slate-200">{{ creditor.name }}</strong>:</span>
         <div class="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
           {{ payment.amount.toLocaleString() }} VND
+        </div>
+        <!-- Creditor Phone & Email -->
+        <div v-if="creditor.phone || creditor.email" class="pt-2 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex flex-wrap items-center justify-center gap-3">
+          <span v-if="creditor.phone" class="flex items-center gap-1 font-semibold text-slate-700 dark:text-slate-300">
+            <Phone class="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" /> {{ creditor.phone }}
+          </span>
+          <span v-if="creditor.email" class="flex items-center gap-1 font-semibold text-slate-700 dark:text-slate-300">
+            <Mail class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" /> {{ creditor.email }}
+          </span>
         </div>
       </div>
 

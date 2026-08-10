@@ -3,6 +3,7 @@ import { useI18n } from 'vue-i18n'
 import Navbar from './components/navbar/Navbar.vue'
 import MobileBottomNav from './components/navbar/MobileBottomNav.vue'
 import ToastContainer from './components/common/ToastContainer.vue'
+import { Phone, Mail } from 'lucide-vue-next'
 
 const { t } = useI18n()
 </script>
@@ -29,13 +30,21 @@ const { t } = useI18n()
 
     <!-- Footer -->
     <footer class="border-t border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950 py-6 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors duration-300">
-      <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div class="flex items-center gap-2">
-          <span class="font-bold text-slate-800 dark:text-slate-300">MealMate</span>
+          <span class="font-extrabold text-slate-800 dark:text-slate-200">MealMate</span>
           <span>&copy; 2026 - {{ t('footer.tagline') }}</span>
         </div>
-        <div class="text-slate-500 dark:text-slate-400">
-          Powered by Vue 3 + Pinia + Vite + Tailwind CSS + Axios
+        
+        <!-- Contact Info -->
+        <div class="flex flex-wrap items-center gap-4 text-xs">
+          <span class="font-bold text-slate-700 dark:text-slate-300">Liên hệ hỗ trợ:</span>
+          <span class="flex items-center gap-1 font-semibold text-slate-600 dark:text-slate-400">
+            <Phone class="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" /> 0901 234 567
+          </span>
+          <span class="flex items-center gap-1 font-semibold text-slate-600 dark:text-slate-400">
+            <Mail class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" /> support@mealmate.com
+          </span>
         </div>
       </div>
     </footer>
