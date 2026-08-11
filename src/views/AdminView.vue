@@ -8,6 +8,7 @@ import UserManagementModal from '../components/admin/UserManagementModal.vue'
 import DebtMatrixTable from '../components/admin/DebtMatrixTable.vue'
 import {
   Shield,
+  Crown,
   Users,
   Utensils,
   DollarSign,
@@ -54,7 +55,10 @@ const settlementRate = computed(() => {
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
         <div class="space-y-2">
           <div class="flex items-center gap-2.5 flex-wrap">
-            <span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[11px] uppercase font-extrabold px-3 py-1 rounded-full flex items-center gap-1.5 shadow-md backdrop-blur-md">
+            <span v-if="authStore.isSuperAdmin" class="bg-purple-500/30 text-purple-200 border border-purple-400/50 text-[11px] uppercase font-black px-3.5 py-1 rounded-full flex items-center gap-1.5 shadow-md backdrop-blur-md">
+              <Crown class="w-3.5 h-3.5 text-amber-400" /> SuperAdmin Portal
+            </span>
+            <span v-else class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[11px] uppercase font-extrabold px-3 py-1 rounded-full flex items-center gap-1.5 shadow-md backdrop-blur-md">
               <Shield class="w-3.5 h-3.5 text-amber-400" /> Admin Portal
             </span>
             <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-md">

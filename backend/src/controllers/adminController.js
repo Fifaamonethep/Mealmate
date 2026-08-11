@@ -7,9 +7,18 @@ export const getUsers = (req, res) => {
 
 export const toggleLockUser = (req, res) => {
   const { id } = req.params
+  const requester = req.user
   const user = db.getUserById(id)
   if (!user) {
     return res.status(404).json({ message: 'User not found!' })
+  }
+
+  // Hierarchy check: Admin cannot lock Admin or SuperAdmin
+  if (requester.role === 'admin' && (user.role === 'admin' || user.role === 'superadmin')) {
+    return res.status(403).json({ message: 'Admins cannot lock other Admins or SuperAdmins!' })
+  }
+  if (user.id === requester.id) {
+    return res.status(400).json({ message: 'You cannot lock your own account!' })
   }
 
   const updated = db.updateUser(id, { isLocked: !user.isLocked })
@@ -20,14 +29,25 @@ export const toggleLockUser = (req, res) => {
 export const updateUserRole = (req, res) => {
   const { id } = req.params
   const { role } = req.body
+  const requester = req.user
 
-  if (!['user', 'admin'].includes(role)) {
+  if (!['user', 'admin', 'superadmin'].includes(role)) {
     return res.status(400).json({ message: 'Invalid role!' })
   }
 
   const user = db.getUserById(id)
   if (!user) {
     return res.status(404).json({ message: 'User not found!' })
+  }
+
+  // Only SuperAdmin can grant or revoke SuperAdmin role
+  if (role === 'superadmin' && requester.role !== 'superadmin') {
+    return res.status(403).json({ message: 'Only SuperAdmin can assign the SuperAdmin role!' })
+  }
+
+  // Admins cannot change role of other Admins or SuperAdmins
+  if (requester.role === 'admin' && (user.role === 'admin' || user.role === 'superadmin')) {
+    return res.status(403).json({ message: 'Admins cannot change roles of other Admins or SuperAdmins!' })
   }
 
   const updated = db.updateUser(id, { role })

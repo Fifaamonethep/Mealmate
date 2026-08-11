@@ -1,5 +1,17 @@
 export const INITIAL_USERS = [
   {
+    id: 'u-superadmin',
+    username: 'superadmin',
+    passwordHash: '123',
+    name: 'SuperAdmin ຜູ້ດູແລລະບົບສູງສຸດ',
+    email: 'superadmin@mealmate.la',
+    phone: '2099998888',
+    role: 'superadmin',
+    currency: 'LAK',
+    avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=SuperAdmin',
+    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-SUPERADMIN-2099998888'
+  },
+  {
     id: 'u-admin',
     username: 'admin',
     passwordHash: '123',

@@ -25,7 +25,8 @@ export const useAuthStore = defineStore('auth', () => {
     return users.value.find(u => u.id === currentUserId.value) || null
   })
 
-  const isAdmin = computed(() => currentUser.value?.role === 'admin')
+  const isSuperAdmin = computed(() => currentUser.value?.role === 'superadmin')
+  const isAdmin = computed(() => currentUser.value?.role === 'admin' || currentUser.value?.role === 'superadmin')
 
   async function fetchUsers() {
     try {
@@ -227,6 +228,7 @@ export const useAuthStore = defineStore('auth', () => {
     currentUserId,
     currentUser,
     token,
+    isSuperAdmin,
     isAdmin,
     fetchUsers,
     login,
