@@ -80,7 +80,7 @@ const totalExpenses = computed(() => {
       <div>
         <span class="text-slate-500 dark:text-slate-400">{{ t('groups.total_expenses') }}</span>
         <div class="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm mt-0.5">
-          {{ formatCurrency(totalExpenses, 'VND', locale) }}
+          {{ formatCurrency(totalExpenses, 'LAK', locale) }}
         </div>
       </div>
       <div>

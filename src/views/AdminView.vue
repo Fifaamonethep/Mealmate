@@ -111,7 +111,7 @@ const settlementRate = computed(() => {
             <span class="text-slate-300 font-bold flex items-center gap-1.5">
               <Layers class="w-3.5 h-3.5 text-indigo-400" /> Đã quyết toán
             </span>
-            <span class="font-extrabold text-indigo-300">{{ formatCurrency(settledVolume, 'VND', locale) }}</span>
+            <span class="font-extrabold text-indigo-300">{{ formatCurrency(settledVolume, 'LAK', locale) }}</span>
           </div>
           <div class="w-full h-2 bg-slate-950/60 rounded-full overflow-hidden p-0.5 border border-white/10">
             <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-400 rounded-full transition-all duration-500" :style="{ width: `${settlementRate}%` }"></div>
@@ -175,7 +175,7 @@ const settlementRate = computed(() => {
         </div>
         <div class="space-y-1">
           <div class="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 truncate">
-            {{ formatCurrency(adminStore.systemMetrics.totalVolume, 'VND', locale) }}
+            {{ formatCurrency(adminStore.systemMetrics.totalVolume, 'LAK', locale) }}
           </div>
           <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold block">{{ t('admin.metric_volume') }}</span>
         </div>
@@ -191,7 +191,7 @@ const settlementRate = computed(() => {
         </div>
         <div class="space-y-1">
           <div class="text-xl sm:text-2xl font-black text-rose-600 dark:text-rose-400 truncate">
-            {{ formatCurrency(adminStore.systemMetrics.totalUnpaid, 'VND', locale) }}
+            {{ formatCurrency(adminStore.systemMetrics.totalUnpaid, 'LAK', locale) }}
           </div>
           <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold block">{{ t('admin.metric_pending') }}</span>
         </div>

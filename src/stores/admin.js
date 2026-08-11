@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useAuthStore } from './auth'
 import { useMealsStore } from './meals'
 import { useDebtsStore } from './debts'
+import api from '../services/api'
 
 export const useAdminStore = defineStore('admin', () => {
   const authStore = useAuthStore()
@@ -48,7 +49,20 @@ export const useAdminStore = defineStore('admin', () => {
     return matrix
   })
 
-  function toggleUserLock(userId) {
+  async function toggleUserLock(userId) {
+    try {
+      const data = await api.put(`/admin/users/${userId}/lock`)
+      if (data.user) {
+        const idx = authStore.users.findIndex(u => u.id === userId)
+        if (idx !== -1) authStore.users[idx] = data.user
+        authStore.saveUsers()
+        return
+      }
+    } catch (err) {
+      console.warn('Backend toggleUserLock failed, using local fallback:', err.message)
+    }
+
+    // Local Fallback
     const user = authStore.users.find(u => u.id === userId)
     if (user && user.role !== 'admin') {
       user.isLocked = !user.isLocked
@@ -56,7 +70,20 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
-  function changeUserRole(userId, newRole) {
+  async function changeUserRole(userId, newRole) {
+    try {
+      const data = await api.put(`/admin/users/${userId}/role`, { role: newRole })
+      if (data.user) {
+        const idx = authStore.users.findIndex(u => u.id === userId)
+        if (idx !== -1) authStore.users[idx] = data.user
+        authStore.saveUsers()
+        return
+      }
+    } catch (err) {
+      console.warn('Backend changeUserRole failed, using local fallback:', err.message)
+    }
+
+    // Local Fallback
     const user = authStore.users.find(u => u.id === userId)
     if (user) {
       user.role = newRole
@@ -64,7 +91,14 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
-  function resetUserPassword(userId, newPassword) {
+  async function resetUserPassword(userId, newPassword) {
+    try {
+      await api.put(`/admin/users/${userId}/password`, { newPassword })
+    } catch (err) {
+      console.warn('Backend resetUserPassword failed, using local fallback:', err.message)
+    }
+
+    // Local Fallback
     const user = authStore.users.find(u => u.id === userId)
     if (user) {
       user.passwordHash = newPassword

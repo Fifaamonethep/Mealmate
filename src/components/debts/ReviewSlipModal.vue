@@ -77,7 +77,7 @@ function handleReject() {
         <div class="text-right">
           <span class="text-xs text-slate-500 dark:text-slate-400">{{ t('debts.bill_amount') }}</span>
           <div class="text-xl font-extrabold text-emerald-600 dark:text-emerald-400">
-            {{ formatCurrency(payment.amount, meal?.currency || 'VND', locale) }}
+            {{ formatCurrency(payment.amount, meal?.currency || 'LAK', locale) }}
           </div>
         </div>
       </div>

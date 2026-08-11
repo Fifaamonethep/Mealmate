@@ -5,6 +5,7 @@ import { useDebtsStore } from './debts'
 import { useNotificationsStore } from './notifications'
 import { formatCurrency } from '../utils/currency'
 import i18n from '../i18n'
+import api from '../services/api'
 
 export const useMealsStore = defineStore('meals', () => {
   const meals = ref(JSON.parse(localStorage.getItem('mealmate_meals')) || INITIAL_MEALS)
@@ -13,16 +14,43 @@ export const useMealsStore = defineStore('meals', () => {
     localStorage.setItem('mealmate_meals', JSON.stringify(meals.value))
   }
 
+  async function fetchMeals() {
+    try {
+      const data = await api.get('/meals')
+      if (Array.isArray(data)) {
+        meals.value = data
+        saveMeals()
+      }
+    } catch (err) {
+      console.warn('Backend fetchMeals failed, using local state:', err.message)
+    }
+  }
+
   function getMealById(id) {
     return meals.value.find(m => m.id === id)
   }
 
-  function createMeal(mealData) {
+  async function createMeal(mealData) {
     const debtsStore = useDebtsStore()
     const notificationsStore = useNotificationsStore()
 
+    let newMeal = null
+    try {
+      const data = await api.post('/meals', mealData)
+      if (data.meal) {
+        newMeal = data.meal
+        meals.value.unshift(newMeal)
+        saveMeals()
+        await debtsStore.fetchDebts()
+        return newMeal
+      }
+    } catch (err) {
+      console.warn('Backend createMeal failed, falling back to local creation:', err.message)
+    }
+
+    // Local Fallback
     const mealId = `m-${Date.now()}`
-    const newMeal = {
+    newMeal = {
       id: mealId,
       title: mealData.title,
       totalAmount: Number(mealData.totalAmount),
@@ -47,7 +75,7 @@ export const useMealsStore = defineStore('meals', () => {
       amountPerPerson = Math.round(Number(mealData.totalAmount) / mealData.participants.length)
     }
 
-    const locale = i18n.global.locale.value || 'vi'
+    const locale = i18n.global.locale.value || 'lo'
 
     debtors.forEach(debtorId => {
       const debtAmount = mealData.splitType === 'equal' 
@@ -77,8 +105,13 @@ export const useMealsStore = defineStore('meals', () => {
     return newMeal
   }
 
-  function deleteMeal(mealId) {
+  async function deleteMeal(mealId) {
     const debtsStore = useDebtsStore()
+    try {
+      await api.delete(`/meals/${mealId}`)
+    } catch (err) {
+      console.warn('Backend deleteMeal failed, using local fallback:', err.message)
+    }
     meals.value = meals.value.filter(m => m.id !== mealId)
     saveMeals()
     debtsStore.deletePaymentsByMealId(mealId)
@@ -86,6 +119,7 @@ export const useMealsStore = defineStore('meals', () => {
 
   return {
     meals,
+    fetchMeals,
     getMealById,
     createMeal,
     deleteMeal,

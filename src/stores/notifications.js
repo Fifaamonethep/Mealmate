@@ -3,12 +3,25 @@ import { ref } from 'vue'
 import { INITIAL_NOTIFICATIONS } from '../mock/seedData'
 import { formatCurrency } from '../utils/currency'
 import i18n from '../i18n'
+import api from '../services/api'
 
 export const useNotificationsStore = defineStore('notifications', () => {
   const notifications = ref(JSON.parse(localStorage.getItem('mealmate_notifications')) || INITIAL_NOTIFICATIONS)
 
   function saveNotifications() {
     localStorage.setItem('mealmate_notifications', JSON.stringify(notifications.value))
+  }
+
+  async function fetchNotifications() {
+    try {
+      const data = await api.get('/notifications')
+      if (Array.isArray(data)) {
+        notifications.value = data
+        saveNotifications()
+      }
+    } catch (err) {
+      console.warn('Backend fetchNotifications failed, using local state:', err.message)
+    }
   }
 
   function addNotification({ userId, title, message }) {
@@ -33,7 +46,13 @@ export const useNotificationsStore = defineStore('notifications', () => {
     }
   }
 
-  function markAllAsRead(userId) {
+  async function markAllAsRead(userId) {
+    try {
+      await api.put('/notifications/read-all')
+    } catch (err) {
+      console.warn('Backend markAllAsRead failed, using local fallback:', err.message)
+    }
+
     notifications.value.forEach(n => {
       if (n.userId === userId) {
         n.isRead = true
@@ -45,13 +64,13 @@ export const useNotificationsStore = defineStore('notifications', () => {
   // Trigger auto reminder simulation for debts older than 3 days
   function triggerOverdueReminderCheck(payments, currentUserId) {
     const threeDaysAgo = Date.now() - 3 * 86400000
-    const locale = i18n.global.locale.value || 'vi'
+    const locale = i18n.global.locale.value || 'lo'
 
     payments.forEach(p => {
       if (p.debtorId === currentUserId && p.status === 'pending') {
         const createdTime = new Date(p.createdAt).getTime()
         if (createdTime < threeDaysAgo) {
-          const formattedAmt = formatCurrency(p.amount, 'VND', locale)
+          const formattedAmt = formatCurrency(p.amount, 'LAK', locale)
           const exists = notifications.value.some(
             n => n.userId === currentUserId && (n.message.includes(`${p.amount}`) || n.message.includes(formattedAmt))
           )
@@ -69,6 +88,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
 
   return {
     notifications,
+    fetchNotifications,
     addNotification,
     markAsRead,
     markAllAsRead,

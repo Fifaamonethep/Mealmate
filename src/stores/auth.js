@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { INITIAL_USERS } from '../mock/seedData'
 import i18n from '../i18n'
+import api from '../services/api'
 
 export const useAuthStore = defineStore('auth', () => {
   const loadedUsers = JSON.parse(localStorage.getItem('mealmate_users')) || INITIAL_USERS
@@ -26,7 +27,41 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAdmin = computed(() => currentUser.value?.role === 'admin')
 
-  function login(username, password) {
+  async function fetchUsers() {
+    try {
+      const data = await api.get('/auth/users')
+      if (Array.isArray(data)) {
+        users.value = data
+        saveUsers()
+      }
+    } catch (err) {
+      console.warn('Backend offline or unreachable, using local users state:', err.message)
+    }
+  }
+
+  async function login(username, password) {
+    try {
+      const data = await api.post('/auth/login', { username, password })
+      if (data.user && data.token) {
+        currentUserId.value = data.user.id
+        token.value = data.token
+        localStorage.setItem('mealmate_session_user_id', data.user.id)
+        localStorage.setItem('mealmate_session_token', data.token)
+        
+        // Update user in list
+        const idx = users.value.findIndex(u => u.id === data.user.id)
+        if (idx !== -1) users.value[idx] = data.user
+        else users.value.push(data.user)
+        saveUsers()
+        return data.user
+      }
+    } catch (err) {
+      if (err.message && !err.message.includes('Network Error') && !err.message.includes('API Request Failed')) {
+        throw err
+      }
+    }
+
+    // Local Fallback
     const user = users.value.find(u => u.username.toLowerCase() === username.toLowerCase())
     if (!user) throw new Error(i18n.global.t('auth.user_not_found'))
     if (user.passwordHash !== password && password !== '123' && user.passwordHash !== `${username}123`) throw new Error(i18n.global.t('auth.incorrect_password'))
@@ -39,7 +74,25 @@ export const useAuthStore = defineStore('auth', () => {
     return user
   }
 
-  function register(userData) {
+  async function register(userData) {
+    try {
+      const data = await api.post('/auth/register', userData)
+      if (data.user && data.token) {
+        currentUserId.value = data.user.id
+        token.value = data.token
+        localStorage.setItem('mealmate_session_user_id', data.user.id)
+        localStorage.setItem('mealmate_session_token', data.token)
+        users.value.push(data.user)
+        saveUsers()
+        return data.user
+      }
+    } catch (err) {
+      if (err.message && !err.message.includes('Network Error') && !err.message.includes('API Request Failed')) {
+        throw err
+      }
+    }
+
+    // Local Fallback
     const exists = users.value.some(u => u.username.toLowerCase() === userData.username.toLowerCase())
     if (exists) throw new Error(i18n.global.t('auth.username_exists'))
 
@@ -72,10 +125,23 @@ export const useAuthStore = defineStore('auth', () => {
     currentUserId.value = target.id
     token.value = `mock_jwt_token_${target.id}_${Date.now()}`
     localStorage.setItem('mealmate_session_user_id', target.id)
-    localStorage.setItem('mealmate_session_token', token.value)
+    localStorage.setItem('mealmate_session_token', target.id)
   }
 
-  function updateProfile(updatedData) {
+  async function updateProfile(updatedData) {
+    try {
+      const data = await api.put('/auth/profile', updatedData)
+      if (data.user) {
+        const idx = users.value.findIndex(u => u.id === currentUserId.value)
+        if (idx !== -1) users.value[idx] = data.user
+        saveUsers()
+        return
+      }
+    } catch (err) {
+      console.warn('Backend updateProfile failed, updating local state:', err.message)
+    }
+
+    // Local Fallback
     const idx = users.value.findIndex(u => u.id === currentUserId.value)
     if (idx !== -1) {
       users.value[idx] = { ...users.value[idx], ...updatedData }
@@ -98,6 +164,7 @@ export const useAuthStore = defineStore('auth', () => {
     currentUser,
     token,
     isAdmin,
+    fetchUsers,
     login,
     register,
     switchUser,

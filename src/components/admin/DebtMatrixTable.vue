@@ -138,7 +138,7 @@ const activeDebtsList = computed(() => {
             </span>
 
             <span class="text-base font-black text-rose-600 dark:text-rose-400 bg-rose-500/10 border border-rose-500/30 px-3 py-1 rounded-xl shadow-sm">
-              {{ formatCurrency(item.amount, 'VND', locale) }}
+              {{ formatCurrency(item.amount, 'LAK', locale) }}
             </span>
           </div>
         </div>
@@ -201,7 +201,7 @@ const activeDebtsList = computed(() => {
               </template>
               <template v-else-if="adminStore.debtMatrix[debtor.id] && adminStore.debtMatrix[debtor.id][creditor.id] > 0">
                 <span class="text-rose-600 dark:text-rose-400 font-black bg-rose-500/10 border border-rose-500/30 px-3 py-1.5 rounded-xl inline-block shadow-sm">
-                  {{ formatCurrency(adminStore.debtMatrix[debtor.id][creditor.id], 'VND', locale) }}
+                  {{ formatCurrency(adminStore.debtMatrix[debtor.id][creditor.id], 'LAK', locale) }}
                 </span>
               </template>
               <template v-else>

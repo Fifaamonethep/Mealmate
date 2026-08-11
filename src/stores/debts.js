@@ -7,12 +7,25 @@ import { useToastStore } from './toast'
 import { useMealsStore } from './meals'
 import { formatCurrency } from '../utils/currency'
 import i18n from '../i18n'
+import api from '../services/api'
 
 export const useDebtsStore = defineStore('debts', () => {
   const payments = ref(JSON.parse(localStorage.getItem('mealmate_payments')) || INITIAL_PAYMENTS)
 
   function savePayments() {
     localStorage.setItem('mealmate_payments', JSON.stringify(payments.value))
+  }
+
+  async function fetchDebts() {
+    try {
+      const data = await api.get('/debts')
+      if (Array.isArray(data)) {
+        payments.value = data
+        savePayments()
+      }
+    } catch (err) {
+      console.warn('Backend fetchDebts failed, using local state:', err.message)
+    }
   }
 
   function createPayment(paymentData) {
@@ -32,11 +45,26 @@ export const useDebtsStore = defineStore('debts', () => {
     return newPayment
   }
 
-  function sendSlip(paymentId, slipUrl) {
+  async function sendSlip(paymentId, slipUrl) {
     const notifStore = useNotificationsStore()
     const authStore = useAuthStore()
     const toastStore = useToastStore()
     const mealsStore = useMealsStore()
+
+    try {
+      const data = await api.put(`/debts/${paymentId}/slip`, { slipUrl })
+      if (data.payment) {
+        const idx = payments.value.findIndex(p => p.id === paymentId)
+        if (idx !== -1) payments.value[idx] = data.payment
+        savePayments()
+        toastStore.showToast(i18n.global.t('debts.slip_sent_toast'), 'success')
+        return
+      }
+    } catch (err) {
+      console.warn('Backend sendSlip failed, using local fallback:', err.message)
+    }
+
+    // Local Fallback
     const p = payments.value.find(item => item.id === paymentId)
     if (!p) return
 
@@ -58,10 +86,25 @@ export const useDebtsStore = defineStore('debts', () => {
     toastStore.showToast(i18n.global.t('debts.slip_sent_toast'), 'success')
   }
 
-  function confirmPayment(paymentId) {
+  async function confirmPayment(paymentId) {
     const notifStore = useNotificationsStore()
     const toastStore = useToastStore()
     const mealsStore = useMealsStore()
+
+    try {
+      const data = await api.put(`/debts/${paymentId}/confirm`)
+      if (data.payment) {
+        const idx = payments.value.findIndex(p => p.id === paymentId)
+        if (idx !== -1) payments.value[idx] = data.payment
+        savePayments()
+        toastStore.showToast(i18n.global.t('debts.payment_approved_toast'), 'success')
+        return
+      }
+    } catch (err) {
+      console.warn('Backend confirmPayment failed, using local fallback:', err.message)
+    }
+
+    // Local Fallback
     const p = payments.value.find(item => item.id === paymentId)
     if (!p) return
 
@@ -80,9 +123,24 @@ export const useDebtsStore = defineStore('debts', () => {
     toastStore.showToast(i18n.global.t('debts.payment_approved_toast'), 'success')
   }
 
-  function rejectPayment(paymentId, reason) {
+  async function rejectPayment(paymentId, reason) {
     const notifStore = useNotificationsStore()
     const toastStore = useToastStore()
+
+    try {
+      const data = await api.put(`/debts/${paymentId}/reject`, { reason })
+      if (data.payment) {
+        const idx = payments.value.findIndex(p => p.id === paymentId)
+        if (idx !== -1) payments.value[idx] = data.payment
+        savePayments()
+        toastStore.showToast(i18n.global.t('debts.payment_rejected_toast'), 'warning')
+        return
+      }
+    } catch (err) {
+      console.warn('Backend rejectPayment failed, using local fallback:', err.message)
+    }
+
+    // Local Fallback
     const p = payments.value.find(item => item.id === paymentId)
     if (!p) return
 
@@ -98,9 +156,24 @@ export const useDebtsStore = defineStore('debts', () => {
     toastStore.showToast(i18n.global.t('debts.payment_rejected_toast'), 'warning')
   }
 
-  function forceAdminAction(paymentId, status, reason = '') {
+  async function forceAdminAction(paymentId, status, reason = '') {
     const notifStore = useNotificationsStore()
     const toastStore = useToastStore()
+
+    try {
+      const data = await api.put(`/debts/${paymentId}/force`, { status, reason })
+      if (data.payment) {
+        const idx = payments.value.findIndex(p => p.id === paymentId)
+        if (idx !== -1) payments.value[idx] = data.payment
+        savePayments()
+        toastStore.showToast(i18n.global.t('debts.admin_status_changed_toast', { status: status.toUpperCase() }), 'info')
+        return
+      }
+    } catch (err) {
+      console.warn('Backend forceAdminAction failed, using local fallback:', err.message)
+    }
+
+    // Local Fallback
     const p = payments.value.find(item => item.id === paymentId)
     if (!p) return
 
@@ -132,6 +205,7 @@ export const useDebtsStore = defineStore('debts', () => {
 
   return {
     payments,
+    fetchDebts,
     createPayment,
     sendSlip,
     confirmPayment,

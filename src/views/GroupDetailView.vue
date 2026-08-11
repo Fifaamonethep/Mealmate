@@ -192,7 +192,7 @@ function handleDisbandGroup() {
             <div>
               <span class="text-slate-500 dark:text-slate-400">{{ t('groups.total_expenses') }}</span>
               <div class="font-extrabold text-emerald-600 dark:text-emerald-400 text-base">
-                {{ formatCurrency(totalExpenses, 'VND', locale) }}
+                {{ formatCurrency(totalExpenses, 'LAK', locale) }}
               </div>
             </div>
             <div class="pl-4 border-l border-slate-200 dark:border-slate-800">

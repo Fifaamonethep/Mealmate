@@ -89,7 +89,7 @@ function handleSendSlip() {
       <div class="bg-slate-100 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2 text-center">
         <span class="text-xs text-slate-500 dark:text-slate-400">{{ t('debts.pay_modal_amount_for') }} <strong class="text-slate-800 dark:text-slate-200">{{ creditor.name }}</strong>:</span>
         <div class="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
-          {{ formatCurrency(payment.amount, meal?.currency || 'VND', locale) }}
+          {{ formatCurrency(payment.amount, meal?.currency || 'LAK', locale) }}
         </div>
         <!-- Creditor Phone & Email -->
         <div v-if="creditor.phone || creditor.email" class="pt-2 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex flex-wrap items-center justify-center gap-3">

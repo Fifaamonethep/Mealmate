@@ -44,7 +44,7 @@ export const register = (req, res) => {
     email: email || '',
     phone: phone || '',
     role: 'user',
-    currency: currency || 'VND',
+    currency: currency || 'LAK',
     avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`,
     qrCodeUrl: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=VIETQR-${username.toUpperCase()}-00000`,
     isLocked: false,

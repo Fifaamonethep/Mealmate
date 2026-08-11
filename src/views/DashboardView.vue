@@ -75,8 +75,8 @@ const userDisplayName = computed(() => {
 <template>
   <div class="space-y-6 pb-12">
     
-    <!-- Ultra-Clean Modern Hero Banner -->
-    <div class="glass-card p-6 sm:p-8 border border-brand-500/40 bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-700 dark:from-brand-950 dark:via-indigo-950 dark:to-slate-900 rounded-3xl shadow-2xl text-white relative overflow-hidden space-y-6">
+    <!-- Ultra-Clean Modern Hero Banner (Pastel Aesthetic) -->
+    <div class="glass-card p-6 sm:p-8 border border-purple-300/40 dark:border-purple-800/40 bg-gradient-to-r from-purple-500 via-indigo-500 to-pink-500 dark:from-purple-950 dark:via-indigo-950 dark:to-slate-900 rounded-3xl shadow-xl text-white relative overflow-hidden space-y-6">
       
       <!-- Glowing Ambient Background Lights -->
       <div class="absolute -top-20 -right-20 w-72 h-72 bg-brand-400/25 rounded-full blur-3xl pointer-events-none"></div>

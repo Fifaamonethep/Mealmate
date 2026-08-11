@@ -1,11 +1,34 @@
 <script setup>
+import { onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useAuthStore } from './stores/auth'
+import { useMealsStore } from './stores/meals'
+import { useGroupsStore } from './stores/groups'
+import { useDebtsStore } from './stores/debts'
+import { useNotificationsStore } from './stores/notifications'
 import Navbar from './components/navbar/Navbar.vue'
 import MobileBottomNav from './components/navbar/MobileBottomNav.vue'
 import ToastContainer from './components/common/ToastContainer.vue'
 import { Phone, Mail } from 'lucide-vue-next'
 
+const route = useRoute()
+const authStore = useAuthStore()
+const mealsStore = useMealsStore()
+const groupsStore = useGroupsStore()
+const debtsStore = useDebtsStore()
+const notificationsStore = useNotificationsStore()
 const { t } = useI18n()
+
+onMounted(async () => {
+  await Promise.allSettled([
+    authStore.fetchUsers(),
+    mealsStore.fetchMeals(),
+    groupsStore.fetchGroups(),
+    debtsStore.fetchDebts(),
+    notificationsStore.fetchNotifications()
+  ])
+})
 </script>
 
 <template>
@@ -28,8 +51,8 @@ const { t } = useI18n()
     <!-- Global Toast Popups -->
     <ToastContainer />
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950 py-6 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors duration-300">
+    <!-- Footer (Hidden on Login Page) -->
+    <footer v-if="route.path !== '/login' && authStore.currentUserId" class="border-t border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950 py-6 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors duration-300">
       <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div class="flex items-center gap-2">
           <span class="font-extrabold text-slate-800 dark:text-slate-200">MealMate</span>

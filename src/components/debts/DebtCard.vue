@@ -83,7 +83,7 @@ function formatDate(isoStr) {
     <div class="flex items-center justify-between md:justify-end gap-4 border-t md:border-t-0 pt-3 md:pt-0 border-slate-200 dark:border-slate-800">
       <div class="text-right">
         <div :class="['text-lg font-extrabold', isDebtor ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400']">
-          {{ isDebtor ? '-' : '+' }}{{ formatCurrency(payment.amount, meal?.currency || 'VND', locale) }}
+          {{ isDebtor ? '-' : '+' }}{{ formatCurrency(payment.amount, meal?.currency || 'LAK', locale) }}
         </div>
       </div>
 
