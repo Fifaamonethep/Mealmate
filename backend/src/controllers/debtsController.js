@@ -54,7 +54,7 @@ export const confirmPayment = (req, res) => {
     id: `n-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
     userId: debt.debtorId,
     title: 'Thanh toán đã được duyệt! 🎉',
-    message: `Chủ nợ đã xác nhận nhận đủ tiền chuyển khoản (${debt.amount.toLocaleString()} ${meal?.currency || 'VND'}). Khoản nợ đã hoàn tất.`,
+    message: `Chủ nợ đã xác nhận nhận đủ tiền chuyển khoản (${debt.amount.toLocaleString()} ${meal?.currency || 'LAK'}). Khoản nợ đã hoàn tất.`,
     isRead: false,
     createdAt: new Date().toISOString()
   })
