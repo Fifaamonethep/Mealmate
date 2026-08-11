@@ -16,7 +16,7 @@ const form = ref({
   name: authStore.currentUser?.name || '',
   email: authStore.currentUser?.email || '',
   phone: authStore.currentUser?.phone || '',
-  currency: authStore.currentUser?.currency || 'VND',
+  currency: authStore.currentUser?.currency || 'LAK',
   avatar: authStore.currentUser?.avatar || '',
   qrCodeUrl: authStore.currentUser?.qrCodeUrl || ''
 })
@@ -140,48 +140,32 @@ function handleChangePassword() {
     <!-- Main Profile Card -->
     <div class="glass-card p-6 border border-slate-200/80 dark:border-slate-700/60 space-y-6">
       
-      <!-- User Avatar header with Camera overlay -->
-      <div class="flex items-center gap-4 p-4 bg-slate-100 dark:bg-slate-950/60 rounded-2xl border border-slate-200 dark:border-slate-800">
-        <div class="relative group cursor-pointer shrink-0" @click="triggerAvatarFileSelect" :title="t('profile.upload_gallery')">
-          <img :src="form.avatar || authStore.currentUser?.avatar" class="w-16 h-16 rounded-full border-2 border-brand-500/60 bg-slate-200 dark:bg-slate-900 object-cover shadow-md transition-transform group-hover:scale-105" />
-          <div class="absolute inset-0 bg-slate-950/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <Camera class="w-5 h-5 text-white" />
+      <!-- User Avatar header with Direct Camera / Gallery Upload -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-slate-100 dark:bg-slate-950/60 rounded-2xl border border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-4">
+          <div class="relative group cursor-pointer shrink-0" @click="triggerAvatarFileSelect" :title="t('profile.upload_gallery')">
+            <img :src="form.avatar || authStore.currentUser?.avatar" class="w-16 h-16 rounded-full border-2 border-brand-500/60 bg-slate-200 dark:bg-slate-900 object-cover shadow-md transition-transform group-hover:scale-105" />
+            <div class="absolute inset-0 bg-slate-950/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <Camera class="w-5 h-5 text-white" />
+            </div>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">{{ form.name || authStore.currentUser?.name }}</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">@{{ authStore.currentUser?.username }}</p>
           </div>
         </div>
-        <div>
-          <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">{{ form.name || authStore.currentUser?.name }}</h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400">@{{ authStore.currentUser?.username }}</p>
-        </div>
+
+        <button
+          type="button"
+          @click="triggerAvatarFileSelect"
+          class="w-full sm:w-auto px-4 py-2.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-300 border border-brand-500/30 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shrink-0 transition-all shadow-sm"
+        >
+          <Camera class="w-4 h-4" />
+          <span>{{ t('profile.upload_gallery') }}</span>
+        </button>
       </div>
 
       <form @submit.prevent="handleSave" class="space-y-4 text-slate-800 dark:text-slate-200">
-        <!-- Avatar Preset & Gallery Selection Bar -->
-        <div class="flex flex-wrap items-center justify-between gap-3 p-3 bg-slate-100 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800">
-          <div class="flex items-center gap-2">
-            <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">{{ t('common.suggestions') }}</span>
-            <div class="flex items-center gap-1.5">
-              <img
-                v-for="(img, idx) in sampleAvatars"
-                :key="idx"
-                :src="img"
-                @click="form.avatar = img"
-                :class="[
-                  'w-7.5 h-7.5 rounded-full object-cover cursor-pointer border transition-all bg-slate-200 dark:bg-slate-800',
-                  form.avatar === img ? 'border-brand-500 ring-2 ring-brand-500/30 scale-110' : 'border-slate-300 dark:border-slate-700 opacity-70 hover:opacity-100'
-                ]"
-              />
-            </div>
-          </div>
-
-          <button
-            type="button"
-            @click="triggerAvatarFileSelect"
-            class="px-3.5 py-2 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-300 border border-brand-500/30 rounded-xl text-xs font-bold flex items-center gap-2 shrink-0 transition-all shadow-sm"
-          >
-            <Image class="w-4 h-4" />
-            <span>{{ t('profile.upload_gallery') }}</span>
-          </button>
-        </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
@@ -203,10 +187,10 @@ function handleChangePassword() {
         <div>
           <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ t('profile.default_currency') }}</label>
           <select v-model="form.currency" class="w-full glass-input text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
-            <option value="VND">{{ t('common.currency_vnd') }}</option>
+            <option value="LAK">{{ t('common.currency_lak') }}</option>
             <option value="THB">{{ t('common.currency_thb') }}</option>
             <option value="USD">{{ t('common.currency_usd') }}</option>
-            <option value="LAK">{{ t('common.currency_lak') }}</option>
+            <option value="VND">{{ t('common.currency_vnd') }}</option>
           </select>
         </div>
 

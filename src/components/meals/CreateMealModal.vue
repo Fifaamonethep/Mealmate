@@ -27,7 +27,7 @@ const receiptFileInput = ref(null)
 const showAiScanner = ref(false)
 const title = ref('')
 const totalAmount = ref('')
-const currency = ref('VND')
+const currency = ref('LAK')
 const paidById = ref(authStore.currentUserId)
 const groupId = ref('')
 const splitType = ref('equal')
@@ -206,10 +206,10 @@ function handleSubmit() {
         <div>
           <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ t('meals.currency') }}</label>
           <select v-model="currency" class="w-full glass-input text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
-            <option value="VND">{{ t('common.currency_vnd') }}</option>
+            <option value="LAK">{{ t('common.currency_lak') }}</option>
             <option value="THB">{{ t('common.currency_thb') }}</option>
             <option value="USD">{{ t('common.currency_usd') }}</option>
-            <option value="LAK">{{ t('common.currency_lak') }}</option>
+            <option value="VND">{{ t('common.currency_vnd') }}</option>
           </select>
         </div>
         <div>

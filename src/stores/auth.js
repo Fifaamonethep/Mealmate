@@ -4,7 +4,15 @@ import { INITIAL_USERS } from '../mock/seedData'
 import i18n from '../i18n'
 
 export const useAuthStore = defineStore('auth', () => {
-  const users = ref(JSON.parse(localStorage.getItem('mealmate_users')) || INITIAL_USERS)
+  const loadedUsers = JSON.parse(localStorage.getItem('mealmate_users')) || INITIAL_USERS
+  if (Array.isArray(loadedUsers)) {
+    loadedUsers.forEach(u => {
+      if (!u.currency || u.currency === 'VND') {
+        u.currency = 'LAK'
+      }
+    })
+  }
+  const users = ref(loadedUsers)
   const currentUserId = ref(localStorage.getItem('mealmate_session_user_id') || '')
   const token = ref(localStorage.getItem('mealmate_session_token') || '')
 
@@ -43,9 +51,9 @@ export const useAuthStore = defineStore('auth', () => {
       email: userData.email || '',
       phone: userData.phone || '',
       role: 'user',
-      currency: userData.currency || 'VND',
+      currency: userData.currency || 'LAK',
       avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.username}`,
-      qrCodeUrl: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=VIETQR-${userData.username.toUpperCase()}-00000`
+      qrCodeUrl: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-${userData.username.toUpperCase()}-00000`
     }
 
     users.value.push(newUser)

@@ -3,57 +3,57 @@ export const INITIAL_USERS = [
     id: 'u-admin',
     username: 'admin',
     passwordHash: '123',
-    name: 'Quản trị viên (Admin)',
+    name: 'ຜູ້ດູແລລະບົບ (Admin)',
     email: 'sokeskesannouanlaty@gmail.com',
     phone: '2098667856',
     role: 'admin',
-    currency: 'VND',
+    currency: 'LAK',
     avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Admin',
-    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=VIETQR-ADMIN-2098667856'
+    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-ADMIN-2098667856'
   },
   {
     id: 'u-alice',
     username: 'alice',
     passwordHash: '123',
-    name: 'Alice Nguyễn',
+    name: 'Alice Vongxay',
     email: 'alice@gmail.com',
-    phone: '0912345678',
+    phone: '2055667788',
     role: 'user',
-    currency: 'VND',
+    currency: 'LAK',
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alice',
-    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=VIETQR-ALICE-987654321'
+    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-ALICE-55667788'
   },
   {
     id: 'u-bob',
     username: 'bob',
     passwordHash: '123',
-    name: 'Bob Trần',
+    name: 'Bob Soukthavy',
     email: 'bob@gmail.com',
-    phone: '0987654321',
+    phone: '2099887766',
     role: 'user',
-    currency: 'VND',
+    currency: 'LAK',
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Bob',
-    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=VIETQR-BOB-456789012'
+    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-BOB-99887766'
   },
   {
     id: 'u-charlie',
     username: 'charlie',
     passwordHash: '123',
-    name: 'Charlie Phạm',
+    name: 'Charlie Keomany',
     email: 'charlie@gmail.com',
-    phone: '0933445566',
+    phone: '2077889900',
     role: 'user',
-    currency: 'VND',
+    currency: 'LAK',
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie',
-    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=VIETQR-CHARLIE-1122334455'
+    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-CHARLIE-77889900'
   },
   {
     id: 'u-david',
     username: 'david',
     passwordHash: '123',
-    name: 'David Lê',
+    name: 'David Sysavath',
     email: 'david@gmail.com',
-    phone: '0977889900',
+    phone: '2088990011',
     role: 'user',
     currency: 'THB',
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David',
@@ -64,8 +64,8 @@ export const INITIAL_USERS = [
 export const INITIAL_GROUPS = [
   {
     id: 'g-1',
-    name: 'Chuyến đi Đà Nẵng 🏖️',
-    description: 'Du lịch hè cùng nhóm bạn thân',
+    name: 'ທ່ຽວວັງວຽງ 🏖️',
+    description: 'ທ່ອງທ່ຽວພັກຜ່ອນກັບກຸ່ມໝູ່ເພື່ອນ',
     ownerId: 'u-alice',
     avatar: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200&auto=format&fit=crop',
     members: ['u-alice', 'u-bob', 'u-charlie', 'u-david'],
@@ -73,8 +73,8 @@ export const INITIAL_GROUPS = [
   },
   {
     id: 'g-2',
-    name: 'Phòng 302 🏢',
-    description: 'Chi phí sinh hoạt chung và ăn uống phòng 302',
+    name: 'ຫ້ອງ 302 🏢',
+    description: 'ຄ່າໃຊ້ຈ່າຍສ່ວນລວມແລະອາຫານຫ້ອງ 302',
     ownerId: 'u-bob',
     avatar: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&auto=format&fit=crop',
     members: ['u-alice', 'u-bob', 'u-charlie'],
@@ -83,7 +83,7 @@ export const INITIAL_GROUPS = [
   {
     id: 'g-3',
     name: 'Team Cty TechCorp 💻',
-    description: 'Ăn trưa & Cà phê chạy deadline',
+    description: 'ກິນເຂົ້າສາຍ ແລະ ກາເຟ',
     ownerId: 'u-alice',
     avatar: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=200&auto=format&fit=crop',
     members: ['u-alice', 'u-bob', 'u-david', 'u-charlie'],
@@ -94,9 +94,9 @@ export const INITIAL_GROUPS = [
 export const INITIAL_MEALS = [
   {
     id: 'm-1',
-    title: 'Hải Sản Bé Mặn Đà Nẵng',
-    totalAmount: 1200000,
-    currency: 'VND',
+    title: 'ຕຳໝາກຮຸ່ງ & ປີ້ງໄກ່ ວັງວຽງ',
+    totalAmount: 120000,
+    currency: 'LAK',
     paidById: 'u-alice',
     groupId: 'g-1',
     receiptUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop',
@@ -106,9 +106,9 @@ export const INITIAL_MEALS = [
   },
   {
     id: 'm-2',
-    title: 'Lẩu Thái YumYum',
-    totalAmount: 600000,
-    currency: 'VND',
+    title: 'ຊາບູ YumYum',
+    totalAmount: 180000,
+    currency: 'LAK',
     paidById: 'u-bob',
     groupId: 'g-2',
     receiptUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop',
@@ -118,18 +118,18 @@ export const INITIAL_MEALS = [
   },
   {
     id: 'm-3',
-    title: 'Cà phê Highland & Bánh mì',
-    totalAmount: 240000,
-    currency: 'VND',
+    title: 'ກາເຟ Sinouk & ເຂົ້າຈີ່',
+    totalAmount: 90000,
+    currency: 'LAK',
     paidById: 'u-charlie',
     groupId: 'g-2',
     receiptUrl: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&auto=format&fit=crop',
     splitType: 'custom',
     participants: ['u-alice', 'u-bob', 'u-charlie'],
     customSplits: {
-      'u-alice': 90000,
-      'u-bob': 80000,
-      'u-charlie': 70000
+      'u-alice': 35000,
+      'u-bob': 30000,
+      'u-charlie': 25000
     },
     createdAt: new Date(Date.now() - 1 * 86400000).toISOString()
   }

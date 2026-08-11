@@ -33,9 +33,8 @@ const langMenuOpen = ref(false)
 const isDark = ref(document.documentElement.classList.contains('dark'))
 
 const languagesList = [
-  { code: 'vi', displayCode: 'VN', label: 'Tiếng Việt', flagUrl: 'https://flagcdn.com/w40/vn.png' },
-  { code: 'th', displayCode: 'TH', label: 'ภาษาไทย', flagUrl: 'https://flagcdn.com/w40/th.png' },
   { code: 'lo', displayCode: 'LA', label: 'ພາສາລາວ', flagUrl: 'https://flagcdn.com/w40/la.png' },
+  { code: 'th', displayCode: 'TH', label: 'ภาษาไทย', flagUrl: 'https://flagcdn.com/w40/th.png' },
   { code: 'en', displayCode: 'EN', label: 'English', flagUrl: 'https://flagcdn.com/w40/gb.png' }
 ]
 
@@ -227,12 +226,12 @@ function handleLogout() {
             <Moon v-else class="w-4 h-4 text-indigo-600" />
           </button>
 
-          <!-- Profile Badge & Logout (Unified Profile Avatar Pill) -->
-          <div v-if="authStore.currentUserId" class="flex items-center gap-1.5 pl-2 border-l border-slate-200 dark:border-slate-800 shrink-0">
+          <!-- Profile Badge & Logout (Desktop Only) -->
+          <div v-if="authStore.currentUserId" class="hidden md:flex items-center gap-1.5 pl-2 border-l border-slate-200 dark:border-slate-800 shrink-0">
             <router-link
               to="/profile"
               :class="[
-                'flex items-center gap-2 p-1 sm:pr-2.5 rounded-full transition-all border group shrink-0',
+                'flex items-center gap-2 p-1 pr-2.5 rounded-full transition-all border group shrink-0',
                 route.path === '/profile'
                   ? 'bg-brand-500/10 text-brand-600 border-brand-500/40 dark:bg-brand-600/20 dark:text-brand-300'
                   : 'bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-brand-500/50'
@@ -247,7 +246,7 @@ function handleLogout() {
                 />
                 <span class="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900"></span>
               </div>
-              <span class="hidden sm:inline text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors max-w-[100px] truncate">
+              <span class="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors max-w-[100px] truncate">
                 {{ authStore.currentUser?.name }}
               </span>
             </router-link>
@@ -265,7 +264,7 @@ function handleLogout() {
           <button
             v-if="authStore.currentUserId"
             @click="mobileMenuOpen = !mobileMenuOpen"
-            class="md:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all"
+            class="md:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all shrink-0"
           >
             <Menu v-if="!mobileMenuOpen" class="w-5 h-5" />
             <X v-else class="w-5 h-5" />
@@ -350,6 +349,29 @@ function handleLogout() {
         <Shield class="w-4 h-4 text-amber-500" />
         <span>{{ t('nav.admin') }}</span>
       </router-link>
+
+      <!-- Profile & Logout inside Mobile Menu Drawer -->
+      <div class="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-1">
+        <router-link
+          to="/profile"
+          @click="mobileMenuOpen = false"
+          class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >
+          <img
+            :src="authStore.currentUser?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${authStore.currentUser?.username || 'user'}`"
+            class="w-5 h-5 rounded-full object-cover shrink-0"
+          />
+          <span class="truncate">{{ authStore.currentUser?.name }} (@{{ authStore.currentUser?.username }})</span>
+        </router-link>
+
+        <button
+          @click="handleLogout(); mobileMenuOpen = false;"
+          class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all"
+        >
+          <LogOut class="w-4 h-4" />
+          <span>{{ t('nav.logout') }}</span>
+        </button>
+      </div>
     </div>
   </header>
 </template>

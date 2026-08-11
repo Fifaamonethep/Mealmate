@@ -125,7 +125,7 @@ const userDisplayName = computed(() => {
             <span>{{ t('dashboard.total_my_debt') }}</span>
           </div>
           <div class="text-2xl sm:text-3xl font-black text-rose-600 dark:text-rose-400">
-            {{ formatCurrency(totalMyDebt, authStore.currentUser?.currency || 'VND', locale) }}
+            {{ formatCurrency(totalMyDebt, authStore.currentUser?.currency || 'LAK', locale) }}
           </div>
           <span class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold block">
             {{ t('dashboard.total_my_debt_sub') }}
@@ -144,7 +144,7 @@ const userDisplayName = computed(() => {
             <span>{{ t('dashboard.total_owed_me') }}</span>
           </div>
           <div class="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400">
-            {{ formatCurrency(totalOwedToMe, authStore.currentUser?.currency || 'VND', locale) }}
+            {{ formatCurrency(totalOwedToMe, authStore.currentUser?.currency || 'LAK', locale) }}
           </div>
           <span class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold block">
             {{ t('dashboard.total_owed_me_sub') }}
@@ -163,7 +163,7 @@ const userDisplayName = computed(() => {
             <span>{{ t('dashboard.net_balance') }}</span>
           </div>
           <div :class="['text-2xl sm:text-3xl font-black', netBalance >= 0 ? 'text-indigo-600 dark:text-indigo-400' : 'text-amber-600 dark:text-amber-400']">
-            {{ netBalance >= 0 ? '+' : '' }}{{ formatCurrency(netBalance, authStore.currentUser?.currency || 'VND', locale) }}
+            {{ netBalance >= 0 ? '+' : '' }}{{ formatCurrency(netBalance, authStore.currentUser?.currency || 'LAK', locale) }}
           </div>
           <span class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold block">
             {{ t('dashboard.net_balance_sub') }}
@@ -176,48 +176,7 @@ const userDisplayName = computed(() => {
 
     </div>
 
-    <!-- Navigation Shortcuts Bar -->
-    <div class="flex flex-wrap items-center justify-between gap-3 p-4 glass-card border border-slate-200/80 dark:border-slate-800 rounded-2xl">
-      <div class="flex items-center gap-2 font-extrabold text-xs text-slate-700 dark:text-slate-300">
-        <Zap class="w-4 h-4 text-brand-500" />
-        <span>Thao tác nhanh:</span>
-      </div>
 
-      <div class="flex flex-wrap items-center gap-2">
-        <button
-          @click="showCreateMeal = true"
-          class="px-3.5 py-2 rounded-xl bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-300 border border-brand-500/30 text-xs font-bold flex items-center gap-1.5 transition-all"
-        >
-          <Plus class="w-3.5 h-3.5" />
-          <span>Bữa ăn mới</span>
-        </button>
-
-        <router-link
-          to="/groups"
-          class="px-3.5 py-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-300 border border-purple-500/30 text-xs font-bold flex items-center gap-1.5 transition-all"
-        >
-          <Users class="w-3.5 h-3.5" />
-          <span>Nhóm của tôi</span>
-        </router-link>
-
-        <router-link
-          to="/debts"
-          class="px-3.5 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5 transition-all"
-        >
-          <CreditCard class="w-3.5 h-3.5" />
-          <span>Sổ khoản nợ</span>
-        </router-link>
-
-        <router-link
-          v-if="authStore.isAdmin"
-          to="/admin"
-          class="px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5 transition-all"
-        >
-          <Shield class="w-3.5 h-3.5" />
-          <span>Admin Portal</span>
-        </router-link>
-      </div>
-    </div>
 
     <!-- Recent Meals Section -->
     <div class="space-y-4">

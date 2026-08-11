@@ -26,7 +26,7 @@ export const useMealsStore = defineStore('meals', () => {
       id: mealId,
       title: mealData.title,
       totalAmount: Number(mealData.totalAmount),
-      currency: mealData.currency || 'VND',
+      currency: mealData.currency || 'LAK',
       paidById: mealData.paidById,
       groupId: mealData.groupId || null,
       receiptUrl: mealData.receiptUrl || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop',

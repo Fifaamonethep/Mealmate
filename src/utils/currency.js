@@ -1,14 +1,14 @@
 /**
  * Utility function to format currency amounts according to currency code and locale.
  */
-export function formatCurrency(amount, currencyCode = 'VND', locale = 'vi') {
+export function formatCurrency(amount, currencyCode = 'LAK', locale = 'lo') {
   const numericAmount = Number(amount) || 0
 
   const currencySymbolMap = {
     VND: 'VND',
     THB: '฿',
     USD: '$',
-    LAK: '₭'
+    LAK: 'LAK'
   }
 
   const localeMap = {
@@ -18,7 +18,7 @@ export function formatCurrency(amount, currencyCode = 'VND', locale = 'vi') {
     en: 'en-US'
   }
 
-  const formattedNum = numericAmount.toLocaleString(localeMap[locale] || 'vi-VN')
+  const formattedNum = numericAmount.toLocaleString(localeMap[locale] || 'lo-LA')
   const symbol = currencySymbolMap[currencyCode] || currencyCode
 
   if (currencyCode === 'USD') {

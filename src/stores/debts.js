@@ -46,8 +46,8 @@ export const useDebtsStore = defineStore('debts', () => {
     savePayments()
 
     const meal = mealsStore.getMealById(p.mealId)
-    const currency = meal?.currency || 'VND'
-    const locale = i18n.global.locale.value || 'vi'
+    const currency = meal?.currency || 'LAK'
+    const locale = i18n.global.locale.value || 'lo'
 
     const senderName = authStore.users.find(u => u.id === p.debtorId)?.name || 'Friends'
     notifStore.addNotification({
@@ -69,8 +69,8 @@ export const useDebtsStore = defineStore('debts', () => {
     savePayments()
 
     const meal = mealsStore.getMealById(p.mealId)
-    const currency = meal?.currency || 'VND'
-    const locale = i18n.global.locale.value || 'vi'
+    const currency = meal?.currency || 'LAK'
+    const locale = i18n.global.locale.value || 'lo'
 
     notifStore.addNotification({
       userId: p.debtorId,
