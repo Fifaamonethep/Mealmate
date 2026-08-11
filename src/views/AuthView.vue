@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
+import GoogleLoginButton from '../components/auth/GoogleLoginButton.vue'
 import { UtensilsCrossed, LogIn, UserPlus, AlertCircle, RefreshCw, Zap, ShieldCheck } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -30,6 +31,20 @@ async function handleAuth() {
     } else {
       loggedUser = await authStore.login(form.value.username, form.value.password)
     }
+    if (loggedUser?.role === 'admin') {
+      router.push('/admin')
+    } else {
+      router.push('/')
+    }
+  } catch (err) {
+    errorMsg.value = err.message
+  }
+}
+
+async function handleGoogleSuccess(idToken) {
+  errorMsg.value = ''
+  try {
+    const loggedUser = await authStore.loginWithGoogle(idToken)
     if (loggedUser?.role === 'admin') {
       router.push('/admin')
     } else {
@@ -151,6 +166,16 @@ function resetDemoData() {
             <span>{{ isRegister ? t('auth.create_account') : t('auth.login') }}</span>
           </button>
         </form>
+
+        <!-- Google OAuth 2.0 Login -->
+        <div class="space-y-3 pt-2">
+          <div class="relative flex py-1 items-center">
+            <div class="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+            <span class="flex-shrink mx-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase">Hoặc</span>
+            <div class="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+          </div>
+          <GoogleLoginButton @success="handleGoogleSuccess" @error="err => errorMsg = err.message" />
+        </div>
 
         <!-- Quick Demo Login Shortcut Buttons (Human UX Touch) -->
         <div v-if="!isRegister" class="pt-3 border-t border-slate-200/80 dark:border-slate-800 space-y-2">

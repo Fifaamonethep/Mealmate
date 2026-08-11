@@ -151,6 +151,68 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function loginWithGoogle(idToken) {
+    try {
+      const data = await api.post('/auth/google', { idToken })
+      if (data?.user && data?.token) {
+        currentUserId.value = data.user.id
+        token.value = data.token
+        localStorage.setItem('mealmate_session_user_id', data.user.id)
+        localStorage.setItem('mealmate_session_token', data.token)
+
+        const idx = users.value.findIndex(u => u.id === data.user.id)
+        if (idx !== -1) users.value[idx] = data.user
+        else users.value.push(data.user)
+        saveUsers()
+        return data.user
+      }
+    } catch (err) {
+      if (err.isBackendValidationError) {
+        throw err
+      }
+      console.warn('Backend Google Auth API unavailable, using local authentication:', err.message)
+    }
+
+    // Local Fallback for Google Token (decode payload if JWT)
+    let payload = {}
+    try {
+      const base64Url = idToken.split('.')[1]
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+      payload = JSON.parse(window.atob(base64))
+    } catch (e) {
+      console.warn('Failed to parse Google ID token locally:', e)
+    }
+
+    const email = payload.email || 'google_user@gmail.com'
+    const name = payload.name || 'Google User'
+    const picture = payload.picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=GoogleUser`
+
+    let user = users.value.find(u => u.email === email)
+    if (!user) {
+      const username = email.split('@')[0] + Math.floor(Math.random() * 1000)
+      user = {
+        id: `u-g-${Date.now()}`,
+        username,
+        passwordHash: `google_${Date.now()}`,
+        name,
+        email,
+        phone: '',
+        role: 'user',
+        currency: 'LAK',
+        avatar: picture,
+        qrCodeUrl: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-${username.toUpperCase()}-00000`
+      }
+      users.value.push(user)
+    }
+
+    currentUserId.value = user.id
+    token.value = idToken || `mock_google_token_${user.id}`
+    localStorage.setItem('mealmate_session_user_id', user.id)
+    localStorage.setItem('mealmate_session_token', token.value)
+    saveUsers()
+    return user
+  }
+
   function logout() {
     currentUserId.value = ''
     token.value = ''
@@ -169,6 +231,7 @@ export const useAuthStore = defineStore('auth', () => {
     fetchUsers,
     login,
     register,
+    loginWithGoogle,
     switchUser,
     updateProfile,
     logout,

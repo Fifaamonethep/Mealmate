@@ -75,3 +75,57 @@ export const updateProfile = (req, res) => {
   const updatedUser = db.updateUser(userId, updates)
   res.json({ user: updatedUser })
 }
+
+export const googleLogin = async (req, res) => {
+  const { idToken } = req.body
+  if (!idToken) return res.status(400).json({ message: 'Google ID Token là bắt buộc.' })
+
+  try {
+    const googleRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`)
+    if (!googleRes.ok) return res.status(400).json({ message: 'Token Google không hợp lệ.' })
+    const payload = await googleRes.json()
+
+    const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
+    if (GOOGLE_CLIENT_ID && payload.aud !== GOOGLE_CLIENT_ID) {
+      return res.status(401).json({ message: 'Google Token không đúng ứng dụng.' })
+    }
+
+    const { email, name, sub: googleId, picture } = payload
+
+    let user = db.getUsers().find(u => (email && u.email === email) || u.googleId === googleId)
+
+    if (!user) {
+      const baseName = email ? email.split('@')[0] : 'google_user'
+      const username = `${baseName}_${Math.floor(Math.random() * 1000)}`
+      user = {
+        id: `u-g-${Date.now()}`,
+        username,
+        passwordHash: `google_${googleId}`,
+        name: name || 'Google User',
+        email: email || '',
+        phone: '',
+        googleId,
+        role: 'user',
+        currency: 'LAK',
+        avatar: picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`,
+        qrCodeUrl: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-${username.toUpperCase()}-00000`,
+        isLocked: false,
+        createdAt: new Date().toISOString()
+      }
+      db.addUser(user)
+    } else {
+      if (user.isLocked) {
+        return res.status(403).json({ message: 'Account has been locked by Admin!' })
+      }
+      if (picture || googleId) {
+        user = db.updateUser(user.id, { avatar: picture || user.avatar, googleId: googleId || user.googleId })
+      }
+    }
+
+    const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '7d' })
+    return res.status(200).json({ message: 'Thành công', token, user })
+  } catch (error) {
+    console.error('Google Auth Controller Error:', error)
+    return res.status(500).json({ message: 'Lỗi server khi xác thực với Google.' })
+  }
+}
