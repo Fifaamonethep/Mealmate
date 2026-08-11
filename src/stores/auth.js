@@ -42,7 +42,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(username, password) {
     try {
       const data = await api.post('/auth/login', { username, password })
-      if (data.user && data.token) {
+      if (data?.user && data?.token) {
         currentUserId.value = data.user.id
         token.value = data.token
         localStorage.setItem('mealmate_session_user_id', data.user.id)
@@ -56,9 +56,10 @@ export const useAuthStore = defineStore('auth', () => {
         return data.user
       }
     } catch (err) {
-      if (err.message && !err.message.includes('Network Error') && !err.message.includes('API Request Failed')) {
+      if (err.isBackendValidationError) {
         throw err
       }
+      console.warn('Backend login API unavailable, using local authentication:', err.message)
     }
 
     // Local Fallback
@@ -77,7 +78,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function register(userData) {
     try {
       const data = await api.post('/auth/register', userData)
-      if (data.user && data.token) {
+      if (data?.user && data?.token) {
         currentUserId.value = data.user.id
         token.value = data.token
         localStorage.setItem('mealmate_session_user_id', data.user.id)
@@ -87,9 +88,10 @@ export const useAuthStore = defineStore('auth', () => {
         return data.user
       }
     } catch (err) {
-      if (err.message && !err.message.includes('Network Error') && !err.message.includes('API Request Failed')) {
+      if (err.isBackendValidationError) {
         throw err
       }
+      console.warn('Backend register API unavailable, using local registration:', err.message)
     }
 
     // Local Fallback
@@ -131,7 +133,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function updateProfile(updatedData) {
     try {
       const data = await api.put('/auth/profile', updatedData)
-      if (data.user) {
+      if (data?.user) {
         const idx = users.value.findIndex(u => u.id === currentUserId.value)
         if (idx !== -1) users.value[idx] = data.user
         saveUsers()

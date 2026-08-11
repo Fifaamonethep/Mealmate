@@ -25,8 +25,11 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response.data,
   (error) => {
+    const isApiValidation = Boolean(error.response?.data?.message && error.response?.status !== 404)
     const message = error.response?.data?.message || error.message || 'API Request Failed'
-    return Promise.reject(new Error(message))
+    const errObj = new Error(message)
+    errObj.isBackendValidationError = isApiValidation
+    return Promise.reject(errObj)
   }
 )
 
