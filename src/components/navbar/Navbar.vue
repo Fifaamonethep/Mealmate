@@ -33,10 +33,10 @@ const langMenuOpen = ref(false)
 const isDark = ref(document.documentElement.classList.contains('dark'))
 
 const languagesList = [
-  { code: 'vi', label: 'Tiếng Việt', flagUrl: 'https://flagcdn.com/w40/vn.png' },
-  { code: 'th', label: 'ภาษาไทย', flagUrl: 'https://flagcdn.com/w40/th.png' },
-  { code: 'lo', label: 'ພາສາລາວ', flagUrl: 'https://flagcdn.com/w40/la.png' },
-  { code: 'en', label: 'English', flagUrl: 'https://flagcdn.com/w40/gb.png' }
+  { code: 'vi', displayCode: 'VN', label: 'Tiếng Việt', flagUrl: 'https://flagcdn.com/w40/vn.png' },
+  { code: 'th', displayCode: 'TH', label: 'ภาษาไทย', flagUrl: 'https://flagcdn.com/w40/th.png' },
+  { code: 'lo', displayCode: 'LA', label: 'ພາສາລາວ', flagUrl: 'https://flagcdn.com/w40/la.png' },
+  { code: 'en', displayCode: 'EN', label: 'English', flagUrl: 'https://flagcdn.com/w40/gb.png' }
 ]
 
 const currentLangObj = computed(() => {
@@ -181,14 +181,14 @@ function handleLogout() {
             </span>
           </router-link>
 
-          <!-- Custom Language Selector Dropdown (VI, TH, LO, EN) -->
+          <!-- Custom Language Selector Dropdown (VN, TH, LA, EN) -->
           <div class="relative">
             <button
               @click="langMenuOpen = !langMenuOpen"
               class="flex items-center gap-2 px-2.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all shadow-sm"
             >
-              <img :src="currentLangObj.flagUrl" class="w-4 h-4 rounded-full object-cover shadow-sm shrink-0 border border-slate-300 dark:border-white/30" :alt="currentLangObj.code" />
-              <span class="uppercase font-extrabold tracking-wide text-[11px]">{{ currentLangObj.code }}</span>
+              <img :src="currentLangObj.flagUrl" class="w-4 h-4 rounded-full object-cover shadow-sm shrink-0 border border-slate-300 dark:border-white/30" :alt="currentLangObj.displayCode" />
+              <span class="uppercase font-extrabold tracking-wide text-[11px]">{{ currentLangObj.displayCode }}</span>
               <ChevronDown class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200" :class="{ 'rotate-180': langMenuOpen }" />
             </button>
 

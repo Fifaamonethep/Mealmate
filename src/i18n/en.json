@@ -125,7 +125,10 @@
     "deleted_success": "Meal deleted successfully!",
     "management_rights": "Management Rights (Leader / Creditor)",
     "receipt_upload_hint": "Snap or upload receipt/bill photo to attach to meal",
-    "custom_split_mismatch": "Custom split total ({customSum}) does not match the bill total ({totalAmount})!"
+    "custom_split_mismatch": "Custom split total ({customSum}) does not match the bill total ({totalAmount})!",
+    "custom_total_input": "Custom total input:",
+    "custom_split_matched": "✓ Total matched",
+    "custom_split_difference": "⚠️ Mismatch {diff}"
   },
   "debts": {
     "title": "Debt & Payment Management",

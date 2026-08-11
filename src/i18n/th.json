@@ -125,7 +125,10 @@
     "deleted_success": "ลบมื้ออาหารเรียบร้อยแล้ว!",
     "management_rights": "สิทธิ์การจัดการ (หัวหน้า / เจ้าหนี้)",
     "receipt_upload_hint": "ถ่ายภาพหรืออัปโหลดสลิปใบเสร็จเพื่อแนบกับมื้ออาหาร",
-    "custom_split_mismatch": "ยอดรวมที่กำหนดเอง ({customSum}) ไม่ตรงกับยอดรวมใบเสร็จ ({totalAmount})!"
+    "custom_split_mismatch": "ยอดรวมที่กำหนดเอง ({customSum}) ไม่ตรงกับยอดรวมใบเสร็จ ({totalAmount})!",
+    "custom_total_input": "ยอดรวมที่กำหนดเอง:",
+    "custom_split_matched": "✓ ตรงกับยอดรวม",
+    "custom_split_difference": "⚠️ ผลต่าง {diff}"
   },
   "debts": {
     "title": "การจัดการหนี้และการชำระเงิน",

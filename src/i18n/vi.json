@@ -125,7 +125,10 @@
     "deleted_success": "Đã xóa bữa ăn thành công!",
     "management_rights": "Quyền Quản Lý (Leader / Creditor)",
     "receipt_upload_hint": "Chụp hoặc tải ảnh hóa đơn / bill thanh toán để đính kèm bữa ăn",
-    "custom_split_mismatch": "Tổng tiền nhập tùy chỉnh ({customSum}) không khớp với tổng tiền hóa đơn ({totalAmount})!"
+    "custom_split_mismatch": "Tổng tiền nhập tùy chỉnh ({customSum}) không khớp với tổng tiền hóa đơn ({totalAmount})!",
+    "custom_total_input": "Tổng tiền tự nhập:",
+    "custom_split_matched": "✓ Khớp tổng tiền",
+    "custom_split_difference": "⚠️ Lệch {diff}"
   },
   "debts": {
     "title": "Quản lý Công Nợ & Thanh Toán",

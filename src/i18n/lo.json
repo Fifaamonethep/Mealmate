@@ -125,7 +125,10 @@
     "deleted_success": "ລົບຄາບອາຫານສຳເລັດແລ້ວ!",
     "management_rights": "ສິດການຈັດການ (ຫົວໜ້າ / ເຈົ້າຫນີ້)",
     "receipt_upload_hint": "ຖ່າຍຮູບຫຼືອັບໂຫຼດໃບເສັດເພື່ອແນບກັບຄາບອາຫານ",
-    "custom_split_mismatch": "ຍອດລວມທີ່ກຳນົດເອງ ({customSum}) ບໍ່ກົງກັບຍອດລວມໃບເສັດ ({totalAmount})!"
+    "custom_split_mismatch": "ຍອດລວມທີ່ກຳນົດເອງ ({customSum}) ບໍ່ກົງກັບຍອດລວມໃບເສັດ ({totalAmount})!",
+    "custom_total_input": "ຍອດລວມທີ່ກຳນົດເອງ:",
+    "custom_split_matched": "✓ ກົງກັບຍອດລວມ",
+    "custom_split_difference": "⚠️ ຫຼຸດ/ເກີນ {diff}"
   },
   "debts": {
     "title": "ການຈັດການໜີ້ແລະການຊຳລະເງິນ",

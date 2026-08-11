@@ -6,6 +6,7 @@ import AiFaceScannerModal from './AiFaceScannerModal.vue'
 import { useAuthStore } from '../../stores/auth'
 import { useGroupsStore } from '../../stores/groups'
 import { useMealsStore } from '../../stores/meals'
+import { useToastStore } from '../../stores/toast'
 import { PlusCircle, Sparkles, Users, Receipt, DollarSign, Camera, Image } from 'lucide-vue-next'
 
 import { formatCurrency } from '../../utils/currency'
@@ -20,6 +21,7 @@ const { t, locale } = useI18n()
 const authStore = useAuthStore()
 const groupsStore = useGroupsStore()
 const mealsStore = useMealsStore()
+const toastStore = useToastStore()
 
 const receiptFileInput = ref(null)
 const showAiScanner = ref(false)
@@ -133,10 +135,13 @@ const isCustomSplitValid = computed(() => {
 function handleSubmit() {
   if (!title.value || !totalAmount.value) return
   if (splitType.value === 'custom' && !isCustomSplitValid.value) {
-    alert(t('meals.custom_split_mismatch', {
-      customSum: formatCurrency(customTotalSum.value, currency.value, locale.value),
-      totalAmount: formatCurrency(totalAmount.value, currency.value, locale.value)
-    }))
+    toastStore.showToast(
+      t('meals.custom_split_mismatch', {
+        customSum: formatCurrency(customTotalSum.value, currency.value, locale.value),
+        totalAmount: formatCurrency(totalAmount.value, currency.value, locale.value)
+      }),
+      'warning'
+    )
     return
   }
 
@@ -379,8 +384,8 @@ function handleSubmit() {
           </div>
 
           <div :class="['p-2 rounded-lg text-xs font-bold flex items-center justify-between border mt-2', isCustomSplitValid ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30']">
-            <span>Tổng tiền tự nhập: {{ customTotalSum.toLocaleString() }} {{ currency }}</span>
-            <span>{{ isCustomSplitValid ? '✓ Khớp tổng tiền' : `⚠️ Lệch ${(Number(totalAmount || 0) - customTotalSum).toLocaleString()} ${currency}` }}</span>
+            <span>{{ t('meals.custom_total_input') }} {{ formatCurrency(customTotalSum, currency, locale) }}</span>
+            <span>{{ isCustomSplitValid ? t('meals.custom_split_matched') : t('meals.custom_split_difference', { diff: formatCurrency(Math.abs(Number(totalAmount || 0) - customTotalSum), currency, locale) }) }}</span>
           </div>
         </div>
       </div>
