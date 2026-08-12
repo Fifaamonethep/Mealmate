@@ -4,7 +4,7 @@ import { onMounted, ref, computed } from 'vue'
 const props = defineProps({
   clientId: {
     type: String,
-    default: () => import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
+    default: () => import.meta.env.VITE_GOOGLE_CLIENT_ID || '286935273027-r7da4lss8asctpfa1as3l418jp5e11p8.apps.googleusercontent.com'
   }
 })
 

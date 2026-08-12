@@ -73,8 +73,15 @@ function resetDemoData() {
     <div class="w-full max-w-md space-y-6">
       
       <!-- Brand Logo & Header -->
-      <div class="text-center space-y-2.5">
-        <img :src="logoImg" class="w-20 h-20 rounded-3xl object-cover shadow-lg mx-auto transform hover:scale-105 transition-all duration-300 border border-purple-300/60 dark:border-purple-800/60 shrink-0" alt="MealMate Logo" />
+      <div class="text-center space-y-3">
+        <div class="relative w-20 h-20 mx-auto flex items-center justify-center">
+          <div class="absolute inset-0 rounded-3xl bg-gradient-to-tr from-purple-500/30 to-pink-500/30 blur-xl animate-pulse"></div>
+          <img
+            :src="logoImg"
+            class="w-20 h-20 object-contain drop-shadow-[0_8px_24px_rgba(168,85,247,0.4)] transform hover:scale-105 transition-all duration-300 relative z-10 shrink-0"
+            alt="MealMate Logo"
+          />
+        </div>
         <div>
           <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">MealMate</h1>
           <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1">{{ t('footer.tagline') }}</p>

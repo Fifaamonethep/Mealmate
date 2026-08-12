@@ -56,7 +56,7 @@ onMounted(async () => {
     <footer v-if="route.path !== '/login' && authStore.currentUserId" class="border-t border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950 py-6 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors duration-300">
       <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div class="flex items-center gap-2">
-          <img :src="logoImg" class="w-5 h-5 rounded-lg object-cover" alt="MealMate Logo" />
+          <img :src="logoImg" class="w-5.5 h-5.5 object-contain drop-shadow-sm shrink-0" alt="MealMate Logo" />
           <span class="font-extrabold text-slate-800 dark:text-slate-200">MealMate</span>
           <span>&copy; 2026 - {{ t('footer.tagline') }}</span>
         </div>

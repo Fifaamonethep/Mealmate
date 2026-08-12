@@ -80,12 +80,19 @@ function handleLogout() {
         
         <!-- Logo -->
         <div class="flex items-center gap-3 cursor-pointer group" @click="router.push('/')">
-          <img :src="logoImg" class="w-10 h-10 rounded-2xl object-cover shadow-md group-hover:scale-105 transition-transform duration-300 border border-purple-200/80 dark:border-purple-800/60 shrink-0" alt="MealMate Logo" />
+          <div class="relative flex items-center justify-center">
+            <div class="absolute inset-0 rounded-2xl bg-purple-500/20 dark:bg-purple-500/30 blur-md group-hover:blur-lg transition-all"></div>
+            <img
+              :src="logoImg"
+              class="w-9 h-9 sm:w-10 sm:h-10 object-contain drop-shadow-[0_4px_12px_rgba(168,85,247,0.35)] group-hover:scale-105 transition-all duration-300 relative z-10 shrink-0"
+              alt="MealMate Logo"
+            />
+          </div>
           <div class="flex items-center gap-2">
             <span class="font-black text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-purple-700 via-pink-600 to-indigo-600 dark:from-purple-300 dark:via-pink-300 dark:to-indigo-200">
               MealMate
             </span>
-            <span class="hidden sm:inline-block text-[10px] uppercase font-black tracking-wider px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-700 border border-purple-300/40 dark:bg-purple-500/20 dark:text-purple-300">
+            <span class="hidden sm:inline-block text-[10px] uppercase font-black tracking-wider px-2.5 py-0.5 rounded-full bg-gradient-to-r from-purple-500/10 to-pink-500/10 text-purple-700 border border-purple-300/40 dark:from-purple-500/20 dark:to-pink-500/20 dark:text-purple-300 shadow-sm">
               Split & Pay
             </span>
           </div>
