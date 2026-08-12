@@ -75,10 +75,9 @@ function resetDemoData() {
       <!-- Brand Logo & Header -->
       <div class="text-center space-y-3">
         <div class="relative w-20 h-20 mx-auto flex items-center justify-center">
-          <div class="absolute inset-0 rounded-3xl bg-gradient-to-tr from-purple-500/30 to-pink-500/30 blur-xl animate-pulse"></div>
           <img
             :src="logoImg"
-            class="w-20 h-20 object-contain drop-shadow-[0_8px_24px_rgba(168,85,247,0.4)] transform hover:scale-105 transition-all duration-300 relative z-10 shrink-0"
+            class="w-20 h-20 object-contain transform hover:scale-105 transition-all duration-300 relative z-10 shrink-0"
             alt="MealMate Logo"
           />
         </div>
@@ -92,13 +91,15 @@ function resetDemoData() {
       <div class="glass-card p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 shadow-xl rounded-3xl space-y-6">
         
         <!-- Segmented Tab Controls -->
-        <div class="grid grid-cols-2 gap-1 bg-slate-100/90 dark:bg-slate-950 p-1.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 text-xs">
+        <div class="grid grid-cols-2 gap-1.5 bg-slate-200/80 dark:bg-slate-950 p-1.5 rounded-2xl border border-slate-300 dark:border-slate-800 text-xs">
           <button
             type="button"
             @click="isRegister = false; errorMsg = ''"
             :class="[
-              'py-2.5 rounded-xl font-extrabold transition-all duration-200',
-              !isRegister ? 'bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-200 text-purple-950 shadow-sm border border-purple-200/80 dark:from-purple-900 dark:to-indigo-900 dark:text-purple-100' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              'py-2.5 rounded-xl font-extrabold transition-all duration-200 text-xs sm:text-sm',
+              !isRegister
+                ? 'bg-purple-600 dark:bg-purple-500 text-white shadow-md shadow-purple-600/30'
+                : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
             ]"
           >
             {{ t('auth.login') }}
@@ -107,8 +108,10 @@ function resetDemoData() {
             type="button"
             @click="isRegister = true; errorMsg = ''"
             :class="[
-              'py-2.5 rounded-xl font-extrabold transition-all duration-200',
-              isRegister ? 'bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-200 text-purple-950 shadow-sm border border-purple-200/80 dark:from-purple-900 dark:to-indigo-900 dark:text-purple-100' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              'py-2.5 rounded-xl font-extrabold transition-all duration-200 text-xs sm:text-sm',
+              isRegister
+                ? 'bg-purple-600 dark:bg-purple-500 text-white shadow-md shadow-purple-600/30'
+                : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
             ]"
           >
             {{ t('auth.register') }}

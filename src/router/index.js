@@ -8,6 +8,7 @@ import MealDetailView from '../views/MealDetailView.vue'
 import DebtsView from '../views/DebtsView.vue'
 import GroupsView from '../views/GroupsView.vue'
 import GroupDetailView from '../views/GroupDetailView.vue'
+import FriendsView from '../views/FriendsView.vue'
 import NotificationsView from '../views/NotificationsView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import AdminView from '../views/AdminView.vue'
@@ -53,6 +54,12 @@ const routes = [
     path: '/groups/:id',
     name: 'GroupDetail',
     component: GroupDetailView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/friends',
+    name: 'Friends',
+    component: FriendsView,
     meta: { requiresAuth: true }
   },
   {

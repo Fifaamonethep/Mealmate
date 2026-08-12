@@ -37,6 +37,15 @@ const selectedParticipants = ref([authStore.currentUserId])
 const customSplits = ref({})
 const receiptUrl = ref('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop')
 
+const currencySymbol = computed(() => {
+  switch (currency.value) {
+    case 'THB': return '฿'
+    case 'USD': return '$'
+    case 'VND': return '₫'
+    case 'LAK': default: return '₭'
+  }
+})
+
 const showInlineGroupInput = ref(false)
 const newGroupName = ref('')
 
@@ -136,12 +145,28 @@ const availableMembers = computed(() => {
       list = authStore.users.filter(u => group.members.includes(u.id))
     }
   }
+
+  // Prioritize Friends & Current User
+  let sortedList = [...list].sort((a, b) => {
+    if (a.id === authStore.currentUserId) return -1
+    if (b.id === authStore.currentUserId) return 1
+    const aIsFriend = authStore.myFriends.some(f => f.id === a.id)
+    const bIsFriend = authStore.myFriends.some(f => f.id === b.id)
+    if (aIsFriend && !bIsFriend) return -1
+    if (!aIsFriend && bIsFriend) return 1
+    return 0
+  })
+
   // Hide system admin from member selection if current user is not admin
   if (!authStore.isAdmin) {
-    return list.filter(u => u.role !== 'admin')
+    return sortedList.filter(u => u.role !== 'admin')
   }
-  return list
+  return sortedList
 })
+
+// Multi-Payer State & Computation
+const payerType = ref('single') // 'single' | 'multiple'
+const paidAmounts = ref({})
 
 // Reset form fields when modal opens
 watch(() => props.show, (newShow) => {
@@ -149,7 +174,9 @@ watch(() => props.show, (newShow) => {
     title.value = ''
     totalAmount.value = ''
     splitType.value = 'equal'
+    payerType.value = 'single'
     customSplits.value = {}
+    paidAmounts.value = {}
     receiptUrl.value = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop'
     paidById.value = authStore.currentUserId || availableMembers.value[0]?.id || ''
     selectedParticipants.value = availableMembers.value.map(u => u.id)
@@ -199,8 +226,59 @@ const isCustomSplitValid = computed(() => {
   return customTotalSum.value === Number(totalAmount.value)
 })
 
+const paidTotalSum = computed(() => {
+  if (payerType.value !== 'multiple') return 0
+  return selectedParticipants.value.reduce((sum, pid) => sum + (Number(paidAmounts.value[pid]) || 0), 0)
+})
+
+const isPaidTotalValid = computed(() => {
+  if (payerType.value !== 'multiple') return true
+  if (!totalAmount.value) return true
+  return paidTotalSum.value === Number(totalAmount.value)
+})
+
+// Live Settlement Preview
+const settlementPreview = computed(() => {
+  if (!totalAmount.value || !selectedParticipants.value.length) return []
+  const total = Number(totalAmount.value)
+  const equalShare = Math.round(total / selectedParticipants.value.length)
+
+  return selectedParticipants.value.map(pid => {
+    const user = authStore.users.find(u => u.id === pid)
+    const upfrontPaid = payerType.value === 'single'
+      ? (pid === paidById.value ? total : 0)
+      : (Number(paidAmounts.value[pid]) || 0)
+
+    const fairShare = splitType.value === 'equal'
+      ? equalShare
+      : (Number(customSplits.value[pid]) || 0)
+
+    const net = upfrontPaid - fairShare
+    return {
+      id: pid,
+      name: user?.name || 'User',
+      avatar: user?.avatar || '',
+      upfrontPaid,
+      fairShare,
+      net
+    }
+  })
+})
+
 async function handleSubmit() {
   if (!title.value || !totalAmount.value) return
+
+  if (payerType.value === 'multiple' && !isPaidTotalValid.value) {
+    toastStore.showToast(
+      t('meals.paid_total_mismatch', {
+        paidSum: formatCurrency(paidTotalSum.value, currency.value, locale.value),
+        totalAmount: formatCurrency(totalAmount.value, currency.value, locale.value)
+      }),
+      'warning'
+    )
+    return
+  }
+
   if (splitType.value === 'custom' && !isCustomSplitValid.value) {
     toastStore.showToast(
       t('meals.custom_split_mismatch', {
@@ -217,6 +295,8 @@ async function handleSubmit() {
     totalAmount: Number(totalAmount.value),
     currency: currency.value,
     paidById: paidById.value,
+    payerType: payerType.value,
+    paidAmounts: paidAmounts.value,
     groupId: groupId.value || null,
     receiptUrl: receiptUrl.value,
     splitType: splitType.value,
@@ -253,17 +333,19 @@ async function handleSubmit() {
           />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ t('meals.total_price') }}</label>
-          <div class="relative">
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ t('meals.total_price') }} *</label>
+          <div class="flex items-center rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 transition-all">
+            <span class="px-3.5 py-2.5 text-xs font-extrabold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 shrink-0">
+              {{ currencySymbol }}
+            </span>
             <input
               v-model="totalAmount"
               type="number"
               required
               min="1000"
               placeholder="500000"
-              class="w-full glass-input text-xs pl-8"
+              class="w-full bg-transparent px-3 py-2.5 text-xs font-bold font-mono text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none"
             />
-            <DollarSign class="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5" />
           </div>
         </div>
       </div>
@@ -328,14 +410,62 @@ async function handleSubmit() {
         @change="handleReceiptFileUpload"
       />
 
-      <!-- Paid By Creditor -->
-      <div>
-        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ t('meals.creditor') }}</label>
-        <select v-model="paidById" class="w-full glass-input text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
-          <option v-for="u in availableMembers" :key="u.id" :value="u.id">
-            {{ u.name }} ({{ u.username }})
-          </option>
-        </select>
+      <!-- Paid By / Upfront Payment Section -->
+      <div class="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">{{ t('meals.payer_type') }}</label>
+        <div class="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-bold">
+          <button
+            type="button"
+            @click="payerType = 'single'"
+            :class="[
+              'py-2 rounded-lg transition-all',
+              payerType === 'single' ? 'brand-pill-active' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            ]"
+          >
+            {{ t('meals.payer_single') }}
+          </button>
+          <button
+            type="button"
+            @click="payerType = 'multiple'"
+            :class="[
+              'py-2 rounded-lg transition-all',
+              payerType === 'multiple' ? 'brand-pill-active' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            ]"
+          >
+            {{ t('meals.payer_multiple') }}
+          </button>
+        </div>
+
+        <!-- Single Payer Dropdown -->
+        <div v-if="payerType === 'single'">
+          <select v-model="paidById" class="w-full glass-input text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+            <option v-for="u in availableMembers" :key="u.id" :value="u.id">
+              {{ u.name }} ({{ u.username }})
+            </option>
+          </select>
+        </div>
+
+        <!-- Multiple Payers Upfront Amounts Inputs -->
+        <div v-else class="space-y-2 bg-slate-50 dark:bg-slate-950/60 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">{{ t('meals.paid_amount_sub') }}</p>
+          <div v-for="pid in selectedParticipants" :key="pid" class="flex items-center justify-between gap-2">
+            <span class="text-xs font-semibold text-slate-700 dark:text-slate-300 truncate w-1/3 flex items-center gap-1.5">
+              <img :src="authStore.users.find(u => u.id === pid)?.avatar" class="w-4 h-4 rounded-full" />
+              <span>{{ authStore.users.find(u => u.id === pid)?.name }}:</span>
+            </span>
+            <input
+              v-model.number="paidAmounts[pid]"
+              type="number"
+              placeholder="0"
+              class="glass-input text-xs py-1 px-3 w-2/3"
+            />
+          </div>
+
+          <div :class="['p-2 rounded-lg text-xs font-bold flex items-center justify-between border mt-2', isPaidTotalValid ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30']">
+            <span>{{ t('meals.custom_total_input') }} {{ formatCurrency(paidTotalSum, currency, locale) }}</span>
+            <span>{{ isPaidTotalValid ? t('meals.paid_total_matched') : t('meals.paid_total_mismatch', { paidSum: formatCurrency(paidTotalSum, currency, locale), totalAmount: formatCurrency(totalAmount || 0, currency, locale) }) }}</span>
+          </div>
+        </div>
       </div>
 
       <!-- Receipt Image Photo Upload / Capture Section -->
@@ -357,7 +487,7 @@ async function handleSubmit() {
             <button
               type="button"
               @click="triggerReceiptFileSelect"
-              class="px-3.5 py-2 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white rounded-xl text-xs font-extrabold flex items-center gap-2 shadow-md shadow-brand-500/20 transition-all transform active:scale-95"
+              class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-extrabold flex items-center gap-2 shadow-sm transition-all transform active:scale-95"
             >
               <Camera class="w-4 h-4" />
               <span>{{ t('meals.upload_receipt') }}</span>
@@ -475,6 +605,37 @@ async function handleSubmit() {
           <div :class="['p-2 rounded-lg text-xs font-bold flex items-center justify-between border mt-2', isCustomSplitValid ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30']">
             <span>{{ t('meals.custom_total_input') }} {{ formatCurrency(customTotalSum, currency, locale) }}</span>
             <span>{{ isCustomSplitValid ? t('meals.custom_split_matched') : t('meals.custom_split_difference', { diff: formatCurrency(Math.abs(Number(totalAmount || 0) - customTotalSum), currency, locale) }) }}</span>
+          </div>
+        </div>
+
+        <!-- Live Settlement Preview Table -->
+        <div v-if="settlementPreview.length && totalAmount" class="mt-3 p-3 bg-indigo-50/50 dark:bg-indigo-950/30 rounded-xl border border-indigo-200 dark:border-indigo-800 space-y-2">
+          <span class="text-xs font-extrabold text-indigo-700 dark:text-indigo-300 block">
+            {{ t('meals.settlement_summary_title') }}
+          </span>
+          <div class="space-y-1.5 max-h-32 overflow-y-auto">
+            <div
+              v-for="item in settlementPreview"
+              :key="item.id"
+              class="flex items-center justify-between text-xs p-1.5 rounded-lg bg-white/80 dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-800"
+            >
+              <div class="flex items-center gap-2">
+                <img :src="item.avatar" class="w-4 h-4 rounded-full" />
+                <span class="font-semibold text-slate-800 dark:text-slate-200">{{ item.name }}</span>
+              </div>
+
+              <div class="flex items-center gap-2 font-mono text-[11px] font-extrabold">
+                <span v-if="item.net > 0" class="text-emerald-600 dark:text-emerald-400">
+                  +{{ formatCurrency(item.net, currency, locale) }} ({{ t('meals.receives_back') }})
+                </span>
+                <span v-else-if="item.net < 0" class="text-rose-600 dark:text-rose-400">
+                  -{{ formatCurrency(Math.abs(item.net), currency, locale) }} ({{ t('debts.status_pending') }})
+                </span>
+                <span v-else class="text-slate-400">
+                  {{ t('meals.settled') }}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

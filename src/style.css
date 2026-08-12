@@ -74,28 +74,28 @@ html[lang="en"] textarea {
 
 @layer utilities {
   .glass-card {
-    @apply bg-white/95 border border-purple-100/80 text-slate-800 shadow-[0_4px_25px_rgba(168,85,247,0.06)] dark:bg-slate-900/90 dark:border-slate-800/90 dark:text-slate-100 dark:shadow-[0_10px_35px_rgba(0,0,0,0.45)] backdrop-blur-xl rounded-3xl transition-all duration-300;
+    @apply bg-white border border-slate-200 text-slate-800 shadow-sm dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100 dark:shadow-md rounded-3xl transition-all duration-200;
   }
   .glass-card-hover {
-    @apply hover:bg-white hover:border-purple-300/80 hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/10 dark:hover:bg-slate-800/90 dark:hover:border-purple-500/50 dark:hover:shadow-[0_20px_40px_rgba(168,85,247,0.25)] transition-all duration-300;
+    @apply hover:bg-slate-50 hover:border-slate-300 dark:hover:bg-slate-800/80 dark:hover:border-slate-700 transition-all duration-200;
   }
   .glass-input {
-    @apply bg-white/95 border border-purple-100/90 rounded-2xl px-4 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-purple-400 focus:ring-4 focus:ring-purple-400/20 dark:bg-slate-950/90 dark:border-slate-800 dark:text-slate-100 dark:placeholder-slate-500 transition-all duration-200;
+    @apply bg-white border border-slate-200 rounded-2xl px-4 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:bg-slate-950 dark:border-slate-800 dark:text-slate-100 dark:placeholder-slate-500 transition-all duration-200;
   }
   .glass-nav {
-    @apply bg-white/85 border-b border-purple-100/80 text-slate-900 dark:bg-slate-950/85 dark:border-slate-800/90 dark:text-slate-100 backdrop-blur-2xl sticky top-0 z-40 shadow-sm dark:shadow-2xl transition-colors duration-300;
+    @apply bg-white/90 border-b border-slate-200 text-slate-900 dark:bg-slate-950/90 dark:border-slate-800 dark:text-slate-100 backdrop-blur-xl sticky top-0 z-40 shadow-sm transition-colors duration-300;
   }
   .glow-button {
-    @apply bg-brand-600 hover:bg-brand-500 text-white font-extrabold px-5 py-2.5 rounded-2xl shadow-md hover:shadow-lg border border-brand-500/50 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200;
+    @apply bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold px-5 py-2.5 rounded-2xl shadow-sm border border-indigo-500 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200;
   }
   .brand-gradient-box {
-    @apply bg-brand-600 border border-brand-500 text-white shadow-md;
+    @apply bg-indigo-600 text-white font-extrabold border border-indigo-500 shadow-sm;
   }
   .brand-gradient-text {
-    @apply text-brand-600 dark:text-brand-400 font-extrabold;
+    @apply text-indigo-600 dark:text-indigo-400 font-extrabold;
   }
   .brand-pill-active {
-    @apply bg-brand-600 text-white font-extrabold shadow-sm border border-brand-500;
+    @apply bg-indigo-600 text-white font-extrabold shadow-sm border border-indigo-500;
   }
 }
 

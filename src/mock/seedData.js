@@ -9,7 +9,8 @@ export const INITIAL_USERS = [
     role: 'admin',
     currency: 'LAK',
     avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Admin',
-    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-ADMIN-2098667856'
+    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-ADMIN-2098667856',
+    friends: ['u-alice', 'u-bob', 'u-charlie']
   },
   {
     id: 'u-alice',
@@ -21,7 +22,8 @@ export const INITIAL_USERS = [
     role: 'user',
     currency: 'LAK',
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alice',
-    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-ALICE-55667788'
+    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-ALICE-55667788',
+    friends: ['u-bob', 'u-charlie']
   },
   {
     id: 'u-bob',
@@ -33,7 +35,8 @@ export const INITIAL_USERS = [
     role: 'user',
     currency: 'LAK',
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Bob',
-    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-BOB-99887766'
+    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-BOB-99887766',
+    friends: ['u-alice', 'u-charlie']
   },
   {
     id: 'u-charlie',
@@ -45,7 +48,8 @@ export const INITIAL_USERS = [
     role: 'user',
     currency: 'LAK',
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie',
-    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-CHARLIE-77889900'
+    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-CHARLIE-77889900',
+    friends: ['u-alice', 'u-bob']
   }
 ]
 

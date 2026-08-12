@@ -213,6 +213,134 @@ export const useAuthStore = defineStore('auth', () => {
     return user
   }
 
+  const myFriends = computed(() => {
+    if (!currentUser.value) return []
+    const friendIds = currentUser.value.friends || []
+    return users.value.filter(u => u.id !== currentUserId.value && friendIds.includes(u.id))
+  })
+
+  const incomingFriendRequests = computed(() => {
+    if (!currentUser.value) return []
+    const reqIds = currentUser.value.friendRequestsReceived || []
+    return users.value.filter(u => u.id !== currentUserId.value && reqIds.includes(u.id))
+  })
+
+  const outgoingFriendRequests = computed(() => {
+    if (!currentUser.value) return []
+    const reqIds = currentUser.value.friendRequestsSent || []
+    return users.value.filter(u => u.id !== currentUserId.value && reqIds.includes(u.id))
+  })
+
+  const suggestedFriends = computed(() => {
+    if (!currentUser.value) return []
+    const friendIds = currentUser.value.friends || []
+    const sentIds = currentUser.value.friendRequestsSent || []
+    const recvIds = currentUser.value.friendRequestsReceived || []
+
+    return users.value.filter(u => 
+      u.id !== currentUserId.value &&
+      u.role !== 'admin' &&
+      !friendIds.includes(u.id) &&
+      !sentIds.includes(u.id) &&
+      !recvIds.includes(u.id)
+    )
+  })
+
+  function sendFriendRequest(targetUserId) {
+    if (!currentUser.value || !targetUserId || targetUserId === currentUserId.value) return
+    const notifStore = useNotificationsStore()
+
+    if (!currentUser.value.friendRequestsSent) currentUser.value.friendRequestsSent = []
+    if (!currentUser.value.friendRequestsSent.includes(targetUserId)) {
+      currentUser.value.friendRequestsSent.push(targetUserId)
+    }
+
+    const targetUser = users.value.find(u => u.id === targetUserId)
+    if (targetUser) {
+      if (!targetUser.friendRequestsReceived) targetUser.friendRequestsReceived = []
+      if (!targetUser.friendRequestsReceived.includes(currentUserId.value)) {
+        targetUser.friendRequestsReceived.push(currentUserId.value)
+      }
+
+      // Send real Notification to target user
+      notifStore.addNotification({
+        userId: targetUserId,
+        title: i18n.global.t('friends.notif_new_request_title'),
+        message: i18n.global.t('friends.notif_new_request_msg', { name: currentUser.value.name })
+      })
+    }
+
+    saveUsers()
+  }
+
+  function acceptFriendRequest(targetUserId) {
+    if (!currentUser.value || !targetUserId) return
+    const notifStore = useNotificationsStore()
+
+    // 1. Add to friends
+    if (!currentUser.value.friends) currentUser.value.friends = []
+    if (!currentUser.value.friends.includes(targetUserId)) {
+      currentUser.value.friends.push(targetUserId)
+    }
+
+    // 2. Clear received request
+    if (currentUser.value.friendRequestsReceived) {
+      currentUser.value.friendRequestsReceived = currentUser.value.friendRequestsReceived.filter(id => id !== targetUserId)
+    }
+
+    const targetUser = users.value.find(u => u.id === targetUserId)
+    if (targetUser) {
+      if (!targetUser.friends) targetUser.friends = []
+      if (!targetUser.friends.includes(currentUserId.value)) {
+        targetUser.friends.push(currentUserId.value)
+      }
+      if (targetUser.friendRequestsSent) {
+        targetUser.friendRequestsSent = targetUser.friendRequestsSent.filter(id => id !== currentUserId.value)
+      }
+
+      // Send acceptance notification back to requester
+      notifStore.addNotification({
+        userId: targetUserId,
+        title: i18n.global.t('friends.request_accepted_notif'),
+        message: i18n.global.t('friends.notif_accepted_msg', { name: currentUser.value.name })
+      })
+    }
+
+    saveUsers()
+  }
+
+  function declineFriendRequest(targetUserId) {
+    if (!currentUser.value || !targetUserId) return
+
+    if (currentUser.value.friendRequestsReceived) {
+      currentUser.value.friendRequestsReceived = currentUser.value.friendRequestsReceived.filter(id => id !== targetUserId)
+    }
+
+    const targetUser = users.value.find(u => u.id === targetUserId)
+    if (targetUser && targetUser.friendRequestsSent) {
+      targetUser.friendRequestsSent = targetUser.friendRequestsSent.filter(id => id !== currentUserId.value)
+    }
+
+    saveUsers()
+  }
+
+  function addFriend(targetUserId) {
+    acceptFriendRequest(targetUserId)
+  }
+
+  function removeFriend(targetUserId) {
+    if (!currentUser.value || !targetUserId) return
+    if (currentUser.value.friends) {
+      currentUser.value.friends = currentUser.value.friends.filter(id => id !== targetUserId)
+    }
+
+    const targetUser = users.value.find(u => u.id === targetUserId)
+    if (targetUser && targetUser.friends) {
+      targetUser.friends = targetUser.friends.filter(id => id !== currentUserId.value)
+    }
+    saveUsers()
+  }
+
   function logout() {
     currentUserId.value = ''
     token.value = ''
@@ -228,12 +356,21 @@ export const useAuthStore = defineStore('auth', () => {
     currentUser,
     token,
     isAdmin,
+    myFriends,
+    incomingFriendRequests,
+    outgoingFriendRequests,
+    suggestedFriends,
     fetchUsers,
     login,
     register,
     loginWithGoogle,
     switchUser,
     updateProfile,
+    sendFriendRequest,
+    acceptFriendRequest,
+    declineFriendRequest,
+    addFriend,
+    removeFriend,
     logout,
     saveUsers
   }

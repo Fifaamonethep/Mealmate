@@ -43,12 +43,29 @@ const presetAvatars = [
   'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=200&auto=format&fit=crop'
 ]
 
+const availableUsers = computed(() => {
+  let list = authStore.users
+  if (!authStore.isAdmin) {
+    list = list.filter(u => u.role !== 'admin')
+  }
+
+  return [...list].sort((a, b) => {
+    if (a.id === authStore.currentUserId) return -1
+    if (b.id === authStore.currentUserId) return 1
+    const aIsFriend = authStore.myFriends.some(f => f.id === a.id)
+    const bIsFriend = authStore.myFriends.some(f => f.id === b.id)
+    if (aIsFriend && !bIsFriend) return -1
+    if (!aIsFriend && bIsFriend) return 1
+    return 0
+  })
+})
+
 watch(() => props.show, (newShow) => {
   if (newShow) {
     name.value = ''
     description.value = ''
     avatar.value = presetAvatars[2]
-    selectedMembers.value = authStore.users.map(u => u.id)
+    selectedMembers.value = availableUsers.value.map(u => u.id)
   }
 })
 
@@ -143,7 +160,7 @@ async function handleSubmit() {
         <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">{{ t('groups.add_members') }} ({{ selectedMembers.length }})</label>
         <div class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-2 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800">
           <div
-            v-for="u in authStore.users"
+            v-for="u in availableUsers"
             :key="u.id"
             @click="toggleMember(u.id)"
             :class="[

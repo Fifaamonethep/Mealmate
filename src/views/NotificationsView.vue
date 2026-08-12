@@ -1,11 +1,13 @@
 <script setup>
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { useNotificationsStore } from '../stores/notifications'
 import { Bell, CheckCheck, Clock } from 'lucide-vue-next'
 
 const { t } = useI18n()
+const router = useRouter()
 const authStore = useAuthStore()
 const notificationsStore = useNotificationsStore()
 
@@ -20,6 +22,16 @@ function formatTime(isoStr) {
 
 function handleMarkAllRead() {
   notificationsStore.markAllAsRead(authStore.currentUserId)
+}
+
+function handleNotificationClick(n) {
+  notificationsStore.markAsRead(n.id)
+  const title = (n.title || '').toLowerCase()
+  if (title.includes('ໝູ່') || title.includes('bạn') || title.includes('friend') || title.includes('เพื่อน')) {
+    router.push('/friends')
+  } else {
+    router.push('/debts')
+  }
 }
 </script>
 
@@ -51,9 +63,9 @@ function handleMarkAllRead() {
       <div
         v-for="n in myNotifications"
         :key="n.id"
-        @click="notificationsStore.markAsRead(n.id)"
+        @click="handleNotificationClick(n)"
         :class="[
-          'glass-card p-4 flex items-start gap-3 cursor-pointer border transition-all',
+          'glass-card p-4 flex items-start gap-3 cursor-pointer border transition-all hover:border-indigo-500/40',
           n.isRead
             ? 'border-slate-200 dark:border-slate-800 opacity-80'
             : 'border-brand-500/40 bg-brand-50/50 dark:bg-slate-800/80 shadow-lg shadow-brand-500/5'

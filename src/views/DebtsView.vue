@@ -66,7 +66,7 @@ const filteredPayments = computed(() => {
           :class="[
             'py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all',
             activeTab === 'my_debts'
-              ? 'bg-gradient-to-r from-rose-600 to-rose-700 text-white shadow-lg shadow-rose-600/20'
+              ? 'bg-rose-600 text-white shadow-sm'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           ]"
         >
@@ -79,7 +79,7 @@ const filteredPayments = computed(() => {
           :class="[
             'py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all',
             activeTab === 'owed_to_me'
-              ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-lg shadow-emerald-600/20'
+              ? 'bg-emerald-600 text-white shadow-sm'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           ]"
         >

@@ -67,40 +67,75 @@ export const useMealsStore = defineStore('meals', () => {
     meals.value.unshift(newMeal)
     saveMeals()
 
-    // Calculate individual payment obligations
-    const debtors = mealData.participants.filter(id => id !== mealData.paidById)
-    
-    let amountPerPerson = 0
-    if (mealData.splitType === 'equal') {
-      amountPerPerson = Math.round(Number(mealData.totalAmount) / mealData.participants.length)
-    }
+    // Calculate individual payment obligations via Greedy Multi-Payer Settlement
+    const participants = mealData.participants || []
+    const totalBill = Number(mealData.totalAmount || 0)
+    const payerType = mealData.payerType || 'single'
+    const paidAmounts = mealData.paidAmounts || {}
+    const splitType = mealData.splitType || 'equal'
+    const customSplits = mealData.customSplits || {}
 
+    const equalShare = participants.length ? Math.round(totalBill / participants.length) : 0
+
+    // Compute net balance for each participant: net = upfrontPaid - fairShare
+    const creditors = []
+    const debtors = []
+
+    participants.forEach(pid => {
+      const upfrontPaid = payerType === 'single'
+        ? (pid === mealData.paidById ? totalBill : 0)
+        : Number(paidAmounts[pid] || 0)
+
+      const fairShare = splitType === 'equal'
+        ? equalShare
+        : Number(customSplits[pid] || 0)
+
+      const net = upfrontPaid - fairShare
+      if (net > 0) {
+        creditors.push({ id: pid, amount: net })
+      } else if (net < 0) {
+        debtors.push({ id: pid, amount: -net })
+      }
+    })
+
+    // Sort to optimize minimal transactions
+    creditors.sort((a, b) => b.amount - a.amount)
+    debtors.sort((a, b) => b.amount - a.amount)
+
+    let cIdx = 0
+    let dIdx = 0
     const locale = i18n.global.locale.value || 'lo'
 
-    debtors.forEach(debtorId => {
-      const debtAmount = mealData.splitType === 'equal' 
-        ? amountPerPerson 
-        : Number(mealData.customSplits[debtorId] || 0)
+    while (cIdx < creditors.length && dIdx < debtors.length) {
+      const creditor = creditors[cIdx]
+      const debtor = debtors[dIdx]
 
-      if (debtAmount > 0) {
+      const transferAmount = Math.min(creditor.amount, debtor.amount)
+      if (transferAmount > 0) {
         debtsStore.createPayment({
           mealId,
-          debtorId,
-          creditorId: mealData.paidById,
-          amount: debtAmount
+          debtorId: debtor.id,
+          creditorId: creditor.id,
+          amount: transferAmount
         })
 
         // Send notification to debtor
         notificationsStore.addNotification({
-          userId: debtorId,
+          userId: debtor.id,
           title: i18n.global.t('notifications.new_meal_split_title'),
           message: i18n.global.t('notifications.new_meal_split_msg', {
             title: newMeal.title,
-            amount: formatCurrency(debtAmount, newMeal.currency, locale)
+            amount: formatCurrency(transferAmount, newMeal.currency, locale)
           })
         })
       }
-    })
+
+      creditor.amount -= transferAmount
+      debtor.amount -= transferAmount
+
+      if (creditor.amount <= 0) cIdx++
+      if (debtor.amount <= 0) dIdx++
+    }
 
     return newMeal
   }

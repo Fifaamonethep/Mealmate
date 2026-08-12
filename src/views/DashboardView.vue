@@ -77,27 +77,22 @@ const userDisplayName = computed(() => {
 <template>
   <div class="space-y-6 pb-12">
     
-    <!-- Ultra-Clean Modern Hero Banner (Pastel Aesthetic) -->
-    <div class="glass-card p-6 sm:p-8 border border-purple-200/80 dark:border-purple-800/40 bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 dark:from-purple-950 dark:via-indigo-950 dark:to-slate-900 rounded-3xl shadow-xl text-purple-950 dark:text-white relative overflow-hidden space-y-6">
-      
-      <!-- Glowing Ambient Background Lights -->
-      <div class="absolute -top-20 -right-20 w-72 h-72 bg-purple-400/25 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-20 -left-20 w-72 h-72 bg-pink-400/25 rounded-full blur-3xl pointer-events-none"></div>
-
+    <!-- Flat Modern Hero Banner -->
+    <div class="glass-card p-6 sm:p-8 border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 rounded-3xl shadow-sm text-slate-900 dark:text-white relative overflow-hidden space-y-6">
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
         <div class="space-y-2">
           <div class="flex items-center gap-2 flex-wrap">
-            <span class="bg-white/40 text-purple-950 border border-white/60 text-[11px] uppercase font-black px-3 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-md shadow-sm">
-              <Sparkles class="w-3.5 h-3.5 text-purple-700" />
+            <span class="bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 text-[11px] uppercase font-bold px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
+              <Sparkles class="w-3.5 h-3.5 text-indigo-500" />
               <span>{{ t('dashboard.hero_tag') }}</span>
             </span>
           </div>
 
-          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black text-purple-950 dark:text-white tracking-tight">
+          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             {{ t('dashboard.welcome') }}, {{ userDisplayName }}! 👋
           </h1>
           
-          <p class="text-xs sm:text-sm text-purple-900/90 dark:text-slate-300 max-w-xl leading-relaxed font-semibold">
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed font-medium">
             {{ t('dashboard.sub') }}
           </p>
         </div>
@@ -106,59 +101,58 @@ const userDisplayName = computed(() => {
         <div class="flex items-center gap-3 shrink-0">
           <button
             @click="showCreateMeal = true"
-            class="glow-button px-5 py-3.5 text-xs font-black flex items-center justify-center gap-2.5 shadow-xl transform active:scale-95 hover:scale-105"
+            class="glow-button px-5 py-3.5 text-xs font-bold flex items-center justify-center gap-2.5 shadow-md"
           >
-            <Plus class="w-4.5 h-4.5 text-purple-950 dark:text-purple-100" />
+            <Plus class="w-4.5 h-4.5 text-white" />
             <span>{{ t('dashboard.create_meal') }}</span>
           </button>
         </div>
       </div>
-
     </div>
 
     <!-- Vibrant & Easy-to-Understand Summary Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
       
       <!-- Total My Debt (Tôi cần trả) -->
-      <div class="glass-card p-6 border border-rose-200 dark:border-rose-900/50 bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent dark:bg-slate-900/90 rounded-2xl flex items-center justify-between hover:border-rose-500/60 hover:shadow-xl hover:shadow-rose-500/10 transition-all group">
+      <div class="glass-card p-6 border border-rose-200/80 dark:border-rose-900/40 bg-white dark:bg-slate-900 rounded-2xl flex items-center justify-between hover:border-rose-500/60 hover:shadow-md transition-all group">
         <div class="space-y-1.5">
           <div class="flex items-center gap-1.5 text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">
             <TrendingDown class="w-4 h-4 text-rose-500" />
             <span>{{ t('dashboard.total_my_debt') }}</span>
           </div>
-          <div class="text-2xl sm:text-3xl font-black text-rose-600 dark:text-rose-400">
+          <div class="text-2xl sm:text-3xl font-extrabold text-rose-600 dark:text-rose-400">
             {{ formatCurrency(totalMyDebt, authStore.currentUser?.currency || 'LAK', locale) }}
           </div>
           <span class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold block">
             {{ t('dashboard.total_my_debt_sub') }}
           </span>
         </div>
-        <div class="w-13 h-13 rounded-2xl bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center shadow-lg shadow-rose-500/20 group-hover:scale-110 transition-transform shrink-0">
+        <div class="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center border border-rose-500/20 group-hover:scale-105 transition-transform shrink-0">
           <TrendingDown class="w-6 h-6" />
         </div>
       </div>
 
       <!-- Total Owed to Me (Người khác nợ tôi) -->
-      <div class="glass-card p-6 border border-emerald-200 dark:border-emerald-900/50 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent dark:bg-slate-900/90 rounded-2xl flex items-center justify-between hover:border-emerald-500/60 hover:shadow-xl hover:shadow-emerald-500/10 transition-all group">
+      <div class="glass-card p-6 border border-emerald-200/80 dark:border-emerald-900/40 bg-white dark:bg-slate-900 rounded-2xl flex items-center justify-between hover:border-emerald-500/60 hover:shadow-md transition-all group">
         <div class="space-y-1.5">
           <div class="flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
             <TrendingUp class="w-4 h-4 text-emerald-500" />
             <span>{{ t('dashboard.total_owed_me') }}</span>
           </div>
-          <div class="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400">
+          <div class="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">
             {{ formatCurrency(totalOwedToMe, authStore.currentUser?.currency || 'LAK', locale) }}
           </div>
           <span class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold block">
             {{ t('dashboard.total_owed_me_sub') }}
           </span>
         </div>
-        <div class="w-13 h-13 rounded-2xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform shrink-0">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20 group-hover:scale-105 transition-transform shrink-0">
           <TrendingUp class="w-6 h-6" />
         </div>
       </div>
 
       <!-- Net Balance (Cân bằng tài chính) -->
-      <div class="glass-card p-6 border border-indigo-200 dark:border-indigo-900/50 bg-gradient-to-br from-indigo-500/10 via-indigo-500/5 to-transparent dark:bg-slate-900/90 rounded-2xl flex items-center justify-between hover:border-indigo-500/60 hover:shadow-xl hover:shadow-indigo-500/10 transition-all group">
+      <div class="glass-card p-6 border border-indigo-200/80 dark:border-indigo-900/40 bg-white dark:bg-slate-900 rounded-2xl flex items-center justify-between hover:border-indigo-500/60 hover:shadow-md transition-all group">
         <div class="space-y-1.5">
           <div class="flex items-center gap-1.5 text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
             <Wallet class="w-4 h-4 text-indigo-500" />

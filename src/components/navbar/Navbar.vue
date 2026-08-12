@@ -11,6 +11,7 @@ import {
   Receipt,
   CreditCard,
   Users,
+  UserCheck,
   Bell,
   Shield,
   User,
@@ -89,10 +90,10 @@ function handleLogout() {
             />
           </div>
           <div class="flex items-center gap-2">
-            <span class="font-black text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-purple-700 via-pink-600 to-indigo-600 dark:from-purple-300 dark:via-pink-300 dark:to-indigo-200">
+            <span class="font-extrabold text-xl tracking-tight text-slate-900 dark:text-white">
               MealMate
             </span>
-            <span class="hidden sm:inline-block text-[10px] uppercase font-black tracking-wider px-2.5 py-0.5 rounded-full bg-gradient-to-r from-purple-500/10 to-pink-500/10 text-purple-700 border border-purple-300/40 dark:from-purple-500/20 dark:to-pink-500/20 dark:text-purple-300 shadow-sm">
+            <span class="hidden sm:inline-block text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-300 border border-indigo-500/20 shadow-sm">
               Split & Pay
             </span>
           </div>
@@ -150,6 +151,19 @@ function handleLogout() {
           >
             <Users class="w-4 h-4" />
             <span>{{ t('nav.groups') }}</span>
+          </router-link>
+
+          <router-link
+            to="/friends"
+            :class="[
+              'flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-black transition-all duration-200',
+              route.path === '/friends'
+                ? 'brand-pill-active'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
+            ]"
+          >
+            <UserCheck class="w-4 h-4" />
+            <span>{{ t('friends.title') }}</span>
           </router-link>
 
           <router-link
@@ -345,6 +359,20 @@ function handleLogout() {
           >
             <Users class="w-4.5 h-4.5" />
             <span>{{ t('nav.groups') }}</span>
+          </router-link>
+
+          <router-link
+            to="/friends"
+            @click="mobileMenuOpen = false"
+            :class="[
+              'flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-extrabold transition-all',
+              route.path === '/friends'
+                ? 'bg-brand-500/10 text-brand-600 dark:bg-brand-600/20 dark:text-brand-300'
+                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+            ]"
+          >
+            <UserCheck class="w-4.5 h-4.5" />
+            <span>{{ t('friends.title') }}</span>
           </router-link>
 
           <router-link
