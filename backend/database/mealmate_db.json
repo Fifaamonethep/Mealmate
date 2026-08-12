@@ -65,6 +65,21 @@
       "qrCodeUrl": "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=VIETQR-SOKE-00000",
       "isLocked": false,
       "createdAt": "2026-08-12T02:09:37.280Z"
+    },
+    {
+      "id": "u-g-1786509324947",
+      "username": "sokeseksannouanlaty_168",
+      "passwordHash": "google_115012626465023161860",
+      "name": "SOKE SUPER DEV",
+      "email": "sokeseksannouanlaty@gmail.com",
+      "phone": "",
+      "googleId": "115012626465023161860",
+      "role": "user",
+      "currency": "LAK",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocKLQYulyvNhaJsaYhIeQF0FJlisq3_8SeW1g9XFNzjKaon_yopl=s96-c",
+      "qrCodeUrl": "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-SOKESEKSANNOUANLATY_168-00000",
+      "isLocked": false,
+      "createdAt": "2026-08-12T04:35:24.947Z"
     }
   ],
   "meals": [],

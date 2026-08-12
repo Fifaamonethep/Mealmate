@@ -36,15 +36,16 @@ export const useDebtsStore = defineStore('debts', () => {
     const authStore = useAuthStore()
 
     const creditor = authStore.users.find(u => u.id === p.creditorId)
-    const formattedAmount = formatCurrency(p.amount, 'LAK')
+    const locale = i18n.global.locale.value || 'lo'
+    const formattedAmount = formatCurrency(p.amount, 'LAK', locale)
 
     notifStore.addNotification({
       userId: p.debtorId,
-      title: '🔔 แจ้งเตือนทวงเงินด่วน!',
-      message: `${creditor?.name || 'เพื่อนในกลุ่ม'} ได้กดส่งคำขอทวงเงินจำนวน ${formattedAmount} กรุณาโอนเงินและแนบสลิปโดยเร็ว`
+      title: i18n.global.t('graph.remind_sent'),
+      message: `${creditor?.name || 'Friend'} - ${formattedAmount}`
     })
 
-    toastStore.showToast(`ส่งข้อความทวงเงินเรียบร้อยแล้ว!`, 'info')
+    toastStore.showToast(i18n.global.t('graph.remind_sent'), 'info')
   }
 
   function createPayment(paymentData) {

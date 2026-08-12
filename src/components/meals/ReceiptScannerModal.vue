@@ -36,10 +36,10 @@ function simulateOCR() {
       totalAmount: 250000,
       currency: 'LAK',
       items: [
-        { name: 'ตำหมากหุ่งส้ม', amount: 45000 },
-        { name: 'ปิ้งไก่บ้าน 1 ตัว', amount: 85000 },
-        { name: 'ชามะนาวเย็น x3', amount: 45000 },
-        { name: 'เบียร์ลาว 1 ลัง', amount: 75000 }
+        { name: 'ຕຳໝາກຮຸ່ງສົ້ມ', amount: 45000 },
+        { name: 'ປີ້ງໄກ່ບ້ານ 1 ໂຕ', amount: 85000 },
+        { name: 'ຊາມະນາວເຢັນ x3', amount: 45000 },
+        { name: 'ເບຍລາວ 1 ລັງ', amount: 75000 }
       ]
     }
   }, 1500)
@@ -67,13 +67,13 @@ function applyScan() {
           <Camera class="w-7 h-7" />
         </div>
         <div>
-          <h4 class="font-extrabold text-sm text-slate-900 dark:text-white">ถ่ายภาพหรืออัปโหลดสลิปใบเสร็จ</h4>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">ระบบ AI จะทำการดึงชื่อมื้ออาหารและยอดเงินรวมให้อัตโนมัติ</p>
+          <h4 class="font-extrabold text-sm text-slate-900 dark:text-white">ຖ່າຍຮູບຫຼືອັບໂຫຼດບິນໃບເສັດ</h4>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">ລະບົບ AI ຈະດຶງຊື່ຄາບອາຫານແລະຍອດເງິນລວມໃຫ້ອັດໂນມັດ</p>
         </div>
 
         <label class="inline-flex items-center gap-2 glow-button text-xs py-2.5 px-5 cursor-pointer font-bold">
           <Upload class="w-4 h-4" />
-          <span>เลือกรูปภาพใบเสร็จ</span>
+          <span>ເລືອກຮູບພາບໃບເສັດ</span>
           <input type="file" accept="image/*" class="hidden" @change="handleFileUpload" />
         </label>
       </div>
@@ -85,7 +85,7 @@ function applyScan() {
           
           <div v-if="isScanning" class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm flex flex-col items-center justify-center space-y-2 text-white">
             <RefreshCw class="w-8 h-8 text-indigo-400 animate-spin" />
-            <span class="text-xs font-extrabold tracking-wider">AI กำลังวิเคราะห์สแกนสลิปใบเสร็จ...</span>
+            <span class="text-xs font-extrabold tracking-wider">AI ກຳລັງວິເຄາະສະແກນໃບເສັດ...</span>
           </div>
         </div>
 
@@ -93,7 +93,7 @@ function applyScan() {
         <div v-if="scannedResult" class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-left space-y-3">
           <div class="flex items-center justify-between">
             <span class="font-black text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
-              <CheckCircle2 class="w-4 h-4 text-emerald-500" /> สแกนใบเสร็จสำเร็จ!
+              <CheckCircle2 class="w-4 h-4 text-emerald-500" /> ສະແກນໃບເສັດສຳເລັດແລ້ວ!
             </span>
             <span class="text-xs font-black text-emerald-700 dark:text-emerald-300">250,000 LAK</span>
           </div>
@@ -115,10 +115,10 @@ function applyScan() {
     <template #footer>
       <div class="flex gap-2 w-full">
         <button v-if="previewImage" @click="previewImage = ''; scannedResult = null;" class="w-1/2 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300">
-          ถ่ายใหม่
+          ຖ່າຍໃໝ່
         </button>
         <button v-if="scannedResult" @click="applyScan" class="w-1/2 glow-button py-2.5 text-xs font-bold">
-          นำข้อมูลเข้ามื้ออาหาร
+          ນຳຂໍ້ມູນເຂົ້າຄາບອາຫານ
         </button>
       </div>
     </template>

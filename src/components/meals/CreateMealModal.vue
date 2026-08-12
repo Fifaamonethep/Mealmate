@@ -8,7 +8,7 @@ import { useAuthStore } from '../../stores/auth'
 import { useGroupsStore } from '../../stores/groups'
 import { useMealsStore } from '../../stores/meals'
 import { useToastStore } from '../../stores/toast'
-import { PlusCircle, Sparkles, Users, Receipt, DollarSign, Camera, Image, ScanText } from 'lucide-vue-next'
+import { PlusCircle, Sparkles, Users, Receipt, DollarSign, Camera, Image, ScanText, UserPlus } from 'lucide-vue-next'
 
 import { formatCurrency } from '../../utils/currency'
 
@@ -39,6 +39,57 @@ const receiptUrl = ref('https://images.unsplash.com/photo-1555396273-367ea4eb4db
 
 const showInlineGroupInput = ref(false)
 const newGroupName = ref('')
+
+const showInlineAddFriend = ref(false)
+const newFriendInput = ref('')
+const addFriendError = ref('')
+
+function handleQuickAddFriend() {
+  const query = newFriendInput.value.trim()
+  if (!query) return
+  addFriendError.value = ''
+
+  // 1. Search existing users
+  let found = authStore.users.find(
+    u => u.name.toLowerCase() === query.toLowerCase() ||
+         u.username.toLowerCase() === query.toLowerCase() ||
+         (u.email && u.email.toLowerCase() === query.toLowerCase())
+  )
+
+  if (!found) {
+    // 2. Quick create new friend
+    found = {
+      id: `u-${Date.now()}`,
+      username: query.toLowerCase().replace(/\s+/g, '_'),
+      name: query,
+      email: '',
+      phone: '',
+      role: 'user',
+      currency: 'LAK',
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(query)}`,
+      qrCodeUrl: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-${encodeURIComponent(query.toUpperCase())}`
+    }
+    authStore.users.push(found)
+    authStore.saveUsers()
+  }
+
+  // 3. Add to selected participants
+  if (!selectedParticipants.value.includes(found.id)) {
+    selectedParticipants.value.push(found.id)
+  }
+
+  // 4. Add to group if group selected
+  if (groupId.value) {
+    const grp = groupsStore.getGroupById(groupId.value)
+    if (grp && !grp.members.includes(found.id)) {
+      groupsStore.addMember(groupId.value, found.id)
+    }
+  }
+
+  toastStore.showToast(t('groups.member_added_success', { name: found.name }), 'success')
+  newFriendInput.value = ''
+  showInlineAddFriend.value = false
+}
 
 const perPersonEqualAmount = computed(() => {
   if (!totalAmount.value || !selectedParticipants.value.length) return 0
@@ -78,13 +129,18 @@ async function handleCreateInlineGroup() {
 
 // Available members depending on selected group or all users
 const availableMembers = computed(() => {
+  let list = authStore.users
   if (groupId.value) {
     const group = groupsStore.getGroupById(groupId.value)
     if (group) {
-      return authStore.users.filter(u => group.members.includes(u.id))
+      list = authStore.users.filter(u => group.members.includes(u.id))
     }
   }
-  return authStore.users
+  // Hide system admin from member selection if current user is not admin
+  if (!authStore.isAdmin) {
+    return list.filter(u => u.role !== 'admin')
+  }
+  return list
 })
 
 // Reset form fields when modal opens
@@ -129,7 +185,7 @@ function handleOcrScanned(data) {
   if (data?.title) title.value = data.title
   if (data?.totalAmount) totalAmount.value = data.totalAmount
   if (data?.currency) currency.value = data.currency
-  toastStore.showToast('สแกนอ่านใบเสร็จดึงข้อมูลเรียบร้อยแล้ว!', 'success')
+  toastStore.showToast(t('meals.ai_success'), 'success')
 }
 
 const customTotalSum = computed(() => {
@@ -311,31 +367,42 @@ async function handleSubmit() {
         </div>
       </div>
 
-      <!-- Participants selection header & AI Scanner Button -->
+      <!-- Participants selection header -->
       <div class="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800">
         <label class="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
           <Users class="w-4 h-4 text-brand-600 dark:text-brand-400" />
           {{ t('meals.participants_count') }} ({{ selectedParticipants.length }})
         </label>
-        <div class="flex items-center gap-1.5">
-          <button
-            type="button"
-            @click="showOcrScanner = true"
-            class="bg-indigo-50 dark:bg-indigo-500/20 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/40 text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-all font-semibold shadow-sm"
-          >
-            <ScanText class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-            <span>AI OCR สแกนสลิป</span>
-          </button>
+        <button
+          type="button"
+          @click="showInlineAddFriend = !showInlineAddFriend"
+          class="text-xs font-extrabold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 flex items-center gap-1 bg-brand-50 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800 px-2.5 py-1 rounded-lg transition-all"
+        >
+          <UserPlus class="w-3.5 h-3.5 text-brand-500" />
+          <span>+ {{ t('groups.add_members') }}</span>
+        </button>
+      </div>
 
+      <!-- Inline Add Friend Input -->
+      <div v-if="showInlineAddFriend" class="p-3 bg-brand-50/60 dark:bg-brand-500/10 rounded-2xl border border-brand-200 dark:border-brand-500/30 space-y-2">
+        <div class="flex gap-2">
+          <input
+            v-model="newFriendInput"
+            type="text"
+            :placeholder="t('groups.enter_name_placeholder') || 'Nhập tên bạn bè...'"
+            class="w-full glass-input text-xs"
+            @keyup.enter="handleQuickAddFriend"
+          />
           <button
             type="button"
-            @click="showAiScanner = true"
-            class="bg-brand-50 dark:bg-brand-500/20 hover:bg-brand-100 dark:hover:bg-brand-500/30 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-500/40 text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-all font-semibold shadow-sm"
+            @click="handleQuickAddFriend"
+            class="px-3.5 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold text-xs shrink-0 shadow-sm flex items-center gap-1"
           >
-            <Sparkles class="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-            <span>{{ t('meals.ai_face_scan') }}</span>
+            <UserPlus class="w-3.5 h-3.5" />
+            <span>{{ t('groups.btn_add') }}</span>
           </button>
         </div>
+        <p v-if="addFriendError" class="text-[11px] text-rose-500 font-semibold">{{ addFriendError }}</p>
       </div>
 
       <!-- Member Pick Checkboxes -->

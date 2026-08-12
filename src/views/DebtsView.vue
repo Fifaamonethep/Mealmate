@@ -52,7 +52,7 @@ const filteredPayments = computed(() => {
         class="bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 font-extrabold transition-all shadow-sm shrink-0"
       >
         <Share2 class="w-4 h-4 text-indigo-500" />
-        <span>แชร์สรุปยอดกลุ่ม (Share)</span>
+        <span>{{ t('share.copy_share_btn') }}</span>
       </button>
     </div>
 

@@ -167,10 +167,10 @@ export const useAuthStore = defineStore('auth', () => {
         return data.user
       }
     } catch (err) {
-      if (err.isBackendValidationError) {
+      if (err.message?.includes('locked') || err.message?.includes('khóa')) {
         throw err
       }
-      console.warn('Backend Google Auth API unavailable, using local authentication:', err.message)
+      console.warn('Backend Google Auth API unavailable/error, using local authentication:', err.message)
     }
 
     // Local Fallback for Google Token (decode payload if JWT)

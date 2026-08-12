@@ -58,7 +58,7 @@ function sendReminder(debtId) {
             <span>Visual Debt Network Graph</span>
             <span class="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">Live Interactive</span>
           </h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400">ผังแสดงสายการโอนเงินหนี้สินระหว่างเพื่อนในกลุ่ม</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">{{ t('graph.graph_sub') }}</p>
         </div>
       </div>
     </div>
@@ -77,7 +77,7 @@ function sendReminder(debtId) {
             <img :src="d.debtor.avatar" class="w-9 h-9 rounded-full border border-slate-300 dark:border-slate-700 object-cover" />
             <div>
               <div class="font-extrabold text-xs text-slate-900 dark:text-white truncate max-w-[90px] sm:max-w-[110px]">{{ d.debtor.name }}</div>
-              <div class="text-[10px] font-bold text-rose-500">ติดหนี้ 🔴</div>
+              <div class="text-[10px] font-bold text-rose-500">{{ t('graph.debtor_label') }}</div>
             </div>
           </div>
 
@@ -96,7 +96,7 @@ function sendReminder(debtId) {
           <div class="flex items-center gap-2 text-right shrink-0">
             <div>
               <div class="font-extrabold text-xs text-slate-900 dark:text-white truncate max-w-[90px] sm:max-w-[110px]">{{ d.creditor.name }}</div>
-              <div class="text-[10px] font-bold text-emerald-500">เจ้าหนี้ 🟢</div>
+              <div class="text-[10px] font-bold text-emerald-500">{{ t('graph.creditor_label') }}</div>
             </div>
             <img :src="d.creditor.avatar" class="w-9 h-9 rounded-full border border-slate-300 dark:border-slate-700 object-cover" />
           </div>
@@ -110,7 +110,7 @@ function sendReminder(debtId) {
             class="text-[11px] font-bold text-amber-700 dark:text-amber-400 hover:text-amber-800 flex items-center gap-1 transition-colors"
           >
             <BellRing class="w-3.5 h-3.5" />
-            <span>{{ reminderSent[d.id] ? 'ส่งการทวงเงินแล้ว! 🔔' : 'ทวงเงินด่วน (Remind)' }}</span>
+            <span>{{ reminderSent[d.id] ? t('graph.remind_sent') : t('graph.remind_btn') }}</span>
           </button>
 
           <button
@@ -118,7 +118,7 @@ function sendReminder(debtId) {
             class="glow-button py-1.5 px-3 text-[11px] font-extrabold flex items-center gap-1.5 rounded-xl"
           >
             <QrCode class="w-3.5 h-3.5" />
-            <span>สแกนจ่าย QR</span>
+            <span>{{ t('graph.scan_pay_qr') }}</span>
           </button>
         </div>
       </div>
@@ -127,12 +127,12 @@ function sendReminder(debtId) {
     <!-- Empty State -->
     <div v-else class="py-8 text-center space-y-2 bg-slate-50 dark:bg-slate-950/50 rounded-2xl border border-dashed border-slate-300 dark:border-slate-800">
       <CheckCircle2 class="w-10 h-10 text-emerald-500 mx-auto" />
-      <h4 class="font-black text-sm text-slate-900 dark:text-white">ไม่มีรายการหนี้สินค้างชำระ 🎉</h4>
-      <p class="text-xs text-slate-500 dark:text-slate-400">ทุกคนในกลุ่มเคลียร์ยอดเงินครบถ้วนเรียบร้อยแล้ว!</p>
+      <h4 class="font-black text-sm text-slate-900 dark:text-white">{{ t('graph.no_debts_title') }}</h4>
+      <p class="text-xs text-slate-500 dark:text-slate-400">{{ t('graph.no_debts_sub') }}</p>
     </div>
 
     <!-- Dynamic QR Payment Modal -->
-    <Modal :show="showPayModal" title="สแกน QR โอนเงินระบบอัตโนมัติ" maxWidth="max-w-md" @close="showPayModal = false">
+    <Modal :show="showPayModal" :title="t('graph.qr_modal_title')" maxWidth="max-w-md" @close="showPayModal = false">
       <template #icon>
         <QrCode class="w-5 h-5 text-purple-500" />
       </template>
@@ -140,7 +140,7 @@ function sendReminder(debtId) {
       <div v-if="selectedDebt" class="space-y-5 text-center">
         <!-- Details -->
         <div class="bg-purple-50 dark:bg-purple-950/50 p-4 rounded-2xl border border-purple-200 dark:border-purple-800 space-y-1">
-          <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">ยอดเงินที่ต้องโอนชำระให้ {{ selectedDebt.creditor.name }}</div>
+          <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ t('graph.amount_to_pay_for', { name: selectedDebt.creditor.name }) }}</div>
           <div class="text-2xl font-black text-purple-950 dark:text-purple-100">
             {{ formatCurrency(selectedDebt.amount, 'LAK') }}
           </div>
@@ -152,17 +152,17 @@ function sendReminder(debtId) {
             :src="generateLaoQrUrl({ username: selectedDebt.creditor.username, amount: selectedDebt.amount })"
             class="w-56 h-56 mx-auto object-contain"
           />
-          <div class="text-[11px] font-bold text-slate-600 mt-2">สแกนผ่านแอปธนาคารใดก็ได้เพื่อโอนเงิน</div>
+          <div class="text-[11px] font-bold text-slate-600 mt-2">{{ t('graph.scan_banking_app_hint') }}</div>
         </div>
 
         <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">
-          เมื่อโอนสำเร็จเรียบร้อยแล้ว สามารถอัปโหลดสลิปได้ที่หน้ารายการหนี้สิน
+          {{ t('graph.after_transfer_hint') }}
         </div>
       </div>
 
       <template #footer>
         <button @click="showPayModal = false" class="glow-button w-full py-2.5 text-xs font-bold">
-          ปิดหน้าต่าง
+          {{ t('common.close') }}
         </button>
       </template>
     </Modal>

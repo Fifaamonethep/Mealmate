@@ -291,7 +291,45 @@
     "metric_pending": "Pending"
   },
   "footer": {
-    "tagline": "Fair & automated meal splitting & debt management",
+    "tagline": "Fair Meal Expense Splitting & Debt Tracking",
     "contact_support": "Contact Support:"
+  },
+  "graph": {
+    "graph_sub": "Interactive Debt Transfer Network Graph",
+    "debtor_label": "Debtor 🔴",
+    "creditor_label": "Creditor 🟢",
+    "remind_btn": "Remind Debt",
+    "remind_sent": "Reminder Sent! 🔔",
+    "scan_pay_qr": "Scan QR Pay",
+    "no_debts_title": "All Debts Cleared! 🎉",
+    "no_debts_sub": "Everyone in the group has settled their debts.",
+    "qr_modal_title": "Scan QR Code for Auto Transfer",
+    "amount_to_pay_for": "Amount to pay for {name}",
+    "scan_banking_app_hint": "Scan via any mobile banking app to pay",
+    "after_transfer_hint": "After paying, upload payment slip on the Debts page"
+  },
+  "share": {
+    "share_modal_title": "Share Group Debt Summary to LINE / Telegram",
+    "share_hint": "Click copy button below to paste in LINE, Telegram, or WhatsApp chat!",
+    "copied_success": "Copied Successfully! 📋",
+    "copy_share_btn": "Copy Share Message",
+    "summary_header": "📌 DEBT SUMMARY [{groupName}] - MealMate App",
+    "all_cleared_msg": "🎉 All debts cleared! No pending balances.",
+    "transfer_to_msg": "transfer to",
+    "debtor_default": "Friend",
+    "creditor_default": "Creditor",
+    "view_details_link_msg": "👉 View details & upload slip at: https://mealmate.sokepromax.space"
+  },
+  "analytics": {
+    "category_title": "Expense Categories",
+    "category_sub": "Distribution of total meal budget",
+    "top_creditor_title": "Top Creditor Leaderboard",
+    "top_creditor_sub": "Members who advanced money for the group",
+    "advanced_paid": "Advanced Paid",
+    "cat_food": "Food & BBQ 🍲",
+    "cat_drink": "Coffee & Drinks ☕",
+    "cat_travel": "Travel & Trips 🏖️",
+    "cat_home": "Room & Common 🏢",
+    "cat_sports": "Sports & Games ⚽"
   }
 }

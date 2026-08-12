@@ -293,5 +293,43 @@
   "footer": {
     "tagline": "ການຈັດການໜີ້ແລະຫານຄ່າອາຫານທີ່ຍຸຕິທຳອັດໂນມັດ",
     "contact_support": "ຕິດຕໍ່ຝ່າຍຊ່ວຍເຫຼືອ:"
+  },
+  "graph": {
+    "graph_sub": "ຜັງສະແດງສາຍການໂອນເງິນໜີ້ສິນລະຫວ່າງໝູ່ໃນກຸ່ມ",
+    "debtor_label": "ລູກໜີ້ 🔴",
+    "creditor_label": "ເຈົ້າໜີ້ 🟢",
+    "remind_btn": "ເຕືອນໜີ້ (Remind)",
+    "remind_sent": "ສົ່ງການເຕືອນໜີ້ແລ້ວ! 🔔",
+    "scan_pay_qr": "ສະແກນ QR ຈ່າຍເງິນ",
+    "no_debts_title": "ບໍ່ມີລາຍການໜີ້ສິນຄ້າງຊຳລະ 🎉",
+    "no_debts_sub": "ທຸກຄົນໃນກຸ່ມຄຼຍອດເງິນຄົບຖ້ວນຮຽບຮ້ອຍແລ້ວ!",
+    "qr_modal_title": "ສະແກນ QR ໂອນເງິນອັດໂນມັດ",
+    "amount_to_pay_for": "ຈຳນວນເງິນທີ່ຕ້ອງໂອນຊຳລະໃຫ້ {name}",
+    "scan_banking_app_hint": "ສະແກນຜ່ານແອັບທະນາຄານໃດກໍໄດ້ເພື່ອໂອນເງິນ",
+    "after_transfer_hint": "ເມື່ອໂອນສຳເລັດແລ້ວ ສາມາດອັບໂຫຼດສລິບໄດ້ຢູ່ໜ້າລາຍການໜີ້ສິນ"
+  },
+  "share": {
+    "share_modal_title": "ແບ່ງປັນສະຫຼຸບໜີ້ສິນກຸ່ມໄປຍັງ LINE / Telegram",
+    "share_hint": "ກົດປຸ່ມຄັດລອກຂໍ້ຄວາມດ້ານລຸ່ມ ເພື່ອນຳໄປວາງໃນແຊັດກຸ່ມ LINE, Telegram ຫຼື WhatsApp ໄດ້ທັນທີ!",
+    "copied_success": "ຄັດລອກສຳເລັດແລ້ວ! 📋",
+    "copy_share_btn": "ຄັດລອກຂໍ້ຄວາມແບ່ງປັນ",
+    "summary_header": "📌 ສະຫຼຸບຍອດເງິນໜີ້ສິນ [{groupName}] - MealMate App",
+    "all_cleared_msg": "🎉 ເຄຼຍຍອດເງິນຄົບຖ້ວນແລ້ວ ບໍ່ມີໃຜຕິດໜີ້ຄ້າງຊຳລະ!",
+    "transfer_to_msg": "ໂອນໃຫ້",
+    "debtor_default": "ໝູ່",
+    "creditor_default": "ເຈົ້າໜີ້",
+    "view_details_link_msg": "👉 ເຂົ້າໄປເບິ່ງລາຍລະອຽດແລະແນບສລິບໄດ້ທີ່: https://mealmate.sokepromax.space"
+  },
+  "analytics": {
+    "category_title": "ໝວດໝູ່ຄ່າໃຊ້ຈ່າຍ",
+    "category_sub": "ການກະຈາຍຕົວຂອງງົບປະມານຄາບອາຫານທັງໝົດ",
+    "top_creditor_title": "ອັນດັບຜູ້ຈ່າຍເງິນລ່ວງໜ້າສູງສຸດ",
+    "top_creditor_sub": "ສະມາຊິກທີ່ອອກເງິນຈ່າຍລ່ວງໜ້າໃຫ້ໝູ່ຫຼາຍສຸດ",
+    "advanced_paid": "ຈ່າຍລ່ວງໜ້າແລ້ວ",
+    "cat_food": "ອາຫານ & ໝູກະທະ 🍲",
+    "cat_drink": "ກາເຟ & ເຄື່ອງດື່ມ ☕",
+    "cat_travel": "ທ່ອງທ່ຽວ & ເດີນທາງ 🏖️",
+    "cat_home": "ຄ່າຫ້ອງ & ສ່ວນລວມ 🏢",
+    "cat_sports": "ກິລາ & ຕີບານ ⚽"
   }
 }

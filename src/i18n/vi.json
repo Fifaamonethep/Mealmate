@@ -293,5 +293,43 @@
   "footer": {
     "tagline": "Quản lý nợ & tự động chia tiền bữa ăn sòng phẳng",
     "contact_support": "Liên hệ hỗ trợ:"
+  },
+  "graph": {
+    "graph_sub": "Sơ đồ luồng chuyển tiền nợ giữa các thành viên",
+    "debtor_label": "Con nợ 🔴",
+    "creditor_label": "Chủ nợ 🟢",
+    "remind_btn": "Nhắc nợ (Remind)",
+    "remind_sent": "Đã gửi nhắc nợ! 🔔",
+    "scan_pay_qr": "Quét QR trả nợ",
+    "no_debts_title": "Không có khoản nợ nào cần trả 🎉",
+    "no_debts_sub": "Tất cả mọi người trong nhóm đã hoàn tất thanh toán sòng phẳng!",
+    "qr_modal_title": "Quét mã QR chuyển khoản tự động",
+    "amount_to_pay_for": "Số tiền cần chuyển trả cho {name}",
+    "scan_banking_app_hint": "Quét bằng ứng dụng ngân hàng bất kỳ để chuyển tiền",
+    "after_transfer_hint": "Sau khi chuyển tiền thành công, bạn có thể tải bill xác nhận ở trang Công nợ"
+  },
+  "share": {
+    "share_modal_title": "Chia sẻ tổng nợ nhóm sang LINE / Telegram",
+    "share_hint": "Bấm nút sao chép bên dưới để dán vào nhóm chat LINE, Telegram hoặc WhatsApp!",
+    "copied_success": "Đã sao chép thành công! 📋",
+    "copy_share_btn": "Sao chép tin nhắn chia sẻ",
+    "summary_header": "📌 TỔNG HỢP NỢ [{groupName}] - MealMate App",
+    "all_cleared_msg": "🎉 Đã thanh toán đầy đủ toàn bộ, không ai còn nợ nần!",
+    "transfer_to_msg": "chuyển cho",
+    "debtor_default": "Bạn bè",
+    "creditor_default": "Chủ nợ",
+    "view_details_link_msg": "👉 Xem chi tiết và đính kèm bill tại: https://mealmate.sokepromax.space"
+  },
+  "analytics": {
+    "category_title": "Danh mục chi tiêu",
+    "category_sub": "Phân bổ ngân sách bữa ăn toàn hệ thống",
+    "top_creditor_title": "Bảng xếp hạng ứng tiền nhiều nhất",
+    "top_creditor_sub": "Thành viên đã chi trả trước cho bạn bè nhiều nhất",
+    "advanced_paid": "Đã ứng trả trước",
+    "cat_food": "Ăn uống & Lẩu nướng 🍲",
+    "cat_drink": "Cà phê & Đồ uống ☕",
+    "cat_travel": "Du lịch & Di chuyển 🏖️",
+    "cat_home": "Tiền phòng & Tiện ích 🏢",
+    "cat_sports": "Thể thao & Đá bóng ⚽"
   }
 }

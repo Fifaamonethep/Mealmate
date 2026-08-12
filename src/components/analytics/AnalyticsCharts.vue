@@ -1,21 +1,23 @@
 <script setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useMealsStore } from '../../stores/meals'
 import { useAuthStore } from '../../stores/auth'
 import { formatCurrency } from '../../utils/currency'
 import { PieChart, TrendingUp, Award, Layers, Sparkles, Coffee, Utensils, Plane, Home, Dumbbell } from 'lucide-vue-next'
 
+const { t, locale } = useI18n()
 const mealsStore = useMealsStore()
 const authStore = useAuthStore()
 
 // Compute categories breakdown
 const categoryStats = computed(() => {
   const categories = [
-    { key: 'food', label: 'ອາຫານ & ໝູກະທະ 🍲', icon: Utensils, color: 'bg-rose-500', total: 0 },
-    { key: 'drink', label: 'ກາເຟ & ເຄື່ອງດື່ມ ☕', icon: Coffee, color: 'bg-amber-500', total: 0 },
-    { key: 'travel', label: 'ທ່ອງທ່ຽວ & ເດີນທາງ 🏖️', icon: Plane, color: 'bg-indigo-500', total: 0 },
-    { key: 'home', label: 'ຄ່າຫ້ອງ & ສ່ວນລວມ 🏢', icon: Home, color: 'bg-emerald-500', total: 0 },
-    { key: 'sports', label: 'ກິລາ & ຕີບານ ⚽', icon: Dumbbell, color: 'bg-purple-500', total: 0 }
+    { key: 'food', label: t('analytics.cat_food'), icon: Utensils, color: 'bg-rose-500', total: 0 },
+    { key: 'drink', label: t('analytics.cat_drink'), icon: Coffee, color: 'bg-amber-500', total: 0 },
+    { key: 'travel', label: t('analytics.cat_travel'), icon: Plane, color: 'bg-indigo-500', total: 0 },
+    { key: 'home', label: t('analytics.cat_home'), icon: Home, color: 'bg-emerald-500', total: 0 },
+    { key: 'sports', label: t('analytics.cat_sports'), icon: Dumbbell, color: 'bg-purple-500', total: 0 }
   ]
 
   const totalAll = mealsStore.meals.reduce((sum, m) => sum + (Number(m.totalAmount) || 0), 0)
@@ -76,8 +78,8 @@ const payerLeaderboard = computed(() => {
             <PieChart class="w-5 h-5" />
           </div>
           <div>
-            <h3 class="font-extrabold text-base text-slate-900 dark:text-white tracking-tight">หมวดหมู่ค่าใช้จ่าย</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400">การกระจายตัวของงบประมาณมื้ออาหารทั้งหมด</p>
+            <h3 class="font-extrabold text-base text-slate-900 dark:text-white tracking-tight">{{ t('analytics.category_title') }}</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">{{ t('analytics.category_sub') }}</p>
           </div>
         </div>
       </div>
@@ -91,7 +93,7 @@ const payerLeaderboard = computed(() => {
               <span>{{ c.label }}</span>
             </span>
             <div class="flex items-center gap-2">
-              <span class="font-black text-slate-900 dark:text-white">{{ formatCurrency(c.total, 'LAK') }}</span>
+              <span class="font-black text-slate-900 dark:text-white">{{ formatCurrency(c.total, 'LAK', locale) }}</span>
               <span class="text-[10px] font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">{{ c.percentage }}%</span>
             </div>
           </div>
@@ -113,8 +115,8 @@ const payerLeaderboard = computed(() => {
             <Award class="w-5 h-5" />
           </div>
           <div>
-            <h3 class="font-extrabold text-base text-slate-900 dark:text-white tracking-tight">อันดับผู้สำรองจ่ายสูงสุด</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400">สมาชิกที่ออกเงินกู้สำรองจ่ายกลางล่วงหน้าให้เพื่อน</p>
+            <h3 class="font-extrabold text-base text-slate-900 dark:text-white tracking-tight">{{ t('analytics.top_creditor_title') }}</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">{{ t('analytics.top_creditor_sub') }}</p>
           </div>
         </div>
       </div>
@@ -142,8 +144,8 @@ const payerLeaderboard = computed(() => {
           </div>
 
           <div class="text-right">
-            <div class="font-black text-amber-600 dark:text-amber-400 text-xs">{{ formatCurrency(p.amount, 'LAK') }}</div>
-            <div class="text-[10px] font-bold text-slate-500">สำรองจ่ายล่วงหน้า</div>
+            <div class="font-black text-amber-600 dark:text-amber-400 text-xs">{{ formatCurrency(p.amount, 'LAK', locale) }}</div>
+            <div class="text-[10px] font-bold text-slate-500">{{ t('analytics.advanced_paid') }}</div>
           </div>
         </div>
       </div>
