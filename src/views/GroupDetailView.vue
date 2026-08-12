@@ -164,8 +164,9 @@ function handleDisbandGroup() {
           <div class="relative shrink-0">
             <img
               :src="group.avatar || owner?.avatar || 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=200&auto=format&fit=crop'"
+              @error="(e) => e.target.src = 'https://api.dicebear.com/7.x/identicon/svg?seed=' + group.id"
               class="w-16 h-16 rounded-2xl object-cover border-2 border-brand-500/50 shadow-md bg-slate-200 dark:bg-slate-800"
-              :alt="group.name"
+              alt=""
             />
             <div v-if="owner" class="absolute -bottom-1 -right-1 bg-amber-500 text-slate-950 p-1 rounded-full border border-white dark:border-slate-900 shadow" title="Leader">
               <Crown class="w-3.5 h-3.5" />

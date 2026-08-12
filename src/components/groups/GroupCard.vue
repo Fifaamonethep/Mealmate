@@ -48,8 +48,9 @@ const totalExpenses = computed(() => {
           <div class="relative shrink-0">
             <img
               :src="group.avatar || owner?.avatar || 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=200&auto=format&fit=crop'"
+              @error="(e) => e.target.src = 'https://api.dicebear.com/7.x/identicon/svg?seed=' + group.id"
               class="w-12 h-12 rounded-xl object-cover border-2 border-brand-500/40 shadow-sm bg-slate-200 dark:bg-slate-800"
-              :alt="group.name"
+              alt=""
             />
             <span v-if="owner" class="absolute -bottom-1 -right-1 bg-amber-500 text-slate-950 text-[10px] p-0.5 rounded-full shadow border border-white dark:border-slate-900" title="Group Leader">
               👑

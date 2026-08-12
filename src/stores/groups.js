@@ -11,7 +11,10 @@ export const useGroupsStore = defineStore('groups', () => {
   }
   const groups = ref(loadedGroups.map(g => ({
     ...g,
-    ownerId: g.ownerId || (g.members && g.members[0]) || 'u-alice'
+    ownerId: g.ownerId || (g.members && g.members[0]) || 'u-alice',
+    avatar: (g.avatar && (g.avatar.startsWith('http') || g.avatar.startsWith('data:image'))) 
+      ? g.avatar 
+      : 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=200&auto=format&fit=crop'
   })))
 
   function saveGroups() {

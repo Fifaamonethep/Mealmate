@@ -129,7 +129,8 @@
     "custom_split_mismatch": "Custom split total ({customSum}) does not match the bill total ({totalAmount})!",
     "custom_total_input": "Custom total input:",
     "custom_split_matched": "✓ Total matched",
-    "custom_split_difference": "⚠️ Mismatch {diff}"
+    "custom_split_difference": "⚠️ Mismatch {diff}",
+    "date_placeholder": "dd/mm/yyyy"
   },
   "debts": {
     "title": "Debt & Payment Management",
@@ -255,7 +256,16 @@
     "err_fill_all_passwords": "Please fill out all password fields!",
     "err_current_pass_incorrect": "Current password incorrect!",
     "err_pass_min_length": "New password must be at least 4 characters!",
-    "err_confirm_pass_mismatch": "Confirm password does not match!"
+    "err_confirm_pass_mismatch": "New password confirmation does not match!",
+    "paste_clipboard": "Paste from Clipboard (Ctrl+V)",
+    "copy_image": "Copy Image",
+    "paste_success": "Image pasted from Clipboard successfully!",
+    "copy_success": "Image copied to Clipboard!"
+  },
+  "cropper": {
+    "title": "Crop & Resize Image",
+    "hint": "Drag or Zoom / Rotate to fit crop frame perfectly",
+    "btn_crop": "Crop & Apply Image"
   },
   "admin": {
     "title": "Admin Dashboard",

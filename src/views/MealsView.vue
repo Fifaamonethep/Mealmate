@@ -7,7 +7,7 @@ import MealCard from '../components/meals/MealCard.vue'
 import CreateMealModal from '../components/meals/CreateMealModal.vue'
 import { Plus, Search, Filter, Utensils, Calendar } from 'lucide-vue-next'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const mealsStore = useMealsStore()
 const groupsStore = useGroupsStore()
 
@@ -86,14 +86,47 @@ const filteredMeals = computed(() => {
         <span class="text-slate-600 dark:text-slate-400 flex items-center gap-1 font-semibold">
           <Calendar class="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" /> {{ t('meals.filter_date') }}
         </span>
+
         <div class="flex items-center gap-2">
           <span class="text-slate-500">{{ t('common.from') }}</span>
-          <input v-model="startDate" type="date" class="glass-input text-xs py-1 px-2" />
+          <div class="relative inline-flex items-center">
+            <input
+              v-model="startDate"
+              type="date"
+              :class="[
+                'glass-input text-xs py-1 px-2.5 rounded-xl cursor-pointer custom-date-input',
+                !startDate ? 'text-transparent dark:text-transparent' : 'text-slate-900 dark:text-white'
+              ]"
+            />
+            <span
+              v-if="!startDate"
+              class="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 dark:text-slate-500 pointer-events-none font-medium pr-6"
+            >
+              {{ t('meals.date_placeholder') }}
+            </span>
+          </div>
         </div>
+
         <div class="flex items-center gap-2">
           <span class="text-slate-500">{{ t('common.to') }}</span>
-          <input v-model="endDate" type="date" class="glass-input text-xs py-1 px-2" />
+          <div class="relative inline-flex items-center">
+            <input
+              v-model="endDate"
+              type="date"
+              :class="[
+                'glass-input text-xs py-1 px-2.5 rounded-xl cursor-pointer custom-date-input',
+                !endDate ? 'text-transparent dark:text-transparent' : 'text-slate-900 dark:text-white'
+              ]"
+            />
+            <span
+              v-if="!endDate"
+              class="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 dark:text-slate-500 pointer-events-none font-medium pr-6"
+            >
+              {{ t('meals.date_placeholder') }}
+            </span>
+          </div>
         </div>
+
         <button
           v-if="startDate || endDate"
           @click="startDate = ''; endDate = ''"

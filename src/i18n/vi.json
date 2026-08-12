@@ -129,7 +129,8 @@
     "custom_split_mismatch": "Tổng tiền nhập tùy chỉnh ({customSum}) không khớp với tổng tiền hóa đơn ({totalAmount})!",
     "custom_total_input": "Tổng tiền tự nhập:",
     "custom_split_matched": "✓ Khớp tổng tiền",
-    "custom_split_difference": "⚠️ Lệch {diff}"
+    "custom_split_difference": "⚠️ Lệch {diff}",
+    "date_placeholder": "dd/mm/yyyy"
   },
   "debts": {
     "title": "Quản lý Công Nợ & Thanh Toán",
@@ -255,7 +256,16 @@
     "err_fill_all_passwords": "Vui lòng điền đầy đủ các trường mật khẩu!",
     "err_current_pass_incorrect": "Mật khẩu hiện tại không chính xác!",
     "err_pass_min_length": "Mật khẩu mới phải có ít nhất 4 ký tự!",
-    "err_confirm_pass_mismatch": "Xác nhận mật khẩu không trùng khớp!"
+    "err_confirm_pass_mismatch": "Xác nhận mật khẩu không trùng khớp!",
+    "paste_clipboard": "Dán từ Clipboard (Ctrl+V)",
+    "copy_image": "Sao chép ảnh",
+    "paste_success": "Đã dán ảnh từ Clipboard thành công!",
+    "copy_success": "Đã sao chép ảnh vào Clipboard!"
+  },
+  "cropper": {
+    "title": "Cắt & Chỉnh Kích Thước Ảnh",
+    "hint": "Kéo di chuyển hoặc Phóng to / Xoay để chỉnh góc cắt ảnh hoàn hảo",
+    "btn_crop": "Cắt & Sử Dụng Ảnh"
   },
   "admin": {
     "title": "Bảng Điều Khiển Admin",

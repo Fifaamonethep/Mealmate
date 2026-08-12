@@ -129,7 +129,8 @@
     "custom_split_mismatch": "ຍອດລວມທີ່ກຳນົດເອງ ({customSum}) ບໍ່ກົງກັບຍອດລວມໃບເສັດ ({totalAmount})!",
     "custom_total_input": "ຍອດລວມທີ່ກຳນົດເອງ:",
     "custom_split_matched": "✓ ກົງກັບຍອດລວມ",
-    "custom_split_difference": "⚠️ ຫຼຸດ/ເກີນ {diff}"
+    "custom_split_difference": "⚠️ ຫຼຸດ/ເກີນ {diff}",
+    "date_placeholder": "ວວ/ດດ/ປປປປ"
   },
   "debts": {
     "title": "ການຈັດການໜີ້ແລະການຊຳລະເງິນ",
@@ -255,7 +256,16 @@
     "err_fill_all_passwords": "ກະລຸນາປ້ອນລະຫັດຜ່ານໃຫ້ຄົບຖ້ວນ!",
     "err_current_pass_incorrect": "ລະຫັດຜ່ານປະຈຸບັນບໍ່ຖືກຕ້ອງ!",
     "err_pass_min_length": "ລະຫັດຜ່ານໃຫມ່ຕ້ອງມີຢ່າງໜ້ອຍ 4 ຕົວອັກສອນ!",
-    "err_confirm_pass_mismatch": "ຢືນຢັນລະຫັດຜ່ານບໍ່ກົງກັນ!"
+    "err_confirm_pass_mismatch": "ຢືນຢັນລະຫັດຜ່ານບໍ່ກົງກັນ!",
+    "paste_clipboard": "ວາງຮູບຈາກ Clipboard (Ctrl+V)",
+    "copy_image": "ຄັດລອກຮູບ",
+    "paste_success": "ວາງຮູບຈາກ Clipboard ສຳເລັດແລ້ວ!",
+    "copy_success": "ຄັດລອກຮູບໄປຍັງ Clipboard ສຳເລັດແລ້ວ!"
+  },
+  "cropper": {
+    "title": "ຕັດ & ປັບຂະໜາດຮູບພາບ",
+    "hint": "ລາກຍ້າຍ ຫຼື ຂະຫຍາຍ / ໝູນ ເພື່ອປັບມຸມຕັດຮູບໃຫ້ສົມບູນແບບ",
+    "btn_crop": "ຕັດ & ນຳໃຊ້ຮູບ"
   },
   "admin": {
     "title": "ແຜງຄວບຄຸມຜູ້ດູແລລະບົບ",

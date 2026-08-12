@@ -1,9 +1,10 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { useToastStore } from '../stores/toast'
-import { User, Key, Save, Check, Lock, Camera, Image, Upload } from 'lucide-vue-next'
+import ImageCropperModal from '../components/common/ImageCropperModal.vue'
+import { User, Key, Save, Check, Lock, Camera, Image, Upload, ClipboardPaste, Copy } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
@@ -11,6 +12,23 @@ const toastStore = useToastStore()
 
 const avatarFileInput = ref(null)
 const qrFileInput = ref(null)
+
+const showCropper = ref(false)
+const cropperSrc = ref('')
+const cropperTarget = ref('avatar')
+const cropperIsCircle = ref(true)
+
+function openCropper(src, targetField) {
+  cropperSrc.value = src
+  cropperTarget.value = targetField
+  cropperIsCircle.value = targetField === 'avatar'
+  showCropper.value = true
+}
+
+function handleCropComplete(croppedDataUrl) {
+  form.value[cropperTarget.value] = croppedDataUrl
+  toastStore.showToast(t('profile.updated_success'), 'success')
+}
 
 const form = ref({
   name: authStore.currentUser?.name || '',
@@ -51,8 +69,7 @@ function handleAvatarFileUpload(event) {
 
   const reader = new FileReader()
   reader.onload = (e) => {
-    form.value.avatar = e.target.result
-    toastStore.showToast(t('profile.updated_success'), 'success')
+    openCropper(e.target.result, 'avatar')
   }
   reader.readAsDataURL(file)
 }
@@ -71,11 +88,77 @@ function handleQrFileUpload(event) {
 
   const reader = new FileReader()
   reader.onload = (e) => {
-    form.value.qrCodeUrl = e.target.result
-    toastStore.showToast(t('profile.updated_success'), 'success')
+    openCropper(e.target.result, 'qrCodeUrl')
   }
   reader.readAsDataURL(file)
 }
+
+async function copyImageToClipboard(imageUrl, typeName) {
+  if (!imageUrl) return
+  try {
+    const res = await fetch(imageUrl)
+    const blob = await res.blob()
+    await navigator.clipboard.write([
+      new ClipboardItem({ [blob.type]: blob })
+    ])
+    toastStore.showToast(t('profile.copy_success'), 'success')
+  } catch (err) {
+    try {
+      await navigator.clipboard.writeText(imageUrl)
+      toastStore.showToast(t('profile.copy_success'), 'success')
+    } catch (e) {
+      console.warn('Clipboard write failed:', e)
+    }
+  }
+}
+
+async function pasteImageFromClipboard(targetField) {
+  try {
+    const clipboardItems = await navigator.clipboard.read()
+    for (const item of clipboardItems) {
+      const imageType = item.types.find(type => type.startsWith('image/'))
+      if (imageType) {
+        const blob = await item.getType(imageType)
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          openCropper(e.target.result, targetField)
+        }
+        reader.readAsDataURL(blob)
+        return
+      }
+    }
+    toastStore.showToast(t('profile.err_select_valid_image'), 'warning')
+  } catch (err) {
+    toastStore.showToast('Hãy bấm Ctrl + V trên bàn phím để dán ảnh!', 'info')
+  }
+}
+
+function handleGlobalPaste(event) {
+  const items = (event.clipboardData || window.clipboardData)?.items
+  if (!items) return
+
+  for (const item of items) {
+    if (item.type.indexOf('image') === 0) {
+      const blob = item.getAsFile()
+      if (!blob) continue
+
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        openCropper(e.target.result, 'avatar')
+      }
+      reader.readAsDataURL(blob)
+      break
+    }
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('paste', handleGlobalPaste)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('paste', handleGlobalPaste)
+})
 
 function handleSave() {
   authStore.updateProfile(form.value)
@@ -140,7 +223,7 @@ function handleChangePassword() {
     <!-- Main Profile Card -->
     <div class="glass-card p-6 border border-slate-200/80 dark:border-slate-700/60 space-y-6">
       
-      <!-- User Avatar header with Direct Camera / Gallery Upload -->
+      <!-- User Avatar header with Direct Camera / Gallery Upload + Copy / Paste Buttons -->
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-slate-100 dark:bg-slate-950/60 rounded-2xl border border-slate-200 dark:border-slate-800">
         <div class="flex items-center gap-4">
           <div class="relative group cursor-pointer shrink-0" @click="triggerAvatarFileSelect" :title="t('profile.upload_gallery')">
@@ -155,14 +238,36 @@ function handleChangePassword() {
           </div>
         </div>
 
-        <button
-          type="button"
-          @click="triggerAvatarFileSelect"
-          class="w-full sm:w-auto px-4 py-2.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-300 border border-brand-500/30 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shrink-0 transition-all shadow-sm"
-        >
-          <Camera class="w-4 h-4" />
-          <span>{{ t('profile.upload_gallery') }}</span>
-        </button>
+        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          <button
+            type="button"
+            @click="triggerAvatarFileSelect"
+            class="px-3 py-2 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-300 border border-brand-500/30 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shrink-0 transition-all shadow-sm"
+          >
+            <Camera class="w-4 h-4" />
+            <span>{{ t('profile.upload_gallery') }}</span>
+          </button>
+
+          <button
+            type="button"
+            @click="pasteImageFromClipboard('avatar')"
+            class="px-3 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shrink-0 transition-all shadow-sm"
+            title="Dán ảnh từ Clipboard (Ctrl + V)"
+          >
+            <ClipboardPaste class="w-4 h-4" />
+            <span>{{ t('profile.paste_clipboard') }}</span>
+          </button>
+
+          <button
+            type="button"
+            @click="copyImageToClipboard(form.avatar || authStore.currentUser?.avatar, 'Avatar')"
+            class="px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shrink-0 transition-all shadow-sm"
+            title="Sao chép ảnh Avatar hiện tại"
+          >
+            <Copy class="w-4 h-4" />
+            <span>{{ t('profile.copy_image') }}</span>
+          </button>
+        </div>
       </div>
 
       <form @submit.prevent="handleSave" class="space-y-4 text-slate-800 dark:text-slate-200">
@@ -194,29 +299,51 @@ function handleChangePassword() {
           </select>
         </div>
 
-        <!-- Bank QR Section (Upload Button + Preview) -->
-        <div class="bg-slate-100 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-4">
-              <div class="p-1.5 bg-white rounded-xl border border-slate-200 shrink-0">
-                <img :src="form.qrCodeUrl || 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=VIETQR'" class="w-20 h-20 object-contain" />
-              </div>
-              <div class="text-xs space-y-1">
-                <span class="font-bold text-slate-800 dark:text-slate-200 block">{{ t('profile.your_qr_title') }}</span>
-                <p class="text-slate-500 dark:text-slate-400">
-                  {{ t('profile.your_qr_sub') }}
-                </p>
-              </div>
+        <!-- Bank QR Section (Upload Button + Copy / Paste Buttons + Preview) -->
+        <div class="bg-slate-100 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <div class="p-1.5 bg-white rounded-xl border border-slate-200 shrink-0">
+              <img :src="form.qrCodeUrl || 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=VIETQR'" class="w-20 h-20 object-contain" />
             </div>
+            <div class="text-xs space-y-1">
+              <span class="font-bold text-slate-800 dark:text-slate-200 block">{{ t('profile.your_qr_title') }}</span>
+              <p class="text-slate-500 dark:text-slate-400">
+                {{ t('profile.your_qr_sub') }}
+              </p>
+            </div>
+          </div>
 
+          <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
             <button
               type="button"
               @click="triggerQrFileSelect"
-              class="w-full sm:w-auto px-4 py-2.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-300 border border-brand-500/30 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shrink-0 transition-all shadow-sm"
+              class="px-3 py-2 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-300 border border-brand-500/30 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shrink-0 transition-all shadow-sm"
             >
               <Upload class="w-4 h-4" />
               <span>{{ t('profile.upload_gallery') }}</span>
             </button>
+
+            <button
+              type="button"
+              @click="pasteImageFromClipboard('qrCodeUrl')"
+              class="px-3 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shrink-0 transition-all shadow-sm"
+              title="Dán ảnh từ Clipboard (Ctrl + V)"
+            >
+              <ClipboardPaste class="w-4 h-4" />
+              <span>{{ t('profile.paste_clipboard') }}</span>
+            </button>
+
+            <button
+              type="button"
+              @click="copyImageToClipboard(form.qrCodeUrl, 'Mã QR')"
+              class="px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shrink-0 transition-all shadow-sm"
+              title="Sao chép ảnh mã QR"
+            >
+              <Copy class="w-4 h-4" />
+              <span>{{ t('profile.copy_image') }}</span>
+            </button>
           </div>
+        </div>
 
         <div class="flex items-center justify-end">
           <button type="submit" class="glow-button text-xs flex items-center gap-2 py-2.5">
@@ -276,5 +403,14 @@ function handleChangePassword() {
         </div>
       </form>
     </div>
+
+    <!-- Image Cropper & Resizer Modal -->
+    <ImageCropperModal
+      :show="showCropper"
+      :imageSrc="cropperSrc"
+      :isCircle="cropperIsCircle"
+      @close="showCropper = false"
+      @cropComplete="handleCropComplete"
+    />
   </div>
 </template>

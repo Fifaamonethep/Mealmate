@@ -129,7 +129,8 @@
     "custom_split_mismatch": "ยอดรวมที่กำหนดเอง ({customSum}) ไม่ตรงกับยอดรวมใบเสร็จ ({totalAmount})!",
     "custom_total_input": "ยอดรวมที่กำหนดเอง:",
     "custom_split_matched": "✓ ตรงกับยอดรวม",
-    "custom_split_difference": "⚠️ ผลต่าง {diff}"
+    "custom_split_difference": "⚠️ ผลต่าง {diff}",
+    "date_placeholder": "วว/ดด/ปปปป"
   },
   "debts": {
     "title": "การจัดการหนี้และการชำระเงิน",
@@ -255,7 +256,16 @@
     "err_fill_all_passwords": "กรุณากรอกรหัสผ่านให้ครบทุกช่อง!",
     "err_current_pass_incorrect": "รหัสผ่านปัจจุบันไม่ถูกต้อง!",
     "err_pass_min_length": "รหัสผ่านใหม่ต้องมีความยาวอย่างน้อย 4 ตัวอักษร!",
-    "err_confirm_pass_mismatch": "ยืนยันรหัสผ่านไม่ตรงกัน!"
+    "err_confirm_pass_mismatch": "ยืนยันรหัสผ่านไม่ตรงกัน!",
+    "paste_clipboard": "วางรูปจาก คลิปบอร์ด (Ctrl+V)",
+    "copy_image": "คัดลอกรูปภาพ",
+    "paste_success": "วางรูปจากคลิปบอร์ดสำเร็จแล้ว!",
+    "copy_success": "คัดลอกรูปภาพไปยังคลิปบอร์ดเรียบร้อยแล้ว!"
+  },
+  "cropper": {
+    "title": "ครอบตัด & ปรับขนาดรูปภาพ",
+    "hint": "ลากย้าย หรือ ขยาย / หมุน เพื่อปรับมุมตัดรูปภาพให้สมบูรณ์แบบ",
+    "btn_crop": "ครอบตัด & ใช้งานรูป"
   },
   "admin": {
     "title": "แผงควบคุมผู้ดูแลระบบ",
