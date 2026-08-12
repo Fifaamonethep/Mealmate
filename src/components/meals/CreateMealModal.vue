@@ -3,11 +3,12 @@ import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Modal from '../common/Modal.vue'
 import AiFaceScannerModal from './AiFaceScannerModal.vue'
+import ReceiptScannerModal from './ReceiptScannerModal.vue'
 import { useAuthStore } from '../../stores/auth'
 import { useGroupsStore } from '../../stores/groups'
 import { useMealsStore } from '../../stores/meals'
 import { useToastStore } from '../../stores/toast'
-import { PlusCircle, Sparkles, Users, Receipt, DollarSign, Camera, Image } from 'lucide-vue-next'
+import { PlusCircle, Sparkles, Users, Receipt, DollarSign, Camera, Image, ScanText } from 'lucide-vue-next'
 
 import { formatCurrency } from '../../utils/currency'
 
@@ -25,6 +26,7 @@ const toastStore = useToastStore()
 
 const receiptFileInput = ref(null)
 const showAiScanner = ref(false)
+const showOcrScanner = ref(false)
 const title = ref('')
 const totalAmount = ref('')
 const currency = ref('LAK')
@@ -61,13 +63,15 @@ function handleReceiptFileUpload(event) {
   reader.readAsDataURL(file)
 }
 
-function handleCreateInlineGroup() {
+async function handleCreateInlineGroup() {
   if (!newGroupName.value.trim()) return
-  const newGroup = groupsStore.createGroup({
+  const newGroup = await groupsStore.createGroup({
     name: newGroupName.value.trim(),
     members: selectedParticipants.value.length ? [...selectedParticipants.value] : [authStore.currentUserId]
   })
-  groupId.value = newGroup.id
+  if (newGroup?.id) {
+    groupId.value = newGroup.id
+  }
   newGroupName.value = ''
   showInlineGroupInput.value = false
 }
@@ -121,6 +125,13 @@ function handleAiFacesDetected(detectedIds) {
   selectedParticipants.value = uniqueIds
 }
 
+function handleOcrScanned(data) {
+  if (data?.title) title.value = data.title
+  if (data?.totalAmount) totalAmount.value = data.totalAmount
+  if (data?.currency) currency.value = data.currency
+  toastStore.showToast('สแกนอ่านใบเสร็จดึงข้อมูลเรียบร้อยแล้ว!', 'success')
+}
+
 const customTotalSum = computed(() => {
   if (splitType.value !== 'custom') return 0
   return selectedParticipants.value.reduce((sum, pid) => sum + (Number(customSplits.value[pid]) || 0), 0)
@@ -132,7 +143,7 @@ const isCustomSplitValid = computed(() => {
   return customTotalSum.value === Number(totalAmount.value)
 })
 
-function handleSubmit() {
+async function handleSubmit() {
   if (!title.value || !totalAmount.value) return
   if (splitType.value === 'custom' && !isCustomSplitValid.value) {
     toastStore.showToast(
@@ -145,7 +156,7 @@ function handleSubmit() {
     return
   }
 
-  const meal = mealsStore.createMeal({
+  const meal = await mealsStore.createMeal({
     title: title.value,
     totalAmount: Number(totalAmount.value),
     currency: currency.value,
@@ -306,14 +317,25 @@ function handleSubmit() {
           <Users class="w-4 h-4 text-brand-600 dark:text-brand-400" />
           {{ t('meals.participants_count') }} ({{ selectedParticipants.length }})
         </label>
-        <button
-          type="button"
-          @click="showAiScanner = true"
-          class="bg-brand-50 dark:bg-brand-500/20 hover:bg-brand-100 dark:hover:bg-brand-500/30 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-500/40 text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all font-semibold shadow-sm"
-        >
-          <Sparkles class="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-          <span>{{ t('meals.ai_face_scan') }}</span>
-        </button>
+        <div class="flex items-center gap-1.5">
+          <button
+            type="button"
+            @click="showOcrScanner = true"
+            class="bg-indigo-50 dark:bg-indigo-500/20 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/40 text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-all font-semibold shadow-sm"
+          >
+            <ScanText class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+            <span>AI OCR สแกนสลิป</span>
+          </button>
+
+          <button
+            type="button"
+            @click="showAiScanner = true"
+            class="bg-brand-50 dark:bg-brand-500/20 hover:bg-brand-100 dark:hover:bg-brand-500/30 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-500/40 text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-all font-semibold shadow-sm"
+          >
+            <Sparkles class="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+            <span>{{ t('meals.ai_face_scan') }}</span>
+          </button>
+        </div>
       </div>
 
       <!-- Member Pick Checkboxes -->
@@ -343,7 +365,7 @@ function handleSubmit() {
             @click="splitType = 'equal'"
             :class="[
               'py-2 rounded-lg transition-all',
-              splitType === 'equal' ? 'bg-brand-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              splitType === 'equal' ? 'brand-pill-active' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             ]"
           >
             {{ t('meals.equal_split') }}
@@ -353,7 +375,7 @@ function handleSubmit() {
             @click="splitType = 'custom'"
             :class="[
               'py-2 rounded-lg transition-all',
-              splitType === 'custom' ? 'bg-brand-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              splitType === 'custom' ? 'brand-pill-active' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             ]"
           >
             {{ t('meals.custom_split') }}
@@ -408,5 +430,12 @@ function handleSubmit() {
     :groupMembers="availableMembers"
     @close="showAiScanner = false"
     @facesDetected="handleAiFacesDetected"
+  />
+
+  <!-- AI Receipt OCR Scanner Modal -->
+  <ReceiptScannerModal
+    :show="showOcrScanner"
+    @close="showOcrScanner = false"
+    @scanComplete="handleOcrScanned"
   />
 </template>

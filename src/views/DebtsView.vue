@@ -6,7 +6,8 @@ import { useDebtsStore } from '../stores/debts'
 import DebtCard from '../components/debts/DebtCard.vue'
 import PaySlipModal from '../components/debts/PaySlipModal.vue'
 import ReviewSlipModal from '../components/debts/ReviewSlipModal.vue'
-import { CreditCard, Filter, ArrowUpRight, ArrowDownLeft } from 'lucide-vue-next'
+import ShareSummaryModal from '../components/debts/ShareSummaryModal.vue'
+import { CreditCard, Filter, ArrowUpRight, ArrowDownLeft, Share2 } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
@@ -17,6 +18,7 @@ const statusFilter = ref('all') // 'all' | 'pending' | 'slip_sent' | 'confirmed'
 
 const selectedPaymentToPay = ref(null)
 const selectedPaymentToReview = ref(null)
+const showShareModal = ref(false)
 
 const filteredPayments = computed(() => {
   return debtsStore.payments.filter(p => {
@@ -34,14 +36,24 @@ const filteredPayments = computed(() => {
   <div class="space-y-6 pb-12">
     
     <!-- Title -->
-    <div>
-      <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-        <CreditCard class="w-6 h-6 text-brand-600 dark:text-brand-400" />
-        <span>{{ t('debts.title') }}</span>
-      </h1>
-      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-        {{ t('debts.sub') }}
-      </p>
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div>
+        <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+          <CreditCard class="w-6 h-6 text-brand-600 dark:text-brand-400" />
+          <span>{{ t('debts.title') }}</span>
+        </h1>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          {{ t('debts.sub') }}
+        </p>
+      </div>
+
+      <button
+        @click="showShareModal = true"
+        class="bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 font-extrabold transition-all shadow-sm shrink-0"
+      >
+        <Share2 class="w-4 h-4 text-indigo-500" />
+        <span>แชร์สรุปยอดกลุ่ม (Share)</span>
+      </button>
     </div>
 
     <!-- Main Tabs & Filter Bar -->
@@ -88,7 +100,7 @@ const filteredPayments = computed(() => {
           :class="[
             'px-3 py-1.5 rounded-lg transition-all font-semibold capitalize border shrink-0',
             statusFilter === st
-              ? 'bg-brand-600 text-white border-brand-500 shadow-md'
+              ? 'brand-pill-active'
               : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-slate-900 dark:hover:text-white'
           ]"
         >
@@ -124,6 +136,11 @@ const filteredPayments = computed(() => {
       :show="!!selectedPaymentToReview"
       :payment="selectedPaymentToReview"
       @close="selectedPaymentToReview = null"
+    />
+
+    <ShareSummaryModal
+      :show="showShareModal"
+      @close="showShareModal = false"
     />
   </div>
 </template>

@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 
 const props = defineProps({
   clientId: {
@@ -9,12 +9,16 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['success', 'error'])
-
 const containerRef = ref(null)
 
+const isConfigured = computed(() => {
+  return !!props.clientId && !props.clientId.includes('YOUR_GOOGLE_CLIENT_ID')
+})
+
 onMounted(() => {
-  if (!props.clientId) {
-    console.warn('VITE_GOOGLE_CLIENT_ID chưa được cấu hình trong file .env')
+  if (!isConfigured.value) {
+    console.warn('VITE_GOOGLE_CLIENT_ID chưa được cấu hình hợp lệ trong file .env')
+    return
   }
 
   const script = document.createElement('script')
@@ -24,7 +28,7 @@ onMounted(() => {
   script.onload = () => {
     if (window.google?.accounts?.id) {
       window.google.accounts.id.initialize({
-        client_id: props.clientId || 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+        client_id: props.clientId,
         callback: (response) => {
           if (response.credential) {
             emit('success', response.credential)
@@ -51,6 +55,15 @@ onMounted(() => {
 
 <template>
   <div class="w-full flex justify-center my-2">
-    <div ref="containerRef" id="googleBtn" class="w-full min-h-[40px] flex justify-center"></div>
+    <div v-if="isConfigured" ref="containerRef" id="googleBtn" class="w-full min-h-[40px] flex justify-center"></div>
+    <div v-else class="w-full p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs text-left font-medium space-y-1">
+      <div class="font-bold flex items-center gap-1.5 text-amber-700 dark:text-amber-400">
+        <span>⚠️ Chưa kích hoạt Đăng nhập Google Client ID</span>
+      </div>
+      <p class="text-[11px] leading-relaxed text-slate-600 dark:text-slate-300">
+        Vui lòng điền mã <strong>VITE_GOOGLE_CLIENT_ID</strong> vào file <code>.env</code> và đăng ký Domain trên <strong>Google Cloud Console</strong>.
+      </p>
+    </div>
   </div>
 </template>
+

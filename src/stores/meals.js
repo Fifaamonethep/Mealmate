@@ -37,8 +37,8 @@ export const useMealsStore = defineStore('meals', () => {
     let newMeal = null
     try {
       const data = await api.post('/meals', mealData)
-      if (data.meal) {
-        newMeal = data.meal
+      if (data?.id) {
+        newMeal = data
         meals.value.unshift(newMeal)
         saveMeals()
         await debtsStore.fetchDebts()

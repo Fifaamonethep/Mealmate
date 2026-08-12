@@ -12,6 +12,8 @@ import CreateMealModal from '../components/meals/CreateMealModal.vue'
 import CreateGroupModal from '../components/groups/CreateGroupModal.vue'
 import PaySlipModal from '../components/debts/PaySlipModal.vue'
 import ReviewSlipModal from '../components/debts/ReviewSlipModal.vue'
+import VisualDebtGraph from '../components/debts/VisualDebtGraph.vue'
+import AnalyticsCharts from '../components/analytics/AnalyticsCharts.vue'
 import {
   TrendingDown,
   TrendingUp,
@@ -76,26 +78,26 @@ const userDisplayName = computed(() => {
   <div class="space-y-6 pb-12">
     
     <!-- Ultra-Clean Modern Hero Banner (Pastel Aesthetic) -->
-    <div class="glass-card p-6 sm:p-8 border border-purple-300/40 dark:border-purple-800/40 bg-gradient-to-r from-purple-500 via-indigo-500 to-pink-500 dark:from-purple-950 dark:via-indigo-950 dark:to-slate-900 rounded-3xl shadow-xl text-white relative overflow-hidden space-y-6">
+    <div class="glass-card p-6 sm:p-8 border border-purple-200/80 dark:border-purple-800/40 bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 dark:from-purple-950 dark:via-indigo-950 dark:to-slate-900 rounded-3xl shadow-xl text-purple-950 dark:text-white relative overflow-hidden space-y-6">
       
       <!-- Glowing Ambient Background Lights -->
-      <div class="absolute -top-20 -right-20 w-72 h-72 bg-brand-400/25 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-20 -left-20 w-72 h-72 bg-purple-400/25 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -top-20 -right-20 w-72 h-72 bg-purple-400/25 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-20 -left-20 w-72 h-72 bg-pink-400/25 rounded-full blur-3xl pointer-events-none"></div>
 
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
         <div class="space-y-2">
           <div class="flex items-center gap-2 flex-wrap">
-            <span class="bg-white/20 text-white border border-white/30 text-[11px] uppercase font-black px-3 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-md shadow-sm">
-              <Sparkles class="w-3.5 h-3.5 text-yellow-300" />
+            <span class="bg-white/40 text-purple-950 border border-white/60 text-[11px] uppercase font-black px-3 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-md shadow-sm">
+              <Sparkles class="w-3.5 h-3.5 text-purple-700" />
               <span>{{ t('dashboard.hero_tag') }}</span>
             </span>
           </div>
 
-          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
+          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black text-purple-950 dark:text-white tracking-tight">
             {{ t('dashboard.welcome') }}, {{ userDisplayName }}! 👋
           </h1>
           
-          <p class="text-xs sm:text-sm text-slate-100/90 dark:text-slate-300 max-w-xl leading-relaxed">
+          <p class="text-xs sm:text-sm text-purple-900/90 dark:text-slate-300 max-w-xl leading-relaxed font-semibold">
             {{ t('dashboard.sub') }}
           </p>
         </div>
@@ -104,9 +106,9 @@ const userDisplayName = computed(() => {
         <div class="flex items-center gap-3 shrink-0">
           <button
             @click="showCreateMeal = true"
-            class="bg-white text-brand-700 hover:bg-slate-100 font-black text-xs px-5 py-3.5 rounded-2xl flex items-center justify-center gap-2.5 transition-all shadow-xl shadow-slate-950/20 transform active:scale-95 hover:scale-105"
+            class="glow-button px-5 py-3.5 text-xs font-black flex items-center justify-center gap-2.5 shadow-xl transform active:scale-95 hover:scale-105"
           >
-            <Plus class="w-4.5 h-4.5 text-brand-600" />
+            <Plus class="w-4.5 h-4.5 text-purple-950 dark:text-purple-100" />
             <span>{{ t('dashboard.create_meal') }}</span>
           </button>
         </div>
@@ -175,6 +177,12 @@ const userDisplayName = computed(() => {
       </div>
 
     </div>
+
+    <!-- Visual Debt Network Graph -->
+    <VisualDebtGraph />
+
+    <!-- Analytics & Spending Charts -->
+    <AnalyticsCharts />
 
 
 

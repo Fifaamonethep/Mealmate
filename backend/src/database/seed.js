@@ -4,19 +4,6 @@ export function seedInitialData() {
   if (db.getUsers().length === 0) {
     db.data.users = [
       {
-        id: 'u-superadmin',
-        username: 'superadmin',
-        passwordHash: '123',
-        name: 'SuperAdmin ຜູ້ດູແລລະບົບສູງສຸດ',
-        email: 'superadmin@mealmate.la',
-        phone: '2099998888',
-        role: 'superadmin',
-        currency: 'LAK',
-        avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=SuperAdmin',
-        qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-SUPERADMIN-2099998888',
-        isLocked: false
-      },
-      {
         id: 'u-admin',
         username: 'admin',
         passwordHash: '123',
@@ -67,30 +54,18 @@ export function seedInitialData() {
         avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie',
         qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-CHARLIE-77889900',
         isLocked: false
-      },
-      {
-        id: 'u-david',
-        username: 'david',
-        passwordHash: '123',
-        name: 'David Sysavath',
-        email: 'david@gmail.com',
-        phone: '2088990011',
-        role: 'user',
-        currency: 'THB',
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David',
-        qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=PROMPTPAY-DAVID-66778899',
-        isLocked: false
       }
     ]
 
+    // Seed 5 clean initial groups
     db.data.groups = [
       {
         id: 'g-1',
-        name: 'ທ່ຽວວັງວຽງ 🏖️',
-        description: 'ທ່ອງທ່ຽວພັກຜ່ອນກັບກຸ່ມໝູ່ເພື່ອນ',
+        name: 'ກຸ່ມທ່ຽວ ວັງວຽງ 🏖️',
+        description: 'ທ່ອງທ່ຽວພັກຜ່ອນກັບກຸ່ມໝູ່ເພື່ອນ ວັງວຽງ 2026',
         ownerId: 'u-alice',
         avatar: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200&auto=format&fit=crop',
-        members: ['u-alice', 'u-bob', 'u-charlie', 'u-david'],
+        members: ['u-admin', 'u-alice', 'u-bob', 'u-charlie'],
         createdAt: new Date(Date.now() - 5 * 86400000).toISOString()
       },
       {
@@ -105,166 +80,37 @@ export function seedInitialData() {
       {
         id: 'g-3',
         name: 'Team Cty TechCorp 💻',
-        description: 'ກິນເຂົ້າສາຍ ແລະ ກາເຟ',
-        ownerId: 'u-alice',
+        description: 'ກິນເຂົ້າສາຍ ກາເຟ ແລະ ງານລ້ຽງບໍລິສັດ',
+        ownerId: 'u-admin',
         avatar: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=200&auto=format&fit=crop',
-        members: ['u-alice', 'u-bob', 'u-david', 'u-charlie'],
-        createdAt: new Date(Date.now() - 2 * 86400000).toISOString()
-      }
-    ]
-
-    db.data.meals = [
-      {
-        id: 'm-1',
-        title: 'ຕຳໝາກຮຸ່ງ & ປີ້ງໄກ່ ວັງວຽງ',
-        totalAmount: 120000,
-        currency: 'LAK',
-        paidById: 'u-alice',
-        groupId: 'g-1',
-        receiptUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop',
-        splitType: 'equal',
-        participants: ['u-alice', 'u-bob', 'u-charlie', 'u-david'],
-        createdAt: new Date(Date.now() - 4 * 86400000).toISOString()
-      },
-      {
-        id: 'm-2',
-        title: 'ຊາບູ YumYum',
-        totalAmount: 180000,
-        currency: 'LAK',
-        paidById: 'u-bob',
-        groupId: 'g-2',
-        receiptUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop',
-        splitType: 'equal',
-        participants: ['u-alice', 'u-bob', 'u-charlie'],
+        members: ['u-admin', 'u-alice', 'u-bob', 'u-charlie'],
         createdAt: new Date(Date.now() - 2 * 86400000).toISOString()
       },
       {
-        id: 'm-3',
-        title: 'ກາເຟ Sinouk & ເຂົ້າຈີ່',
-        totalAmount: 90000,
-        currency: 'LAK',
-        paidById: 'u-charlie',
-        groupId: 'g-2',
-        receiptUrl: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&auto=format&fit=crop',
-        splitType: 'custom',
-        participants: ['u-alice', 'u-bob', 'u-charlie'],
-        customSplits: {
-          'u-alice': 35000,
-          'u-bob': 30000,
-          'u-charlie': 25000
-        },
+        id: 'g-4',
+        name: 'ກຸ່ມຕີບານ & ກິລາ ⚽',
+        description: 'ຄ່າເດີນຕີບານ ແລະ ນ້ຳດື່ມທຸກໆທ້າຍອາທິດ',
+        ownerId: 'u-charlie',
+        avatar: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=200&auto=format&fit=crop',
+        members: ['u-admin', 'u-alice', 'u-bob', 'u-charlie'],
         createdAt: new Date(Date.now() - 1 * 86400000).toISOString()
-      }
-    ]
-
-    db.data.debts = [
-      {
-        id: 'p-1',
-        mealId: 'm-1',
-        debtorId: 'u-bob',
-        creditorId: 'u-alice',
-        amount: 30000,
-        status: 'pending',
-        slipUrl: null,
-        rejectReason: null,
-        createdAt: new Date(Date.now() - 4 * 86400000).toISOString()
       },
       {
-        id: 'p-2',
-        mealId: 'm-1',
-        debtorId: 'u-charlie',
-        creditorId: 'u-alice',
-        amount: 30000,
-        status: 'slip_sent',
-        slipUrl: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&auto=format&fit=crop',
-        rejectReason: null,
+        id: 'g-5',
+        name: 'ກຸ່ມກິນດື່ມທ້າຍອາທິດ 🍲',
+        description: 'ສັງສັນກິນດື່ມໝູກະທະ ແລະ ຊາບູ ທຸກວັນສຸກ',
+        ownerId: 'u-admin',
+        avatar: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=200&auto=format&fit=crop',
+        members: ['u-admin', 'u-alice', 'u-bob', 'u-charlie'],
         createdAt: new Date(Date.now() - 3 * 86400000).toISOString()
-      },
-      {
-        id: 'p-3',
-        mealId: 'm-1',
-        debtorId: 'u-david',
-        creditorId: 'u-alice',
-        amount: 30000,
-        status: 'confirmed',
-        slipUrl: 'https://images.unsplash.com/photo-1554224154-26032ffc0d07?w=600&auto=format&fit=crop',
-        rejectReason: null,
-        createdAt: new Date(Date.now() - 2 * 86400000).toISOString()
-      },
-      {
-        id: 'p-4',
-        mealId: 'm-2',
-        debtorId: 'u-alice',
-        creditorId: 'u-bob',
-        amount: 60000,
-        status: 'pending',
-        slipUrl: null,
-        rejectReason: null,
-        createdAt: new Date(Date.now() - 2 * 86400000).toISOString()
-      },
-      {
-        id: 'p-5',
-        mealId: 'm-2',
-        debtorId: 'u-charlie',
-        creditorId: 'u-bob',
-        amount: 60000,
-        status: 'rejected',
-        slipUrl: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&auto=format&fit=crop',
-        rejectReason: 'ຮູບໃບເສັດບໍ່ຈະແຈ້ງ, ບໍ່ກົງກັບລະຫັດທຸລະກຳ.',
-        createdAt: new Date(Date.now() - 1 * 86400000).toISOString()
-      },
-      {
-        id: 'p-6',
-        mealId: 'm-3',
-        debtorId: 'u-alice',
-        creditorId: 'u-charlie',
-        amount: 35000,
-        status: 'pending',
-        slipUrl: null,
-        rejectReason: null,
-        createdAt: new Date(Date.now() - 1 * 86400000).toISOString()
-      },
-      {
-        id: 'p-7',
-        mealId: 'm-3',
-        debtorId: 'u-bob',
-        creditorId: 'u-charlie',
-        amount: 30000,
-        status: 'pending',
-        slipUrl: null,
-        rejectReason: null,
-        createdAt: new Date(Date.now() - 1 * 86400000).toISOString()
       }
     ]
 
-    db.data.notifications = [
-      {
-        id: 'n-1',
-        userId: 'u-alice',
-        title: 'ໃບເສັດການໂອນໃໝ່',
-        message: 'Charlie Keomany ໄດ້ສົ່ງໃບເສັດການໂອນ 30,000 LAK ສໍາລັບ ຕຳໝາກຮຸ່ງ & ປີ້ງໄກ່ ວັງວຽງ.',
-        isRead: false,
-        createdAt: new Date(Date.now() - 3 * 3600000).toISOString()
-      },
-      {
-        id: 'n-2',
-        userId: 'u-charlie',
-        title: 'ການຊຳລະຖືກປະຕິເສດ',
-        message: 'Bob Soukthavy ໄດ້ປະຕິເສດໃບເສັດຂອງທ່ານ: "ຮູບໃບເສັດບໍ່ຈະແຈ້ງ, ບໍ່ກົງກັບລະຫັດທຸລະກຳ."',
-        isRead: false,
-        createdAt: new Date(Date.now() - 12 * 3600000).toISOString()
-      },
-      {
-        id: 'n-3',
-        userId: 'u-bob',
-        title: 'ເຕືອນໜີ້ອັດໂນມັດ (ເກີນ 3 ວັນ)',
-        message: 'ທ່ານຍັງບໍ່ທັນໄດ້ຊຳລະໜີ້ 30,000 LAK ໃຫ້ກັບ Alice Vongxay (ຕຳໝາກຮຸ່ງ & ປີ້ງໄກ່ ວັງວຽງ). ກະລຸນາສົ່ງໃບເສັດໂດຍໄວ!',
-        isRead: false,
-        createdAt: new Date(Date.now() - 24 * 3600000).toISOString()
-      }
-    ]
-
+    db.data.meals = []
+    db.data.debts = []
+    db.data.notifications = []
     db.save()
-    console.log('Database seeded with initial data successfully!')
   }
 }
+
+seedInitialData()

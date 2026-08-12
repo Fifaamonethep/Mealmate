@@ -5,7 +5,10 @@ import { useAuthStore } from './auth'
 import api from '../services/api'
 
 export const useGroupsStore = defineStore('groups', () => {
-  const loadedGroups = JSON.parse(localStorage.getItem('mealmate_groups')) || INITIAL_GROUPS
+  let loadedGroups = JSON.parse(localStorage.getItem('mealmate_groups'))
+  if (!loadedGroups || !Array.isArray(loadedGroups) || loadedGroups.length === 0) {
+    loadedGroups = INITIAL_GROUPS
+  }
   const groups = ref(loadedGroups.map(g => ({
     ...g,
     ownerId: g.ownerId || (g.members && g.members[0]) || 'u-alice'
@@ -37,10 +40,10 @@ export const useGroupsStore = defineStore('groups', () => {
 
     try {
       const data = await api.post('/groups', { ...groupData, ownerId })
-      if (data.group) {
-        groups.value.unshift(data.group)
+      if (data?.id) {
+        groups.value.unshift(data)
         saveGroups()
-        return data.group
+        return data
       }
     } catch (err) {
       console.warn('Backend createGroup failed, using local fallback:', err.message)
@@ -71,9 +74,9 @@ export const useGroupsStore = defineStore('groups', () => {
   async function addMember(groupId, userId) {
     try {
       const data = await api.post(`/groups/${groupId}/members`, { userId })
-      if (data.group) {
+      if (data?.id) {
         const idx = groups.value.findIndex(g => g.id === groupId)
-        if (idx !== -1) groups.value[idx] = data.group
+        if (idx !== -1) groups.value[idx] = data
         saveGroups()
         return
       }
@@ -92,9 +95,9 @@ export const useGroupsStore = defineStore('groups', () => {
   async function removeMember(groupId, userId) {
     try {
       const data = await api.delete(`/groups/${groupId}/members/${userId}`)
-      if (data.group) {
+      if (data?.id) {
         const idx = groups.value.findIndex(g => g.id === groupId)
-        if (idx !== -1) groups.value[idx] = data.group
+        if (idx !== -1) groups.value[idx] = data
         saveGroups()
         return
       }
@@ -113,9 +116,9 @@ export const useGroupsStore = defineStore('groups', () => {
   async function updateGroup(groupId, updatedData) {
     try {
       const data = await api.put(`/groups/${groupId}`, updatedData)
-      if (data.group) {
+      if (data?.id) {
         const idx = groups.value.findIndex(g => g.id === groupId)
-        if (idx !== -1) groups.value[idx] = data.group
+        if (idx !== -1) groups.value[idx] = data
         saveGroups()
         return
       }

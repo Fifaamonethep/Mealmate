@@ -25,8 +25,7 @@ export const useAuthStore = defineStore('auth', () => {
     return users.value.find(u => u.id === currentUserId.value) || null
   })
 
-  const isSuperAdmin = computed(() => currentUser.value?.role === 'superadmin')
-  const isAdmin = computed(() => currentUser.value?.role === 'admin' || currentUser.value?.role === 'superadmin')
+  const isAdmin = computed(() => currentUser.value?.role === 'admin')
 
   async function fetchUsers() {
     try {
@@ -128,7 +127,7 @@ export const useAuthStore = defineStore('auth', () => {
     currentUserId.value = target.id
     token.value = `mock_jwt_token_${target.id}_${Date.now()}`
     localStorage.setItem('mealmate_session_user_id', target.id)
-    localStorage.setItem('mealmate_session_token', target.id)
+    localStorage.setItem('mealmate_session_token', token.value)
   }
 
   async function updateProfile(updatedData) {
@@ -228,7 +227,6 @@ export const useAuthStore = defineStore('auth', () => {
     currentUserId,
     currentUser,
     token,
-    isSuperAdmin,
     isAdmin,
     fetchUsers,
     login,

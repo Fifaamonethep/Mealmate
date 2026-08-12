@@ -4,7 +4,8 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import GoogleLoginButton from '../components/auth/GoogleLoginButton.vue'
-import { UtensilsCrossed, LogIn, UserPlus, AlertCircle, RefreshCw, Zap, ShieldCheck, Crown } from 'lucide-vue-next'
+import logoImg from '../../ChatGPT Image Aug 12, 2026, 10_37_57 AM (1).png'
+import { UtensilsCrossed, LogIn, UserPlus, AlertCircle } from 'lucide-vue-next'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -73,9 +74,7 @@ function resetDemoData() {
       
       <!-- Brand Logo & Header -->
       <div class="text-center space-y-2.5">
-        <div class="w-16 h-16 rounded-3xl bg-gradient-to-tr from-indigo-300 via-purple-300 to-pink-200 dark:from-purple-900 dark:to-indigo-900 border border-purple-300/60 dark:border-purple-800/60 flex items-center justify-center mx-auto shadow-sm transform hover:scale-105 transition-all duration-300">
-          <UtensilsCrossed class="w-8 h-8 text-purple-950 dark:text-purple-100" />
-        </div>
+        <img :src="logoImg" class="w-20 h-20 rounded-3xl object-cover shadow-lg mx-auto transform hover:scale-105 transition-all duration-300 border border-purple-300/60 dark:border-purple-800/60 shrink-0" alt="MealMate Logo" />
         <div>
           <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">MealMate</h1>
           <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1">{{ t('footer.tagline') }}</p>
@@ -123,7 +122,7 @@ function resetDemoData() {
               v-model="form.username"
               type="text"
               required
-              placeholder="alice, bob, admin..."
+              :placeholder="t('auth.username')"
               class="w-full glass-input text-xs font-medium text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-950"
             />
           </div>
@@ -145,17 +144,7 @@ function resetDemoData() {
               <input
                 v-model="form.name"
                 type="text"
-                placeholder="Alice"
-                class="w-full glass-input text-xs font-medium text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-950"
-              />
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1.5">{{ t('auth.email') }}</label>
-              <input
-                v-model="form.email"
-                type="email"
-                placeholder="alice@gmail.com"
+                :placeholder="t('auth.name')"
                 class="w-full glass-input text-xs font-medium text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-950"
               />
             </div>
@@ -171,65 +160,13 @@ function resetDemoData() {
         <div class="space-y-3 pt-2">
           <div class="relative flex py-1 items-center">
             <div class="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
-            <span class="flex-shrink mx-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase">Hoặc</span>
+            <span class="flex-shrink mx-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase">{{ t('auth.or') }}</span>
             <div class="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
           </div>
           <GoogleLoginButton @success="handleGoogleSuccess" @error="err => errorMsg = err.message" />
         </div>
 
-        <!-- Quick Demo Login Shortcut Buttons (Human UX Touch) -->
-        <div v-if="!isRegister" class="pt-3 border-t border-slate-200/80 dark:border-slate-800 space-y-2">
-          <span class="text-[11px] font-extrabold text-slate-500 dark:text-slate-400 block uppercase tracking-wider flex items-center gap-1">
-            <Zap class="w-3 h-3 text-amber-500" /> Demo Accounts:
-          </span>
-          <div class="flex flex-wrap gap-2">
-            <button
-              type="button"
-              @click="quickLogin('alice', '123')"
-              class="px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/50 border border-purple-200 dark:border-purple-800/60 text-purple-900 dark:text-purple-300 text-xs font-bold hover:bg-purple-100 transition-all flex items-center gap-1.5"
-            >
-              <span>Alice Vongxay</span>
-            </button>
-            <button
-              type="button"
-              @click="quickLogin('bob', '123')"
-              class="px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-800/60 text-indigo-900 dark:text-indigo-300 text-xs font-bold hover:bg-indigo-100 transition-all flex items-center gap-1.5"
-            >
-              <span>Bob Soukthavy</span>
-            </button>
-            <button
-              type="button"
-              @click="quickLogin('superadmin', '123')"
-              class="px-3 py-1.5 rounded-xl bg-purple-100 dark:bg-purple-900/60 border border-purple-300 dark:border-purple-700 text-purple-950 dark:text-purple-200 text-xs font-black hover:bg-purple-200 transition-all flex items-center gap-1.5 shadow-sm"
-            >
-              <Crown class="w-3.5 h-3.5 text-amber-500" />
-              <span>SuperAdmin</span>
-            </button>
-            <button
-              type="button"
-              @click="quickLogin('admin', '123')"
-              class="px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800/60 text-amber-900 dark:text-amber-300 text-xs font-bold hover:bg-amber-100 transition-all flex items-center gap-1.5"
-            >
-              <ShieldCheck class="w-3.5 h-3.5 text-amber-500" />
-              <span>Admin</span>
-            </button>
-          </div>
-        </div>
-
       </div>
-
-      <!-- Reset Demo Data -->
-      <div class="text-center">
-        <button
-          type="button"
-          @click="resetDemoData"
-          class="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-bold flex items-center gap-1.5 mx-auto transition-colors"
-        >
-          <RefreshCw class="w-3.5 h-3.5" />
-          <span>{{ t('auth.reset_demo_data') }}</span>
-        </button>
-      </div>
-
     </div>
   </div>
 </template>

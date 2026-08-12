@@ -4,6 +4,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../../stores/auth'
 import { useNotificationsStore } from '../../stores/notifications'
+import logoImg from '../../../ChatGPT Image Aug 12, 2026, 10_37_57 AM (1).png'
 import {
   UtensilsCrossed,
   LayoutDashboard,
@@ -79,27 +80,25 @@ function handleLogout() {
         
         <!-- Logo -->
         <div class="flex items-center gap-3 cursor-pointer group" @click="router.push('/')">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-purple-600 flex items-center justify-center shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform duration-300">
-            <UtensilsCrossed class="w-5 h-5 text-white" />
-          </div>
+          <img :src="logoImg" class="w-10 h-10 rounded-2xl object-cover shadow-md group-hover:scale-105 transition-transform duration-300 border border-purple-200/80 dark:border-purple-800/60 shrink-0" alt="MealMate Logo" />
           <div class="flex items-center gap-2">
-            <span class="font-extrabold text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 dark:from-white dark:via-slate-200 dark:to-indigo-300">
+            <span class="font-black text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-purple-700 via-pink-600 to-indigo-600 dark:from-purple-300 dark:via-pink-300 dark:to-indigo-200">
               MealMate
             </span>
-            <span class="hidden sm:inline-block text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-600 border border-brand-500/20 dark:bg-brand-500/20 dark:text-brand-300">
+            <span class="hidden sm:inline-block text-[10px] uppercase font-black tracking-wider px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-700 border border-purple-300/40 dark:bg-purple-500/20 dark:text-purple-300">
               Split & Pay
             </span>
           </div>
         </div>
 
         <!-- Desktop Navigation Links (Clean & Uncluttered) -->
-        <nav v-if="authStore.currentUserId" class="hidden md:flex items-center gap-1.5 bg-slate-100/80 dark:bg-slate-900/80 p-1.5 rounded-2xl border border-slate-200/60 dark:border-slate-800/60">
+        <nav v-if="authStore.currentUserId" class="hidden md:flex items-center gap-1.5 bg-slate-100/90 dark:bg-slate-900/90 p-1.5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80">
           <router-link
             to="/"
             :class="[
-              'flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200',
+              'flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-black transition-all duration-200',
               route.path === '/'
-                ? 'bg-white dark:bg-slate-800 text-brand-600 dark:text-brand-300 shadow-sm border border-slate-200/80 dark:border-slate-700/80'
+                ? 'brand-pill-active'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
             ]"
           >
@@ -110,9 +109,9 @@ function handleLogout() {
           <router-link
             to="/meals"
             :class="[
-              'flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200',
+              'flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-black transition-all duration-200',
               route.path.startsWith('/meals')
-                ? 'bg-white dark:bg-slate-800 text-brand-600 dark:text-brand-300 shadow-sm border border-slate-200/80 dark:border-slate-700/80'
+                ? 'brand-pill-active'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
             ]"
           >
@@ -123,9 +122,9 @@ function handleLogout() {
           <router-link
             to="/debts"
             :class="[
-              'flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200',
+              'flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-black transition-all duration-200',
               route.path === '/debts'
-                ? 'bg-white dark:bg-slate-800 text-brand-600 dark:text-brand-300 shadow-sm border border-slate-200/80 dark:border-slate-700/80'
+                ? 'brand-pill-active'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
             ]"
           >
@@ -136,9 +135,9 @@ function handleLogout() {
           <router-link
             to="/groups"
             :class="[
-              'flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200',
+              'flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-black transition-all duration-200',
               route.path.startsWith('/groups')
-                ? 'bg-white dark:bg-slate-800 text-brand-600 dark:text-brand-300 shadow-sm border border-slate-200/80 dark:border-slate-700/80'
+                ? 'brand-pill-active'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
             ]"
           >
@@ -150,7 +149,7 @@ function handleLogout() {
             v-if="authStore.isAdmin"
             to="/admin"
             :class="[
-              'flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200',
+              'flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-black transition-all duration-200',
               route.path === '/admin'
                 ? 'bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/40 shadow-sm'
                 : 'text-amber-600/90 dark:text-amber-400/90 hover:bg-amber-500/10 hover:text-amber-600 dark:hover:text-amber-300'
@@ -274,104 +273,112 @@ function handleLogout() {
       </div>
     </div>
 
-    <!-- Mobile Drawer Menu -->
-    <div
-      v-if="mobileMenuOpen && authStore.currentUserId"
-      class="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl px-4 py-3 space-y-1 animate-fadeIn"
-    >
-      <router-link
-        to="/"
-        @click="mobileMenuOpen = false"
-        :class="[
-          'flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all',
-          route.path === '/'
-            ? 'bg-brand-500/10 text-brand-600 dark:bg-brand-600/20 dark:text-brand-300'
-            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-        ]"
-      >
-        <LayoutDashboard class="w-4 h-4" />
-        <span>{{ t('nav.dashboard') }}</span>
-      </router-link>
-
-      <router-link
-        to="/meals"
-        @click="mobileMenuOpen = false"
-        :class="[
-          'flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all',
-          route.path.startsWith('/meals')
-            ? 'bg-brand-500/10 text-brand-600 dark:bg-brand-600/20 dark:text-brand-300'
-            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-        ]"
-      >
-        <Receipt class="w-4 h-4" />
-        <span>{{ t('nav.meals') }}</span>
-      </router-link>
-
-      <router-link
-        to="/debts"
-        @click="mobileMenuOpen = false"
-        :class="[
-          'flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all',
-          route.path === '/debts'
-            ? 'bg-brand-500/10 text-brand-600 dark:bg-brand-600/20 dark:text-brand-300'
-            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-        ]"
-      >
-        <CreditCard class="w-4 h-4" />
-        <span>{{ t('nav.debts') }}</span>
-      </router-link>
-
-      <router-link
-        to="/groups"
-        @click="mobileMenuOpen = false"
-        :class="[
-          'flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all',
-          route.path.startsWith('/groups')
-            ? 'bg-brand-500/10 text-brand-600 dark:bg-brand-600/20 dark:text-brand-300'
-            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-        ]"
-      >
-        <Users class="w-4 h-4" />
-        <span>{{ t('nav.groups') }}</span>
-      </router-link>
-
-      <router-link
-        v-if="authStore.isAdmin"
-        to="/admin"
-        @click="mobileMenuOpen = false"
-        :class="[
-          'flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all',
-          route.path === '/admin'
-            ? 'bg-amber-500/20 text-amber-700 dark:text-amber-300'
-            : 'text-amber-600 dark:text-amber-400 hover:bg-amber-500/10'
-        ]"
-      >
-        <Shield class="w-4 h-4 text-amber-500" />
-        <span>{{ t('nav.admin') }}</span>
-      </router-link>
-
-      <!-- Profile & Logout inside Mobile Menu Drawer -->
-      <div class="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-1">
-        <router-link
-          to="/profile"
+    <!-- Mobile Floating Drawer Overlay (No Page Push) -->
+    <Teleport to="body">
+      <div v-if="mobileMenuOpen && authStore.currentUserId" class="md:hidden">
+        <!-- Backdrop Overlay -->
+        <div 
           @click="mobileMenuOpen = false"
-          class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
-        >
-          <img
-            :src="authStore.currentUser?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${authStore.currentUser?.username || 'user'}`"
-            class="w-5 h-5 rounded-full object-cover shrink-0"
-          />
-          <span class="truncate">{{ authStore.currentUser?.name }} (@{{ authStore.currentUser?.username }})</span>
-        </router-link>
+          class="fixed inset-0 top-16 bg-slate-950/40 backdrop-blur-sm z-40 animate-fadeIn"
+        ></div>
 
-        <button
-          @click="handleLogout(); mobileMenuOpen = false;"
-          class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all"
-        >
-          <LogOut class="w-4 h-4" />
-          <span>{{ t('nav.logout') }}</span>
-        </button>
+        <!-- Floating Glass Menu -->
+        <div class="fixed top-16 left-0 right-0 z-50 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl px-5 py-4 space-y-1 shadow-2xl rounded-b-3xl max-h-[85vh] overflow-y-auto animate-slideDown">
+          <router-link
+            to="/"
+            @click="mobileMenuOpen = false"
+            :class="[
+              'flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-extrabold transition-all',
+              route.path === '/'
+                ? 'bg-brand-500/10 text-brand-600 dark:bg-brand-600/20 dark:text-brand-300'
+                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+            ]"
+          >
+            <LayoutDashboard class="w-4.5 h-4.5" />
+            <span>{{ t('nav.dashboard') }}</span>
+          </router-link>
+
+          <router-link
+            to="/meals"
+            @click="mobileMenuOpen = false"
+            :class="[
+              'flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-extrabold transition-all',
+              route.path.startsWith('/meals')
+                ? 'bg-brand-500/10 text-brand-600 dark:bg-brand-600/20 dark:text-brand-300'
+                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+            ]"
+          >
+            <Receipt class="w-4.5 h-4.5" />
+            <span>{{ t('nav.meals') }}</span>
+          </router-link>
+
+          <router-link
+            to="/debts"
+            @click="mobileMenuOpen = false"
+            :class="[
+              'flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-extrabold transition-all',
+              route.path === '/debts'
+                ? 'bg-brand-500/10 text-brand-600 dark:bg-brand-600/20 dark:text-brand-300'
+                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+            ]"
+          >
+            <CreditCard class="w-4.5 h-4.5" />
+            <span>{{ t('nav.debts') }}</span>
+          </router-link>
+
+          <router-link
+            to="/groups"
+            @click="mobileMenuOpen = false"
+            :class="[
+              'flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-extrabold transition-all',
+              route.path.startsWith('/groups')
+                ? 'bg-brand-500/10 text-brand-600 dark:bg-brand-600/20 dark:text-brand-300'
+                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+            ]"
+          >
+            <Users class="w-4.5 h-4.5" />
+            <span>{{ t('nav.groups') }}</span>
+          </router-link>
+
+          <router-link
+            v-if="authStore.isAdmin"
+            to="/admin"
+            @click="mobileMenuOpen = false"
+            :class="[
+              'flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-extrabold transition-all',
+              route.path === '/admin'
+                ? 'bg-amber-500/20 text-amber-700 dark:text-amber-300'
+                : 'text-amber-600 dark:text-amber-400 hover:bg-amber-500/10'
+            ]"
+          >
+            <Shield class="w-4.5 h-4.5 text-amber-500" />
+            <span>{{ t('nav.admin') }}</span>
+          </router-link>
+
+          <!-- Profile & Logout inside Mobile Menu Drawer -->
+          <div class="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-1">
+            <router-link
+              to="/profile"
+              @click="mobileMenuOpen = false"
+              class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-extrabold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+            >
+              <img
+                :src="authStore.currentUser?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${authStore.currentUser?.username || 'user'}`"
+                class="w-6 h-6 rounded-full object-cover shrink-0 border border-slate-200 dark:border-slate-700"
+              />
+              <span class="truncate">{{ authStore.currentUser?.name }} (@{{ authStore.currentUser?.username }})</span>
+            </router-link>
+
+            <button
+              @click="handleLogout(); mobileMenuOpen = false;"
+              class="w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-extrabold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all"
+            >
+              <LogOut class="w-4.5 h-4.5" />
+              <span>{{ t('nav.logout') }}</span>
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </Teleport>
   </header>
 </template>

@@ -51,10 +51,10 @@ watch(() => props.group, (newGroup) => {
   }
 }, { immediate: true })
 
-function handleSubmit() {
+async function handleSubmit() {
   if (!props.group || !name.value.trim()) return
 
-  groupsStore.updateGroup(props.group.id, {
+  await groupsStore.updateGroup(props.group.id, {
     name: name.value.trim(),
     description: description.value.trim(),
     avatar: avatar.value

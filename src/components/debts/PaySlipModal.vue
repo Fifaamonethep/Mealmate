@@ -63,9 +63,9 @@ function copyAccountInfo() {
   setTimeout(() => (copied.value = false), 2000)
 }
 
-function handleSendSlip() {
+async function handleSendSlip() {
   if (!props.payment || !slipUrl.value) return
-  debtsStore.sendSlip(props.payment.id, slipUrl.value)
+  await debtsStore.sendSlip(props.payment.id, slipUrl.value)
   emit('close')
 }
 </script>

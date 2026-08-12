@@ -75,19 +75,28 @@ html[lang="en"] textarea {
 
 @layer utilities {
   .glass-card {
-    @apply bg-white/90 border border-slate-200/80 text-slate-800 shadow-[0_4px_25px_rgba(0,0,0,0.04)] dark:bg-slate-900/85 dark:border-slate-800/90 dark:text-slate-100 dark:shadow-[0_10px_35px_rgba(0,0,0,0.45)] backdrop-blur-xl rounded-2xl transition-all duration-300;
+    @apply bg-white/95 border border-purple-100/80 text-slate-800 shadow-[0_4px_25px_rgba(168,85,247,0.06)] dark:bg-slate-900/90 dark:border-slate-800/90 dark:text-slate-100 dark:shadow-[0_10px_35px_rgba(0,0,0,0.45)] backdrop-blur-xl rounded-3xl transition-all duration-300;
   }
   .glass-card-hover {
-    @apply hover:bg-white hover:border-brand-400/50 hover:-translate-y-1 hover:shadow-xl dark:hover:bg-slate-800/90 dark:hover:border-indigo-500/50 dark:hover:shadow-[0_20px_40px_rgba(99,102,241,0.25)] transition-all duration-300;
+    @apply hover:bg-white hover:border-purple-300/80 hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/10 dark:hover:bg-slate-800/90 dark:hover:border-purple-500/50 dark:hover:shadow-[0_20px_40px_rgba(168,85,247,0.25)] transition-all duration-300;
   }
   .glass-input {
-    @apply bg-white/90 border border-slate-300/80 rounded-xl px-4 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20 dark:bg-slate-950/90 dark:border-slate-800 dark:text-slate-100 dark:placeholder-slate-500 transition-all duration-200;
+    @apply bg-white/95 border border-purple-100/90 rounded-2xl px-4 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-purple-400 focus:ring-4 focus:ring-purple-400/20 dark:bg-slate-950/90 dark:border-slate-800 dark:text-slate-100 dark:placeholder-slate-500 transition-all duration-200;
   }
   .glass-nav {
-    @apply bg-white/85 border-b border-slate-200/80 text-slate-900 dark:bg-slate-950/85 dark:border-slate-800/90 dark:text-slate-100 backdrop-blur-2xl sticky top-0 z-40 shadow-sm dark:shadow-2xl transition-colors duration-300;
+    @apply bg-white/85 border-b border-purple-100/80 text-slate-900 dark:bg-slate-950/85 dark:border-slate-800/90 dark:text-slate-100 backdrop-blur-2xl sticky top-0 z-40 shadow-sm dark:shadow-2xl transition-colors duration-300;
   }
   .glow-button {
-    @apply bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-200 hover:from-indigo-400 hover:via-purple-400 hover:to-pink-300 text-purple-950 font-extrabold px-5 py-2.5 rounded-xl shadow-sm hover:shadow border border-purple-200/80 dark:from-purple-900 dark:via-indigo-900 dark:to-pink-950 dark:text-purple-100 dark:border-purple-800/60 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200;
+    @apply bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 hover:from-indigo-400 hover:via-purple-400 hover:to-pink-400 text-purple-950 font-black px-5 py-2.5 rounded-2xl shadow-md hover:shadow-lg border border-purple-200/80 dark:from-purple-900 dark:via-indigo-900 dark:to-pink-950 dark:text-purple-100 dark:border-purple-800/60 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200;
+  }
+  .brand-gradient-box {
+    @apply bg-gradient-to-tr from-indigo-300 via-purple-300 to-pink-300 border border-purple-200/80 text-purple-950 shadow-md;
+  }
+  .brand-gradient-text {
+    @apply bg-gradient-to-r from-purple-700 via-pink-600 to-indigo-600 dark:from-purple-300 dark:via-pink-300 dark:to-indigo-200 bg-clip-text text-transparent font-black;
+  }
+  .brand-pill-active {
+    @apply bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 text-purple-950 font-black shadow-sm border border-purple-200/80 dark:from-purple-900 dark:via-indigo-900 dark:to-pink-950 dark:text-purple-100 dark:border-purple-800/60;
   }
 }
 

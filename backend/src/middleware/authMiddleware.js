@@ -43,18 +43,10 @@ export function authenticateToken(req, res, next) {
 }
 
 export function requireAdmin(req, res, next) {
-  if (req.user && (req.user.role === 'admin' || req.user.role === 'superadmin')) {
+  if (req.user && req.user.role === 'admin') {
     next()
   } else {
     res.status(403).json({ message: 'Admin privilege required!' })
-  }
-}
-
-export function requireSuperAdmin(req, res, next) {
-  if (req.user && req.user.role === 'superadmin') {
-    next()
-  } else {
-    res.status(403).json({ message: 'SuperAdmin privilege required!' })
   }
 }
 

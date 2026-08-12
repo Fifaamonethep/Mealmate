@@ -53,7 +53,7 @@ function selectUser(userId) {
         :class="[
           'flex items-center gap-1.5 px-3 py-1 rounded-full transition-all text-xs font-semibold border shrink-0',
           authStore.currentUserId === u.id
-            ? 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white border-brand-400/80 shadow-md shadow-brand-500/25 ring-2 ring-brand-500/30'
+            ? 'brand-pill-active ring-2 ring-purple-400/30'
             : 'bg-slate-100 dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
         ]"
       >

@@ -52,9 +52,9 @@ export const useAdminStore = defineStore('admin', () => {
   async function toggleUserLock(userId) {
     try {
       const data = await api.put(`/admin/users/${userId}/lock`)
-      if (data.user) {
+      if (data?.id) {
         const idx = authStore.users.findIndex(u => u.id === userId)
-        if (idx !== -1) authStore.users[idx] = data.user
+        if (idx !== -1) authStore.users[idx] = data
         authStore.saveUsers()
         return
       }
@@ -73,9 +73,9 @@ export const useAdminStore = defineStore('admin', () => {
   async function changeUserRole(userId, newRole) {
     try {
       const data = await api.put(`/admin/users/${userId}/role`, { role: newRole })
-      if (data.user) {
+      if (data?.id) {
         const idx = authStore.users.findIndex(u => u.id === userId)
-        if (idx !== -1) authStore.users[idx] = data.user
+        if (idx !== -1) authStore.users[idx] = data
         authStore.saveUsers()
         return
       }

@@ -38,19 +38,19 @@ const meal = computed(() => {
   return props.payment ? mealsStore.getMealById(props.payment.mealId) : null
 })
 
-function handleConfirm() {
+async function handleConfirm() {
   if (!props.payment) return
-  debtsStore.confirmPayment(props.payment.id)
+  await debtsStore.confirmPayment(props.payment.id)
   emit('close')
 }
 
-function handleReject() {
+async function handleReject() {
   if (!props.payment) return
   if (!showRejectReasonInput.value) {
     showRejectReasonInput.value = true
     return
   }
-  debtsStore.rejectPayment(props.payment.id, rejectReason.value)
+  await debtsStore.rejectPayment(props.payment.id, rejectReason.value)
   showRejectReasonInput.value = false
   rejectReason.value = ''
   emit('close')

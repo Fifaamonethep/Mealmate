@@ -24,7 +24,7 @@ export const createMeal = (req, res) => {
     id: mealId,
     title,
     totalAmount: Number(totalAmount),
-    currency: currency || 'VND',
+    currency: currency || 'LAK',
     paidById,
     groupId: groupId || null,
     receiptUrl: receiptUrl || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop',

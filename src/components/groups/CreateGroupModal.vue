@@ -62,10 +62,10 @@ function toggleMember(userId) {
   }
 }
 
-function handleSubmit() {
+async function handleSubmit() {
   if (!name.value) return
 
-  groupsStore.createGroup({
+  await groupsStore.createGroup({
     name: name.value,
     description: description.value,
     avatar: avatar.value,

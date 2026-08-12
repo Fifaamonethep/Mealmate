@@ -36,7 +36,7 @@ const unreadCount = computed(() => {
         :class="[
           'flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl transition-all duration-300 relative',
           route.path === '/'
-            ? 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white font-extrabold shadow-md shadow-brand-500/30'
+            ? 'brand-pill-active'
             : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'
         ]"
       >
@@ -50,7 +50,7 @@ const unreadCount = computed(() => {
         :class="[
           'flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl transition-all duration-300 relative',
           route.path.startsWith('/meals')
-            ? 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white font-extrabold shadow-md shadow-brand-500/30'
+            ? 'brand-pill-active'
             : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'
         ]"
       >
@@ -64,7 +64,7 @@ const unreadCount = computed(() => {
         :class="[
           'flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl transition-all duration-300 relative',
           route.path === '/debts'
-            ? 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white font-extrabold shadow-md shadow-brand-500/30'
+            ? 'brand-pill-active'
             : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'
         ]"
       >
@@ -78,7 +78,7 @@ const unreadCount = computed(() => {
         :class="[
           'flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl transition-all duration-300 relative',
           route.path.startsWith('/groups')
-            ? 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white font-extrabold shadow-md shadow-brand-500/30'
+            ? 'brand-pill-active'
             : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'
         ]"
       >

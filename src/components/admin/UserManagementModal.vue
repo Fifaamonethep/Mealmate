@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import Modal from '../common/Modal.vue'
 import { useAuthStore } from '../../stores/auth'
 import { useAdminStore } from '../../stores/admin'
-import { Shield, Lock, Unlock, Key, Check, Crown, ShieldAlert, User } from 'lucide-vue-next'
+import { Shield, Lock, Unlock, Key, Check, User } from 'lucide-vue-next'
 
 const props = defineProps({
   show: Boolean
@@ -22,13 +22,7 @@ const passResetSuccess = ref(false)
 
 function canManageUser(targetUser) {
   if (!authStore.currentUser) return false
-  if (authStore.isSuperAdmin) {
-    return targetUser.id !== authStore.currentUser.id
-  }
-  if (authStore.isAdmin) {
-    return targetUser.role === 'user'
-  }
-  return false
+  return targetUser.role !== 'admin'
 }
 
 function handleResetPassword() {
@@ -46,7 +40,7 @@ function handleResetPassword() {
 <template>
   <Modal :show="show" :title="t('admin.user_modal_title')" maxWidth="max-w-3xl" @close="emit('close')">
     <template #icon>
-      <Crown class="w-5 h-5 text-purple-500" />
+      <Shield class="w-5 h-5 text-amber-500" />
     </template>
 
     <div class="space-y-4 text-slate-800 dark:text-slate-200">
@@ -74,10 +68,7 @@ function handleResetPassword() {
                   <div>
                     <div class="font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
                       <span>{{ u.name }}</span>
-                      <span v-if="u.role === 'superadmin'" class="bg-purple-100 text-purple-800 dark:bg-purple-950/80 dark:text-purple-300 text-[10px] px-2 py-0.5 rounded-full font-black border border-purple-200 dark:border-purple-800 flex items-center gap-1">
-                        <Crown class="w-3 h-3 text-amber-500" /> SuperAdmin
-                      </span>
-                      <span v-else-if="u.role === 'admin'" class="bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-300 text-[10px] px-2 py-0.5 rounded-full font-black border border-amber-200 dark:border-amber-800 flex items-center gap-1">
+                      <span v-if="u.role === 'admin'" class="bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-300 text-[10px] px-2 py-0.5 rounded-full font-black border border-amber-200 dark:border-amber-800 flex items-center gap-1">
                         <Shield class="w-3 h-3 text-amber-500" /> Admin
                       </span>
                     </div>
@@ -94,7 +85,6 @@ function handleResetPassword() {
                 >
                   <option value="user">👤 {{ t('admin.role_user') }}</option>
                   <option value="admin">🛡️ {{ t('admin.role_admin') }}</option>
-                  <option v-if="authStore.isSuperAdmin" value="superadmin">👑 SuperAdmin</option>
                 </select>
               </td>
               <td class="p-3.5">

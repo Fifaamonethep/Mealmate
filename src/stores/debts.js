@@ -28,6 +28,25 @@ export const useDebtsStore = defineStore('debts', () => {
     }
   }
 
+  function sendPaymentReminder(paymentId) {
+    const p = payments.value.find(item => item.id === paymentId)
+    if (!p) return
+    const notifStore = useNotificationsStore()
+    const toastStore = useToastStore()
+    const authStore = useAuthStore()
+
+    const creditor = authStore.users.find(u => u.id === p.creditorId)
+    const formattedAmount = formatCurrency(p.amount, 'LAK')
+
+    notifStore.addNotification({
+      userId: p.debtorId,
+      title: '🔔 แจ้งเตือนทวงเงินด่วน!',
+      message: `${creditor?.name || 'เพื่อนในกลุ่ม'} ได้กดส่งคำขอทวงเงินจำนวน ${formattedAmount} กรุณาโอนเงินและแนบสลิปโดยเร็ว`
+    })
+
+    toastStore.showToast(`ส่งข้อความทวงเงินเรียบร้อยแล้ว!`, 'info')
+  }
+
   function createPayment(paymentData) {
     const newPayment = {
       id: `p-${Date.now()}-${Math.floor(Math.random()*1000)}`,
@@ -53,9 +72,9 @@ export const useDebtsStore = defineStore('debts', () => {
 
     try {
       const data = await api.put(`/debts/${paymentId}/slip`, { slipUrl })
-      if (data.payment) {
+      if (data?.id) {
         const idx = payments.value.findIndex(p => p.id === paymentId)
-        if (idx !== -1) payments.value[idx] = data.payment
+        if (idx !== -1) payments.value[idx] = data
         savePayments()
         toastStore.showToast(i18n.global.t('debts.slip_sent_toast'), 'success')
         return
@@ -93,9 +112,9 @@ export const useDebtsStore = defineStore('debts', () => {
 
     try {
       const data = await api.put(`/debts/${paymentId}/confirm`)
-      if (data.payment) {
+      if (data?.id) {
         const idx = payments.value.findIndex(p => p.id === paymentId)
-        if (idx !== -1) payments.value[idx] = data.payment
+        if (idx !== -1) payments.value[idx] = data
         savePayments()
         toastStore.showToast(i18n.global.t('debts.payment_approved_toast'), 'success')
         return
@@ -129,9 +148,9 @@ export const useDebtsStore = defineStore('debts', () => {
 
     try {
       const data = await api.put(`/debts/${paymentId}/reject`, { reason })
-      if (data.payment) {
+      if (data?.id) {
         const idx = payments.value.findIndex(p => p.id === paymentId)
-        if (idx !== -1) payments.value[idx] = data.payment
+        if (idx !== -1) payments.value[idx] = data
         savePayments()
         toastStore.showToast(i18n.global.t('debts.payment_rejected_toast'), 'warning')
         return
@@ -162,9 +181,9 @@ export const useDebtsStore = defineStore('debts', () => {
 
     try {
       const data = await api.put(`/debts/${paymentId}/force`, { status, reason })
-      if (data.payment) {
+      if (data?.id) {
         const idx = payments.value.findIndex(p => p.id === paymentId)
-        if (idx !== -1) payments.value[idx] = data.payment
+        if (idx !== -1) payments.value[idx] = data
         savePayments()
         toastStore.showToast(i18n.global.t('debts.admin_status_changed_toast', { status: status.toUpperCase() }), 'info')
         return
@@ -210,6 +229,7 @@ export const useDebtsStore = defineStore('debts', () => {
     sendSlip,
     confirmPayment,
     rejectPayment,
+    sendPaymentReminder,
     forceAdminAction,
     deletePaymentsByMealId,
     savePayments
