@@ -39,6 +39,7 @@ html[lang="lo"] select,
 html[lang="lo"] textarea,
 html[lang="lo"] p,
 html[lang="lo"] span,
+html[lang="lo"] div,
 html[lang="lo"] h1,
 html[lang="lo"] h2,
 html[lang="lo"] h3,
@@ -47,15 +48,19 @@ html[lang="lo"] h5,
 html[lang="lo"] h6,
 html[lang="lo"] a,
 html[lang="lo"] label {
-  font-family: 'Noto Sans Lao', 'Phetsarath OT', 'Noto Sans Lao Looped', 'Laos UI', 'Saysettha OT', 'Plus Jakarta Sans', sans-serif !important;
+  font-family: 'Noto Sans Lao', 'Phetsarath OT', 'Saysettha OT', 'Laos UI', 'Plus Jakarta Sans', sans-serif !important;
   letter-spacing: 0.01em !important;
   line-height: 1.6 !important;
 }
 
-/* Lao typography weight cap to maintain crisp, elegant strokes without ink bleeding */
+/* Lao typography weight cap to maintain crisp, hollow loops and prevent blobby ink bleeding */
 html[lang="lo"] .font-black,
-html[lang="lo"] .font-extrabold {
-  font-weight: 700 !important;
+html[lang="lo"] .font-extrabold,
+html[lang="lo"] .font-bold,
+html[lang="lo"] b,
+html[lang="lo"] strong,
+html[lang="lo"] button {
+  font-weight: 600 !important;
 }
 
 html[lang="th"] body,
