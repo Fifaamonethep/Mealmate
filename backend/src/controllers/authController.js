@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcryptjs'
 import { db } from '../config/db.js'
 import { JWT_SECRET } from '../middleware/authMiddleware.js'
 
@@ -18,12 +19,20 @@ export const login = async (req, res) => {
       return res.status(403).json({ message: 'Account has been locked by Admin!' })
     }
 
-    if (user.passwordHash !== password && password !== '123' && user.passwordHash !== `${username}123`) {
+    let isMatch = false
+    if (user.passwordHash && (user.passwordHash.startsWith('$2a$') || user.passwordHash.startsWith('$2b$'))) {
+      isMatch = await bcrypt.compare(password, user.passwordHash)
+    } else {
+      isMatch = (user.passwordHash === password || password === '123' || user.passwordHash === `${username}123`)
+    }
+
+    if (!isMatch) {
       return res.status(400).json({ message: 'Incorrect password!' })
     }
 
     const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '7d' })
-    res.json({ token, user })
+    const { passwordHash, ...safeUser } = user
+    res.json({ token, user: safeUser })
   } catch (err) {
     res.status(500).json({ message: err.message || 'Login error' })
   }
@@ -43,11 +52,12 @@ export const register = async (req, res) => {
 
     const cleanCode = username.toLowerCase().replace(/[^a-z0-9_]/g, '')
     const userId = cleanCode ? `u-${cleanCode}` : `u-${Date.now()}`
+    const hashedPassword = await bcrypt.hash(password, 10)
 
     const newUser = {
       id: userId,
       username,
-      passwordHash: password,
+      passwordHash: hashedPassword,
       name: name || username,
       email: email || '',
       phone: phone || '',
@@ -61,14 +71,16 @@ export const register = async (req, res) => {
 
     const created = await db.addUser(newUser)
     const token = jwt.sign({ id: created.id, username: created.username, role: created.role }, JWT_SECRET, { expiresIn: '7d' })
-    res.status(201).json({ token, user: created })
+    const { passwordHash, ...safeUser } = created
+    res.status(201).json({ token, user: safeUser })
   } catch (err) {
     res.status(500).json({ message: err.message || 'Registration error' })
   }
 }
 
 export const getMe = (req, res) => {
-  res.json({ user: req.user })
+  const { passwordHash, ...safeUser } = req.user
+  res.json({ user: safeUser })
 }
 
 export const getUsers = async (req, res) => {
@@ -87,10 +99,16 @@ export const updateProfile = async (req, res) => {
     const updates = { ...req.body }
     delete updates.id
     delete updates.role
-    delete updates.passwordHash
+
+    if (updates.passwordHash || updates.newPassword) {
+      const plainPass = updates.newPassword || updates.passwordHash
+      updates.passwordHash = await bcrypt.hash(plainPass, 10)
+      delete updates.newPassword
+    }
 
     const updatedUser = await db.updateUser(userId, updates)
-    res.json({ user: updatedUser })
+    const { passwordHash, ...safeUser } = updatedUser
+    res.json({ user: safeUser })
   } catch (err) {
     res.status(500).json({ message: err.message || 'Failed to update profile' })
   }
@@ -150,10 +168,12 @@ export const googleLogin = async (req, res) => {
     if (!user) {
       const baseName = email ? email.split('@')[0] : 'google_user'
       const username = `${baseName}_${Math.floor(Math.random() * 1000)}`
+      const randomPass = await bcrypt.hash(`google_${googleId || Date.now()}`, 10)
+
       user = {
         id: `u-g-${Date.now()}`,
         username,
-        passwordHash: `google_${googleId || Date.now()}`,
+        passwordHash: randomPass,
         name: name || 'Google User',
         email: email || '',
         phone: '',
@@ -176,7 +196,8 @@ export const googleLogin = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '7d' })
-    return res.status(200).json({ message: 'Thành công', token, user })
+    const { passwordHash, ...safeUser } = user
+    return res.status(200).json({ message: 'Thành công', token, user: safeUser })
   } catch (error) {
     console.error('Google Auth Controller Error:', error)
     return res.status(500).json({ message: 'Lỗi server khi xác thực với Google: ' + error.message })

@@ -297,6 +297,11 @@ class JsonDB {
 
 const localJsonDb = new JsonDB(DB_FILE)
 
+// Guard: Disallow local JSON file DB fallback in production mode
+if (process.env.NODE_ENV === 'production' && !supabase) {
+  throw new Error('FATAL SECURITY ERROR: Local JSON file database fallback (mealmate_db.json) is strictly prohibited in NODE_ENV=production. Valid Supabase credentials are required!')
+}
+
 // ----------------------------------------------------
 // Unified Async Data Access Layer (Supabase / JsonDB)
 // ----------------------------------------------------
@@ -510,5 +515,42 @@ export const db = {
       return true
     }
     return localJsonDb.markNotificationsRead(userId)
+  },
+
+  // FRIENDSHIPS
+  async getFriendships() {
+    if (supabase) {
+      const { data, error } = await supabase.from('friendships').select('*')
+      if (error) throw error
+      return data || []
+    }
+    return localJsonDb.getFriendships()
+  },
+
+  async addFriendship(friendship) {
+    if (supabase) {
+      const { data, error } = await supabase.from('friendships').insert([friendship]).select().single()
+      if (error) throw error
+      return data
+    }
+    return localJsonDb.addFriendship(friendship)
+  },
+
+  async updateFriendship(id, updates) {
+    if (supabase) {
+      const { data, error } = await supabase.from('friendships').update(updates).eq('id', id).select().single()
+      if (error) throw error
+      return data
+    }
+    return localJsonDb.updateFriendship(id, updates)
+  },
+
+  async deleteFriendship(id) {
+    if (supabase) {
+      const { error } = await supabase.from('friendships').delete().eq('id', id)
+      if (error) throw error
+      return true
+    }
+    return localJsonDb.deleteFriendship(id)
   }
 }

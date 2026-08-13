@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import GoogleLoginButton from '../components/auth/GoogleLoginButton.vue'
 import logoImg from '../../ChatGPT Image Aug 12, 2026, 10_37_57 AM (1).png'
-import { UtensilsCrossed, LogIn, UserPlus, AlertCircle } from 'lucide-vue-next'
+import { UtensilsCrossed, LogIn, UserPlus, AlertCircle, UserCheck, Sparkles } from 'lucide-vue-next'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -42,6 +42,14 @@ async function handleAuth() {
   }
 }
 
+function switchToRegisterWithUsername() {
+  isRegister.value = true
+  if (!form.value.name) {
+    form.value.name = form.value.username
+  }
+  errorMsg.value = ''
+}
+
 async function handleGoogleSuccess(idToken) {
   errorMsg.value = ''
   try {
@@ -59,6 +67,7 @@ async function handleGoogleSuccess(idToken) {
 async function quickLogin(username, password) {
   form.value.username = username
   form.value.password = password
+  isRegister.value = false
   await handleAuth()
 }
 
@@ -118,10 +127,23 @@ function resetDemoData() {
           </button>
         </div>
 
-        <!-- Error Notification -->
-        <div v-if="errorMsg" class="bg-rose-500/10 border border-rose-500/30 text-rose-700 dark:text-rose-400 text-xs p-3.5 rounded-2xl flex items-center gap-2.5 font-bold animate-fadeIn">
-          <AlertCircle class="w-4 h-4 shrink-0" />
-          <span>{{ errorMsg }}</span>
+        <!-- Error Notification with Quick Register CTA -->
+        <div v-if="errorMsg" class="bg-rose-500/10 border border-rose-500/30 text-rose-700 dark:text-rose-400 text-xs p-3.5 rounded-2xl space-y-2 animate-fadeIn">
+          <div class="flex items-center gap-2.5 font-bold">
+            <AlertCircle class="w-4 h-4 shrink-0" />
+            <span>{{ errorMsg }}</span>
+          </div>
+          <!-- Quick switch to Register button if account not found -->
+          <div v-if="!isRegister && (errorMsg.includes('không tồn tại') || errorMsg.includes('not exist') || errorMsg.includes('user_not_found') || errorMsg.includes('Account does not exist'))" class="pt-1 border-t border-rose-500/20">
+            <button
+              type="button"
+              @click="switchToRegisterWithUsername"
+              class="w-full text-left text-xs text-purple-600 dark:text-purple-400 font-extrabold hover:underline flex items-center gap-1.5"
+            >
+              <UserPlus class="w-3.5 h-3.5" />
+              <span>Chưa có tài khoản? Bấm vào đây để Đăng ký ngay với "{{ form.username || 'tên này' }}" →</span>
+            </button>
+          </div>
         </div>
 
         <!-- Inputs Form -->
@@ -150,13 +172,46 @@ function resetDemoData() {
 
           <template v-if="isRegister">
             <div>
-              <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1.5">{{ t('auth.name') }}</label>
+              <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1.5">{{ t('auth.name') }} *</label>
               <input
                 v-model="form.name"
                 type="text"
+                required
                 :placeholder="t('auth.name')"
                 class="w-full glass-input text-xs font-medium text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-950"
               />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1.5">{{ t('auth.email') }}</label>
+                <input
+                  v-model="form.email"
+                  type="email"
+                  placeholder="name@example.com"
+                  class="w-full glass-input text-xs font-medium text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-950"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1.5">{{ t('auth.phone') }}</label>
+                <input
+                  v-model="form.phone"
+                  type="text"
+                  placeholder="020..."
+                  class="w-full glass-input text-xs font-medium text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-950"
+                />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1.5">{{ t('meals.currency') }}</label>
+              <select
+                v-model="form.currency"
+                class="w-full glass-input text-xs font-medium text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-950"
+              >
+                <option value="LAK">LAK (Kip Lào)</option>
+                <option value="VND">VND (Đồng Việt Nam)</option>
+                <option value="THB">THB (Baht Thái)</option>
+                <option value="USD">USD (Đô la Mỹ)</option>
+              </select>
             </div>
           </template>
 
@@ -166,6 +221,30 @@ function resetDemoData() {
           </button>
         </form>
 
+        <!-- Toggle Switch Link under form -->
+        <div class="text-center text-xs text-slate-600 dark:text-slate-400 pt-1">
+          <span v-if="!isRegister">
+            Chưa có tài khoản?
+            <button
+              type="button"
+              @click="isRegister = true; errorMsg = ''"
+              class="font-extrabold text-purple-600 dark:text-purple-400 hover:underline ml-1"
+            >
+              Đăng ký ngay
+            </button>
+          </span>
+          <span v-else>
+            Đã có tài khoản?
+            <button
+              type="button"
+              @click="isRegister = false; errorMsg = ''"
+              class="font-extrabold text-purple-600 dark:text-purple-400 hover:underline ml-1"
+            >
+              Đăng nhập ngay
+            </button>
+          </span>
+        </div>
+
         <!-- Google OAuth 2.0 Login -->
         <div class="space-y-3 pt-2">
           <div class="relative flex py-1 items-center">
@@ -174,6 +253,26 @@ function resetDemoData() {
             <div class="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
           </div>
           <GoogleLoginButton @success="handleGoogleSuccess" @error="err => errorMsg = err.message" />
+        </div>
+
+        <!-- Quick Demo Users Section -->
+        <div class="pt-4 border-t border-slate-200/80 dark:border-slate-800/80 space-y-2.5">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
+            <span class="flex items-center gap-1.5">
+              <Sparkles class="w-3.5 h-3.5 text-amber-500" />
+              <span>{{ t('auth.switch_test_user') }}</span>
+            </span>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button
+              type="button"
+              @click="quickLogin('admin', '123')"
+              class="px-3 py-1.5 bg-purple-100 dark:bg-purple-950/60 hover:bg-purple-200 dark:hover:bg-purple-900 border border-purple-300 dark:border-purple-800 text-purple-700 dark:text-purple-300 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+            >
+              <UserCheck class="w-3.5 h-3.5" />
+              <span>Admin (admin / 123)</span>
+            </button>
+          </div>
         </div>
 
       </div>

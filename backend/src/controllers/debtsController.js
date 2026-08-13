@@ -2,7 +2,23 @@ import { db } from '../config/db.js'
 
 export const getDebts = async (req, res) => {
   try {
-    const debts = await db.getDebts()
+    let debts = await db.getDebts()
+    const page = parseInt(req.query.page, 10) || 1
+    const limit = parseInt(req.query.limit, 10) || 20
+    const total = debts.length
+
+    if (req.query.page || req.query.limit) {
+      const startIndex = (page - 1) * limit
+      const paginated = debts.slice(startIndex, startIndex + limit)
+      return res.json({
+        data: paginated,
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      })
+    }
+
     res.json(debts)
   } catch (err) {
     res.status(500).json({ message: err.message || 'Failed to fetch debts' })
@@ -19,6 +35,17 @@ export const sendSlip = async (req, res) => {
       return res.status(400).json({ message: 'Payment slip URL or image required!' })
     }
 
+    // Basic URL / data URI format validation
+    const isValidImage = typeof image === 'string' && (
+      image.startsWith('data:image/') ||
+      image.startsWith('http://') ||
+      image.startsWith('https://')
+    )
+
+    if (!isValidImage) {
+      return res.status(400).json({ message: 'Invalid payment slip image format!' })
+    }
+
     const debt = await db.getDebtById(debtId)
     if (!debt) {
       return res.status(404).json({ message: 'Debt payment record not found!' })
@@ -28,7 +55,8 @@ export const sendSlip = async (req, res) => {
       status: 'PAID',
       slipUrl: image,
       proofImage: image,
-      rejectReason: null
+      rejectReason: null,
+      updatedAt: new Date().toISOString()
     })
 
     const debtorId = debt.fromUser || debt.debtorId
@@ -62,7 +90,10 @@ export const confirmPayment = async (req, res) => {
       return res.status(404).json({ message: 'Debt record not found!' })
     }
 
-    const updated = await db.updateDebt(debtId, { status: 'VERIFIED' })
+    const updated = await db.updateDebt(debtId, {
+      status: 'VERIFIED',
+      updatedAt: new Date().toISOString()
+    })
     const meal = debt.mealId ? await db.getMealById(debt.mealId) : null
 
     const debtorId = debt.fromUser || debt.debtorId
@@ -95,7 +126,8 @@ export const rejectPayment = async (req, res) => {
 
     const updated = await db.updateDebt(debtId, {
       status: 'REJECTED',
-      rejectReason: reason || 'Bị từ chối bởi chủ nợ'
+      rejectReason: reason || 'Bị từ chối bởi chủ nợ',
+      updatedAt: new Date().toISOString()
     })
 
     const debtorId = debt.fromUser || debt.debtorId
@@ -127,7 +159,7 @@ export const forceAdminAction = async (req, res) => {
       return res.status(404).json({ message: 'Debt record not found!' })
     }
 
-    const updates = { status }
+    const updates = { status, updatedAt: new Date().toISOString() }
     if (status === 'REJECTED' || status === 'rejected') {
       updates.rejectReason = reason || 'Admin action'
     } else {

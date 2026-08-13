@@ -17,6 +17,14 @@ function copyUserId() {
   toastStore.showToast(`Đã sao chép User ID: ${userId}`, 'success')
 }
 
+function copyUsername() {
+  const username = authStore.currentUser?.username || ''
+  if (!username) return
+  const tag = `@${username}`
+  navigator.clipboard.writeText(tag)
+  toastStore.showToast(`Đã sao chép tên người dùng: ${tag}`, 'success')
+}
+
 const avatarFileInput = ref(null)
 const qrFileInput = ref(null)
 
@@ -242,7 +250,20 @@ function handleChangePassword() {
           </div>
           <div>
             <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">{{ form.name || authStore.currentUser?.name }}</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">@{{ authStore.currentUser?.username }}</p>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="text-xs text-slate-600 dark:text-slate-300 font-bold bg-slate-200/90 dark:bg-slate-900 px-2.5 py-1 rounded-xl border border-slate-300/80 dark:border-slate-800 font-mono">
+                @{{ authStore.currentUser?.username }}
+              </span>
+              <button
+                type="button"
+                @click="copyUsername"
+                class="px-2.5 py-1 bg-purple-500/10 hover:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/30 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm active:scale-95 cursor-pointer"
+                title="Sao chép tên người dùng (@username)"
+              >
+                <Copy class="w-3.5 h-3.5" />
+                <span>Sao chép</span>
+              </button>
+            </div>
           </div>
         </div>
 

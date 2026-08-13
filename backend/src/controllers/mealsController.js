@@ -1,8 +1,25 @@
 import { db } from '../config/db.js'
+import { calculateEqualSplit } from '../utils/financial.js'
 
 export const getMeals = async (req, res) => {
   try {
-    const meals = await db.getMeals()
+    let meals = await db.getMeals()
+    const page = parseInt(req.query.page, 10) || 1
+    const limit = parseInt(req.query.limit, 10) || 20
+    const total = meals.length
+
+    if (req.query.page || req.query.limit) {
+      const startIndex = (page - 1) * limit
+      const paginated = meals.slice(startIndex, startIndex + limit)
+      return res.json({
+        data: paginated,
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      })
+    }
+
     res.json(meals)
   } catch (err) {
     res.status(500).json({ message: err.message || 'Failed to fetch meals' })
@@ -31,18 +48,32 @@ export const createMeal = async (req, res) => {
     }
 
     const mealId = `m-${Date.now()}`
+    const curr = currency || 'LAK'
+
+    let shares = {}
+    if (!splitType || splitType.toUpperCase() === 'EQUAL') {
+      shares = calculateEqualSplit({
+        totalAmount: Number(totalAmount),
+        currency: curr,
+        participants,
+        paidBy: payer
+      })
+    } else {
+      shares = splitDetails || customSplits || {}
+    }
+
     const newMeal = {
       id: mealId,
       title,
       totalAmount: Number(totalAmount),
-      currency: currency || 'LAK',
+      currency: curr,
       paidBy: payer,
       paidById: payer,
       groupId: groupId || null,
       imageUrl: imageUrl || receiptUrl || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop',
       splitType: splitType || 'EQUAL',
       participants,
-      splitDetails: splitDetails || customSplits || {},
+      splitDetails: shares,
       createdAt: new Date().toISOString()
     }
 
@@ -50,12 +81,9 @@ export const createMeal = async (req, res) => {
 
     // Calculate debts for debtors
     const debtors = participants.filter(id => id !== payer)
-    let equalShare = Math.round(Number(totalAmount) / participants.length)
 
     for (const debtorId of debtors) {
-      const debtAmount = (splitType?.toUpperCase() === 'EQUAL' || splitType === 'equal')
-        ? equalShare
-        : Number(customSplits?.[debtorId] || splitDetails?.[debtorId] || 0)
+      const debtAmount = Number(shares[debtorId] || 0)
 
       if (debtAmount > 0) {
         await db.addDebt({
