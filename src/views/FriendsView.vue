@@ -1,7 +1,8 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
+import { useFriendsStore } from '../stores/friends'
 import { useMealsStore } from '../stores/meals'
 import { useDebtsStore } from '../stores/debts'
 import { useToastStore } from '../stores/toast'
@@ -25,9 +26,15 @@ import {
 
 const { t } = useI18n()
 const authStore = useAuthStore()
+const friendsStore = useFriendsStore()
 const mealsStore = useMealsStore()
 const debtsStore = useDebtsStore()
 const toastStore = useToastStore()
+
+onMounted(() => {
+  friendsStore.fetchFriends()
+  friendsStore.fetchRequests()
+})
 
 const activeTab = ref('my_friends') // 'my_friends' | 'requests' | 'suggested'
 const searchQuery = ref('')
@@ -86,25 +93,25 @@ const suggestedList = computed(() => {
   return list
 })
 
-function handleSendFriendRequest(userId, userName) {
-  authStore.sendFriendRequest(userId)
-  toastStore.showToast(t('friends.request_sent_notif', { name: userName }), 'success')
+async function handleSendFriendRequest(userId, userName) {
+  await friendsStore.sendRequest(userId)
+  toastStore.showToast(t('friends.request_sent_notif', { name: userName || 'User' }), 'success')
 }
 
-function handleAcceptFriendRequest(userId, userName) {
-  authStore.acceptFriendRequest(userId)
-  toastStore.showToast(t('friends.request_accepted_notif', { name: userName }), 'success')
+async function handleAcceptFriendRequest(userId, userName) {
+  await friendsStore.acceptRequest(userId)
+  toastStore.showToast(t('friends.request_accepted_notif', { name: userName || 'User' }), 'success')
 }
 
-function handleDeclineFriendRequest(userId) {
-  authStore.declineFriendRequest(userId)
+async function handleDeclineFriendRequest(userId) {
+  await friendsStore.declineRequest(userId)
   toastStore.showToast(t('common.deleted') || 'Đã từ chối lời mời', 'info')
 }
 
-function handleRemoveFriend(userId, userName) {
-  if (confirm(t('friends.confirm_remove', { name: userName }))) {
-    authStore.removeFriend(userId)
-    toastStore.showToast(t('friends.removed_success', { name: userName }), 'info')
+async function handleRemoveFriend(userId, userName) {
+  if (confirm(t('friends.confirm_remove', { name: userName || 'User' }))) {
+    await friendsStore.removeFriend(userId)
+    toastStore.showToast(t('friends.removed_success', { name: userName || 'User' }), 'info')
   }
 }
 

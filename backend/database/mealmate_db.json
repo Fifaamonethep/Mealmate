@@ -80,6 +80,18 @@
       "qrCodeUrl": "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-SOKESEKSANNOUANLATY_168-00000",
       "isLocked": false,
       "createdAt": "2026-08-12T04:35:24.947Z"
+    },
+    {
+      "id": "u-testA",
+      "username": "testA",
+      "passwordHash": "123",
+      "name": "Test User A"
+    },
+    {
+      "id": "u-testB",
+      "username": "testB",
+      "passwordHash": "123",
+      "name": "Test User B"
     }
   ],
   "meals": [],
@@ -155,5 +167,6 @@
       "createdAt": "2026-08-08T10:00:06.304Z"
     }
   ],
-  "notifications": []
+  "notifications": [],
+  "friendships": []
 }

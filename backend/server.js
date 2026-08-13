@@ -1,14 +1,18 @@
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
+import swaggerUi from 'swagger-ui-express'
 
 import { seedInitialData } from './src/database/seed.js'
+import { swaggerSpec } from './src/config/swagger.js'
 import authRoutes from './src/routes/auth.js'
 import mealsRoutes from './src/routes/meals.js'
 import debtsRoutes from './src/routes/debts.js'
 import groupsRoutes from './src/routes/groups.js'
 import notificationsRoutes from './src/routes/notifications.js'
 import adminRoutes from './src/routes/admin.js'
+import friendsRoutes from './src/routes/friends.js'
+import usersRoutes from './src/routes/users.js'
 
 dotenv.config()
 
@@ -29,18 +33,24 @@ app.use((req, res, next) => {
   next()
 })
 
+// Swagger API Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+
 // Root route
 app.get('/', (req, res) => {
   res.json({
     status: 'online',
     app: 'MealMate REST API Backend',
     version: '1.0.0',
+    swaggerDocs: 'http://localhost:5000/api-docs',
     timestamp: new Date().toISOString()
   })
 })
 
 // API Routes
 app.use('/api/auth', authRoutes)
+app.use('/api/users', usersRoutes)
+app.use('/api/friends', friendsRoutes)
 app.use('/api/meals', mealsRoutes)
 app.use('/api/debts', debtsRoutes)
 app.use('/api/groups', groupsRoutes)
@@ -59,5 +69,6 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`==================================================`)
   console.log(`🚀 MealMate Backend Server running on http://localhost:${PORT}`)
+  console.log(`📖 Swagger API Docs available at http://localhost:${PORT}/api-docs`)
   console.log(`==================================================`)
 })

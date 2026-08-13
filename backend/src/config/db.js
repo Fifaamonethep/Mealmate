@@ -180,7 +180,8 @@ class JsonDB {
       meals: [],
       debts: [],
       groups: [],
-      notifications: []
+      notifications: [],
+      friendships: []
     }
     this.load()
   }
@@ -190,6 +191,7 @@ class JsonDB {
       if (fs.existsSync(this.filePath)) {
         const raw = fs.readFileSync(this.filePath, 'utf-8')
         this.data = JSON.parse(raw)
+        if (!Array.isArray(this.data.friendships)) this.data.friendships = []
       } else {
         this.save()
       }
@@ -291,6 +293,29 @@ class JsonDB {
     this.data.notifications.forEach(n => {
       if (n.userId === userId) n.isRead = true
     })
+    this.save()
+  }
+
+  getFriendships() { return this.data.friendships || [] }
+  addFriendship(f) {
+    if (!this.data.friendships) this.data.friendships = []
+    this.data.friendships.push(f)
+    this.save()
+    return f
+  }
+  updateFriendship(id, updates) {
+    if (!this.data.friendships) this.data.friendships = []
+    const idx = this.data.friendships.findIndex(f => f.id === id)
+    if (idx !== -1) {
+      this.data.friendships[idx] = { ...this.data.friendships[idx], ...updates }
+      this.save()
+      return this.data.friendships[idx]
+    }
+    return null
+  }
+  deleteFriendship(id) {
+    if (!this.data.friendships) this.data.friendships = []
+    this.data.friendships = this.data.friendships.filter(f => f.id !== id)
     this.save()
   }
 }
