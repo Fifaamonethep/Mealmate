@@ -7,11 +7,11 @@
 /* Light & Dark Base Body Styles */
 @layer base {
   *, ::before, ::after {
-    font-family: 'Noto Sans Lao Looped', 'Noto Sans Lao', 'Plus Jakarta Sans', 'Be Vietnam Pro', 'Prompt', 'Kanit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: 'Noto Sans Lao', 'Noto Sans Lao Looped', 'Be Vietnam Pro', 'Prompt', 'Kanit', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 
   body {
-    font-family: 'Noto Sans Lao Looped', 'Noto Sans Lao', 'Plus Jakarta Sans', 'Be Vietnam Pro', 'Prompt', 'Kanit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-family: 'Noto Sans Lao', 'Noto Sans Lao Looped', 'Be Vietnam Pro', 'Prompt', 'Kanit', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     line-height: 1.5;
     letter-spacing: -0.01em;
     -webkit-font-smoothing: antialiased;
@@ -39,45 +39,13 @@
 html[lang="lo"] *,
 html[lang="lo"] ::before,
 html[lang="lo"] ::after {
-  font-family: 'Noto Sans Lao Looped', 'Phetsarath OT', 'Noto Sans Lao', 'Saysettha OT', 'Laos UI', sans-serif !important;
-  letter-spacing: 0.01em !important;
-}
-
-/* Strict Lao typography weight cap to maintain crisp, hollow loops and prevent blobby ink bleeding */
-html[lang="lo"] body,
-html[lang="lo"] p,
-html[lang="lo"] span,
-html[lang="lo"] div,
-html[lang="lo"] a,
-html[lang="lo"] label,
-html[lang="lo"] input,
-html[lang="lo"] select,
-html[lang="lo"] textarea {
-  font-weight: 500 !important;
-  line-height: 1.6 !important;
-}
-
-html[lang="lo"] button,
-html[lang="lo"] h1,
-html[lang="lo"] h2,
-html[lang="lo"] h3,
-html[lang="lo"] h4,
-html[lang="lo"] h5,
-html[lang="lo"] h6,
-html[lang="lo"] b,
-html[lang="lo"] strong,
-html[lang="lo"] .font-black,
-html[lang="lo"] .font-extrabold,
-html[lang="lo"] .font-bold {
-  font-weight: 600 !important;
-  line-height: 1.6 !important;
+  font-family: 'Noto Sans Lao', 'Noto Sans Lao Looped', 'Phetsarath OT', 'Saysettha OT', sans-serif !important;
 }
 
 html[lang="th"] *,
 html[lang="th"] ::before,
 html[lang="th"] ::after {
   font-family: 'Prompt', 'Kanit', 'Plus Jakarta Sans', sans-serif !important;
-  letter-spacing: 0em;
 }
 
 html[lang="vi"] *,
@@ -91,6 +59,7 @@ html[lang="en"] ::before,
 html[lang="en"] ::after {
   font-family: 'Plus Jakarta Sans', 'Outfit', 'Be Vietnam Pro', sans-serif !important;
 }
+
 
 
 @layer utilities {
