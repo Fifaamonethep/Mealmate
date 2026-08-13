@@ -54,12 +54,33 @@ export function requireAdmin(req, res, next) {
 
 export async function requireGroupMember(req, res, next) {
   try {
-    const groupId = req.params.groupId || req.params.id || req.body.groupId || req.query.groupId
-    if (!groupId) return next()
+    let groupId = req.params.groupId || req.body?.groupId || req.query?.groupId
+    const paramId = req.params.id
 
-    const group = await db.getGroupById(groupId)
+    let group = null
+    if (groupId) {
+      group = await db.getGroupById(groupId)
+    } else if (paramId) {
+      // Check if paramId is a group ID
+      group = await db.getGroupById(paramId)
+      if (!group) {
+        // Check if paramId is a meal ID
+        const meal = await db.getMealById(paramId)
+        if (meal && meal.groupId) {
+          groupId = meal.groupId
+          group = await db.getGroupById(groupId)
+        }
+      } else {
+        groupId = paramId
+      }
+    }
+
     if (!group) {
-      return res.status(404).json({ message: 'Group not found!' })
+      // If endpoint requires group membership and no group found
+      if (groupId) {
+        return res.status(404).json({ message: 'Group not found!' })
+      }
+      return next()
     }
 
     const userId = req.user?.id
@@ -77,3 +98,4 @@ export async function requireGroupMember(req, res, next) {
 }
 
 export { JWT_SECRET }
+

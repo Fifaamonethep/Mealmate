@@ -98,34 +98,6 @@ function resetDemoData() {
 
       <!-- Auth Form Card -->
       <div class="glass-card p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 shadow-xl rounded-3xl space-y-6">
-        
-        <!-- Segmented Tab Controls -->
-        <div class="grid grid-cols-2 gap-1.5 bg-slate-200/80 dark:bg-slate-950 p-1.5 rounded-2xl border border-slate-300 dark:border-slate-800 text-xs">
-          <button
-            type="button"
-            @click="isRegister = false; errorMsg = ''"
-            :class="[
-              'py-2.5 rounded-xl font-extrabold transition-all duration-200 text-xs sm:text-sm',
-              !isRegister
-                ? 'bg-purple-600 dark:bg-purple-500 text-white shadow-md shadow-purple-600/30'
-                : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
-            ]"
-          >
-            {{ t('auth.login') }}
-          </button>
-          <button
-            type="button"
-            @click="isRegister = true; errorMsg = ''"
-            :class="[
-              'py-2.5 rounded-xl font-extrabold transition-all duration-200 text-xs sm:text-sm',
-              isRegister
-                ? 'bg-purple-600 dark:bg-purple-500 text-white shadow-md shadow-purple-600/30'
-                : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
-            ]"
-          >
-            {{ t('auth.register') }}
-          </button>
-        </div>
 
         <!-- Error Notification with Quick Register CTA -->
         <div v-if="errorMsg" class="bg-rose-500/10 border border-rose-500/30 text-rose-700 dark:text-rose-400 text-xs p-3.5 rounded-2xl space-y-2 animate-fadeIn">
@@ -253,26 +225,6 @@ function resetDemoData() {
             <div class="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
           </div>
           <GoogleLoginButton @success="handleGoogleSuccess" @error="err => errorMsg = err.message" />
-        </div>
-
-        <!-- Quick Demo Users Section -->
-        <div class="pt-4 border-t border-slate-200/80 dark:border-slate-800/80 space-y-2.5">
-          <div class="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
-            <span class="flex items-center gap-1.5">
-              <Sparkles class="w-3.5 h-3.5 text-amber-500" />
-              <span>{{ t('auth.switch_test_user') }}</span>
-            </span>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <button
-              type="button"
-              @click="quickLogin('admin', '123')"
-              class="px-3 py-1.5 bg-purple-100 dark:bg-purple-950/60 hover:bg-purple-200 dark:hover:bg-purple-900 border border-purple-300 dark:border-purple-800 text-purple-700 dark:text-purple-300 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
-            >
-              <UserCheck class="w-3.5 h-3.5" />
-              <span>Admin (admin / 123)</span>
-            </button>
-          </div>
         </div>
 
       </div>

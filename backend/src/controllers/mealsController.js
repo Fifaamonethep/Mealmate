@@ -4,6 +4,35 @@ import { calculateEqualSplit } from '../utils/financial.js'
 export const getMeals = async (req, res) => {
   try {
     let meals = await db.getMeals()
+    const currentUserId = req.user?.id
+    const isAdmin = req.user?.role === 'admin'
+
+    if (req.query.groupId) {
+      const group = await db.getGroupById(req.query.groupId)
+      if (!group) {
+        return res.status(404).json({ message: 'Group not found!' })
+      }
+      if (currentUserId && !isAdmin) {
+        const isMember = (group.members || []).includes(currentUserId) || group.ownerId === currentUserId
+        if (!isMember) {
+          return res.status(403).json({ message: 'Access denied: You are not a member of this group!' })
+        }
+      }
+      meals = meals.filter(m => m.groupId === req.query.groupId)
+    } else if (currentUserId && !isAdmin) {
+      const allGroups = await db.getGroups()
+      const userGroupIds = new Set(
+        allGroups
+          .filter(g => g.ownerId === currentUserId || (g.members || []).includes(currentUserId))
+          .map(g => g.id)
+      )
+      meals = meals.filter(m => {
+        const isParticipant = (m.participants || []).includes(currentUserId) || m.paidBy === currentUserId
+        const isGroupMember = m.groupId && userGroupIds.has(m.groupId)
+        return isParticipant || isGroupMember
+      })
+    }
+
     const page = parseInt(req.query.page, 10) || 1
     const limit = parseInt(req.query.limit, 10) || 20
     const total = meals.length
@@ -32,6 +61,24 @@ export const getMealById = async (req, res) => {
     if (!meal) {
       return res.status(404).json({ message: 'Meal not found!' })
     }
+
+    const currentUserId = req.user?.id
+    const isAdmin = req.user?.role === 'admin'
+
+    if (currentUserId && !isAdmin) {
+      let isMember = false
+      if (meal.groupId) {
+        const group = await db.getGroupById(meal.groupId)
+        if (group && ((group.members || []).includes(currentUserId) || group.ownerId === currentUserId)) {
+          isMember = true
+        }
+      }
+      const isParticipant = (meal.participants || []).includes(currentUserId) || meal.paidBy === currentUserId
+      if (!isMember && !isParticipant) {
+        return res.status(403).json({ message: 'Access denied: You are not a member of this meal group or participant!' })
+      }
+    }
+
     res.json(meal)
   } catch (err) {
     res.status(500).json({ message: err.message || 'Failed to fetch meal' })
@@ -45,6 +92,20 @@ export const createMeal = async (req, res) => {
     const payer = paidById || paidBy
     if (!title || !totalAmount || !payer || !participants || participants.length === 0) {
       return res.status(400).json({ message: 'Missing required meal fields!' })
+    }
+
+    const currentUserId = req.user?.id
+    const isAdmin = req.user?.role === 'admin'
+
+    if (groupId && currentUserId && !isAdmin) {
+      const group = await db.getGroupById(groupId)
+      if (!group) {
+        return res.status(404).json({ message: 'Target group not found!' })
+      }
+      const isMember = (group.members || []).includes(currentUserId) || group.ownerId === currentUserId
+      if (!isMember) {
+        return res.status(403).json({ message: 'Access denied: You are not a member of this group!' })
+      }
     }
 
     const mealId = `m-${Date.now()}`
@@ -127,9 +188,26 @@ export const deleteMeal = async (req, res) => {
       return res.status(404).json({ message: 'Meal not found!' })
     }
 
+    const currentUserId = req.user?.id
+    const isAdmin = req.user?.role === 'admin'
+
+    if (currentUserId && !isAdmin) {
+      let isAuthorized = meal.paidBy === currentUserId
+      if (meal.groupId) {
+        const group = await db.getGroupById(meal.groupId)
+        if (group && ((group.members || []).includes(currentUserId) || group.ownerId === currentUserId)) {
+          isAuthorized = true
+        }
+      }
+      if (!isAuthorized) {
+        return res.status(403).json({ message: 'Access denied: You are not authorized to delete this meal!' })
+      }
+    }
+
     await db.deleteMeal(mealId)
     res.json({ message: 'Meal deleted successfully!' })
   } catch (err) {
     res.status(500).json({ message: err.message || 'Failed to delete meal' })
   }
 }
+

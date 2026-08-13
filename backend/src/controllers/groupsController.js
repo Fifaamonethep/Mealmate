@@ -2,7 +2,14 @@ import { db } from '../config/db.js'
 
 export const getGroups = async (req, res) => {
   try {
-    const groups = await db.getGroups()
+    let groups = await db.getGroups()
+    const currentUserId = req.user?.id
+    const isAdmin = req.user?.role === 'admin'
+
+    if (currentUserId && !isAdmin) {
+      groups = groups.filter(g => g.ownerId === currentUserId || (g.members || []).includes(currentUserId))
+    }
+
     res.json(groups)
   } catch (err) {
     res.status(500).json({ message: err.message || 'Failed to fetch groups' })
@@ -15,6 +22,17 @@ export const getGroupById = async (req, res) => {
     if (!group) {
       return res.status(404).json({ message: 'Group not found!' })
     }
+
+    const currentUserId = req.user?.id
+    const isAdmin = req.user?.role === 'admin'
+
+    if (currentUserId && !isAdmin) {
+      const isMember = (group.members || []).includes(currentUserId) || group.ownerId === currentUserId
+      if (!isMember) {
+        return res.status(403).json({ message: 'Access denied: You are not a member of this group!' })
+      }
+    }
+
     res.json(group)
   } catch (err) {
     res.status(500).json({ message: err.message || 'Failed to fetch group' })
@@ -56,6 +74,16 @@ export const updateGroup = async (req, res) => {
       return res.status(404).json({ message: 'Group not found!' })
     }
 
+    const currentUserId = req.user?.id
+    const isAdmin = req.user?.role === 'admin'
+
+    if (currentUserId && !isAdmin) {
+      const isMember = (group.members || []).includes(currentUserId) || group.ownerId === currentUserId
+      if (!isMember) {
+        return res.status(403).json({ message: 'Access denied: You are not a member of this group!' })
+      }
+    }
+
     const updated = await db.updateGroup(groupId, req.body)
     res.json(updated)
   } catch (err) {
@@ -69,6 +97,16 @@ export const deleteGroup = async (req, res) => {
     const group = await db.getGroupById(groupId)
     if (!group) {
       return res.status(404).json({ message: 'Group not found!' })
+    }
+
+    const currentUserId = req.user?.id
+    const isAdmin = req.user?.role === 'admin'
+
+    if (currentUserId && !isAdmin) {
+      const isOwner = group.ownerId === currentUserId
+      if (!isOwner) {
+        return res.status(403).json({ message: 'Access denied: Only group owner can disband the group!' })
+      }
     }
 
     await db.deleteGroup(groupId)
@@ -86,6 +124,16 @@ export const addMember = async (req, res) => {
     const group = await db.getGroupById(groupId)
     if (!group) {
       return res.status(404).json({ message: 'Group not found!' })
+    }
+
+    const currentUserId = req.user?.id
+    const isAdmin = req.user?.role === 'admin'
+
+    if (currentUserId && !isAdmin) {
+      const isMember = (group.members || []).includes(currentUserId) || group.ownerId === currentUserId
+      if (!isMember) {
+        return res.status(403).json({ message: 'Access denied: You are not a member of this group!' })
+      }
     }
 
     if (group.members.includes(userId)) {
@@ -109,6 +157,16 @@ export const removeMember = async (req, res) => {
       return res.status(404).json({ message: 'Group not found!' })
     }
 
+    const currentUserId = req.user?.id
+    const isAdmin = req.user?.role === 'admin'
+
+    if (currentUserId && !isAdmin) {
+      const isMember = (group.members || []).includes(currentUserId) || group.ownerId === currentUserId
+      if (!isMember) {
+        return res.status(403).json({ message: 'Access denied: You are not a member of this group!' })
+      }
+    }
+
     if (userId === group.ownerId) {
       return res.status(400).json({ message: 'Cannot remove group owner!' })
     }
@@ -120,3 +178,4 @@ export const removeMember = async (req, res) => {
     res.status(500).json({ message: err.message || 'Failed to remove member' })
   }
 }
+

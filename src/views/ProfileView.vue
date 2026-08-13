@@ -251,17 +251,14 @@ function handleChangePassword() {
           <div>
             <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">{{ form.name || authStore.currentUser?.name }}</h3>
             <div class="flex items-center gap-2 mt-1">
-              <span class="text-xs text-slate-600 dark:text-slate-300 font-bold bg-slate-200/90 dark:bg-slate-900 px-2.5 py-1 rounded-xl border border-slate-300/80 dark:border-slate-800 font-mono">
-                @{{ authStore.currentUser?.username }}
-              </span>
               <button
                 type="button"
                 @click="copyUsername"
-                class="px-2.5 py-1 bg-purple-500/10 hover:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/30 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm active:scale-95 cursor-pointer"
-                title="Sao chép tên người dùng (@username)"
+                class="text-xs text-slate-600 dark:text-slate-300 font-bold bg-slate-200/90 dark:bg-slate-900 px-2.5 py-1 rounded-xl border border-slate-300/80 dark:border-slate-800 font-mono hover:bg-purple-500/10 hover:text-purple-600 dark:hover:text-purple-400 hover:border-purple-500/30 transition-all flex items-center gap-1.5 active:scale-95 cursor-pointer shadow-sm group"
+                title="Bấm để sao chép tên người dùng"
               >
-                <Copy class="w-3.5 h-3.5" />
-                <span>Sao chép</span>
+                <span>@{{ authStore.currentUser?.username }}</span>
+                <Copy class="w-3 h-3 text-slate-400 group-hover:text-purple-500 transition-colors" />
               </button>
             </div>
           </div>

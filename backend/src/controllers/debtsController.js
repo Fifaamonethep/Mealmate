@@ -1,17 +1,53 @@
 import { db } from '../config/db.js'
+import { uploadSlipImage, getSignedSlipUrl } from '../config/supabase.js'
+
+async function formatDebtWithSignedUrl(debt) {
+  if (!debt) return null
+  const signedUrl = await getSignedSlipUrl(debt.proofImage || debt.slipUrl)
+  return {
+    ...debt,
+    proofImage: signedUrl || debt.proofImage,
+    slipUrl: signedUrl || debt.slipUrl
+  }
+}
 
 export const getDebts = async (req, res) => {
   try {
     let debts = await db.getDebts()
+    const currentUserId = req.user?.id
+    const isAdmin = req.user?.role === 'admin'
+
+    // Filter debts to user's authorized groups / debts
+    if (currentUserId && !isAdmin) {
+      const allGroups = await db.getGroups()
+      const userGroupIds = new Set(
+        allGroups
+          .filter(g => g.ownerId === currentUserId || (g.members || []).includes(currentUserId))
+          .map(g => g.id)
+      )
+
+      debts = debts.filter(d => {
+        const isParty = d.fromUser === currentUserId || d.toUser === currentUserId
+        const isGroupMember = d.groupId && userGroupIds.has(d.groupId)
+        return isParty || isGroupMember
+      })
+    }
+
     const page = parseInt(req.query.page, 10) || 1
     const limit = parseInt(req.query.limit, 10) || 20
     const total = debts.length
 
+    let resultDebts = debts
     if (req.query.page || req.query.limit) {
       const startIndex = (page - 1) * limit
-      const paginated = debts.slice(startIndex, startIndex + limit)
+      resultDebts = debts.slice(startIndex, startIndex + limit)
+    }
+
+    const formattedDebts = await Promise.all(resultDebts.map(formatDebtWithSignedUrl))
+
+    if (req.query.page || req.query.limit) {
       return res.json({
-        data: paginated,
+        data: formattedDebts,
         page,
         limit,
         total,
@@ -19,7 +55,7 @@ export const getDebts = async (req, res) => {
       })
     }
 
-    res.json(debts)
+    res.json(formattedDebts)
   } catch (err) {
     res.status(500).json({ message: err.message || 'Failed to fetch debts' })
   }
@@ -35,7 +71,6 @@ export const sendSlip = async (req, res) => {
       return res.status(400).json({ message: 'Payment slip URL or image required!' })
     }
 
-    // Basic URL / data URI format validation
     const isValidImage = typeof image === 'string' && (
       image.startsWith('data:image/') ||
       image.startsWith('http://') ||
@@ -51,16 +86,35 @@ export const sendSlip = async (req, res) => {
       return res.status(404).json({ message: 'Debt payment record not found!' })
     }
 
+    const currentUserId = req.user?.id
+    const isAdmin = req.user?.role === 'admin'
+    const debtorId = debt.fromUser || debt.debtorId
+    const creditorId = debt.toUser || debt.creditorId
+
+    // Check group membership / authorization
+    if (currentUserId && !isAdmin) {
+      let isMember = false
+      if (debt.groupId) {
+        const group = await db.getGroupById(debt.groupId)
+        if (group && ((group.members || []).includes(currentUserId) || group.ownerId === currentUserId)) {
+          isMember = true
+        }
+      }
+      if (!isMember && currentUserId !== debtorId && currentUserId !== creditorId) {
+        return res.status(403).json({ message: 'Access denied: You are not a member of this group or party to this debt!' })
+      }
+    }
+
+    // Upload image to private Supabase Storage if configured
+    const storedPath = await uploadSlipImage(image, `${debtId}_${Date.now()}.png`)
+
     const updated = await db.updateDebt(debtId, {
       status: 'PAID',
-      slipUrl: image,
-      proofImage: image,
+      slipUrl: storedPath,
+      proofImage: storedPath,
       rejectReason: null,
       updatedAt: new Date().toISOString()
     })
-
-    const debtorId = debt.fromUser || debt.debtorId
-    const creditorId = debt.toUser || debt.creditorId
 
     const debtor = await db.getUserById(debtorId)
     const meal = debt.mealId ? await db.getMealById(debt.mealId) : null
@@ -76,7 +130,8 @@ export const sendSlip = async (req, res) => {
       createdAt: new Date().toISOString()
     })
 
-    res.json(updated)
+    const result = await formatDebtWithSignedUrl(updated)
+    res.json(result)
   } catch (err) {
     res.status(500).json({ message: err.message || 'Failed to send slip' })
   }
@@ -90,12 +145,29 @@ export const confirmPayment = async (req, res) => {
       return res.status(404).json({ message: 'Debt record not found!' })
     }
 
+    const currentUserId = req.user?.id
+    const isAdmin = req.user?.role === 'admin'
+    const creditorId = debt.toUser || debt.creditorId
+
+    // Check group membership / creditor authorization
+    if (currentUserId && !isAdmin) {
+      let isMember = false
+      if (debt.groupId) {
+        const group = await db.getGroupById(debt.groupId)
+        if (group && ((group.members || []).includes(currentUserId) || group.ownerId === currentUserId)) {
+          isMember = true
+        }
+      }
+      if (!isMember && currentUserId !== creditorId) {
+        return res.status(403).json({ message: 'Access denied: You are not a member of this group or the creditor!' })
+      }
+    }
+
     const updated = await db.updateDebt(debtId, {
       status: 'VERIFIED',
       updatedAt: new Date().toISOString()
     })
     const meal = debt.mealId ? await db.getMealById(debt.mealId) : null
-
     const debtorId = debt.fromUser || debt.debtorId
 
     // Notify debtor
@@ -109,7 +181,8 @@ export const confirmPayment = async (req, res) => {
       createdAt: new Date().toISOString()
     })
 
-    res.json(updated)
+    const result = await formatDebtWithSignedUrl(updated)
+    res.json(result)
   } catch (err) {
     res.status(500).json({ message: err.message || 'Failed to confirm payment' })
   }
@@ -122,6 +195,24 @@ export const rejectPayment = async (req, res) => {
     const debt = await db.getDebtById(debtId)
     if (!debt) {
       return res.status(404).json({ message: 'Debt record not found!' })
+    }
+
+    const currentUserId = req.user?.id
+    const isAdmin = req.user?.role === 'admin'
+    const creditorId = debt.toUser || debt.creditorId
+
+    // Check group membership / creditor authorization
+    if (currentUserId && !isAdmin) {
+      let isMember = false
+      if (debt.groupId) {
+        const group = await db.getGroupById(debt.groupId)
+        if (group && ((group.members || []).includes(currentUserId) || group.ownerId === currentUserId)) {
+          isMember = true
+        }
+      }
+      if (!isMember && currentUserId !== creditorId) {
+        return res.status(403).json({ message: 'Access denied: You are not a member of this group or the creditor!' })
+      }
     }
 
     const updated = await db.updateDebt(debtId, {
@@ -143,7 +234,8 @@ export const rejectPayment = async (req, res) => {
       createdAt: new Date().toISOString()
     })
 
-    res.json(updated)
+    const result = await formatDebtWithSignedUrl(updated)
+    res.json(result)
   } catch (err) {
     res.status(500).json({ message: err.message || 'Failed to reject payment' })
   }
@@ -186,8 +278,10 @@ export const forceAdminAction = async (req, res) => {
       }
     }
 
-    res.json(updated)
+    const result = await formatDebtWithSignedUrl(updated)
+    res.json(result)
   } catch (err) {
     res.status(500).json({ message: err.message || 'Failed to update debt' })
   }
 }
+
