@@ -84,9 +84,15 @@ function handleAddMember() {
   memberError.value = ''
   if (!searchMemberInput.value || !group.value) return
 
-  const query = searchMemberInput.value.trim().toLowerCase()
-  const foundUser = authStore.users.find(
-    u => u.username.toLowerCase() === query || u.email.toLowerCase() === query
+  const query = searchMemberInput.value.trim().toLowerCase().replace(/^@/, '')
+  const foundUser = authStore.users.find(u =>
+    u.id.toLowerCase() === query ||
+    u.id.toLowerCase().includes(query) ||
+    u.username.toLowerCase() === query ||
+    u.username.toLowerCase().includes(query) ||
+    u.name.toLowerCase().includes(query) ||
+    (u.phone && u.phone.includes(query)) ||
+    (u.email && u.email.toLowerCase().includes(query))
   )
 
   if (!foundUser) {

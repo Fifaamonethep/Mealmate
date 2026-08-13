@@ -45,8 +45,9 @@ const newFriend = ref({
 const myFriendsList = computed(() => {
   let list = authStore.myFriends
   if (searchQuery.value.trim()) {
-    const q = searchQuery.value.trim().toLowerCase()
+    const q = searchQuery.value.trim().toLowerCase().replace(/^@/, '')
     list = list.filter(u =>
+      u.id.toLowerCase().includes(q) ||
       u.name.toLowerCase().includes(q) ||
       u.username.toLowerCase().includes(q) ||
       (u.phone && u.phone.includes(q)) ||
@@ -59,10 +60,12 @@ const myFriendsList = computed(() => {
 const incomingRequestsList = computed(() => {
   let list = authStore.incomingFriendRequests
   if (searchQuery.value.trim()) {
-    const q = searchQuery.value.trim().toLowerCase()
+    const q = searchQuery.value.trim().toLowerCase().replace(/^@/, '')
     list = list.filter(u =>
+      u.id.toLowerCase().includes(q) ||
       u.name.toLowerCase().includes(q) ||
-      u.username.toLowerCase().includes(q)
+      u.username.toLowerCase().includes(q) ||
+      (u.phone && u.phone.includes(q))
     )
   }
   return list
@@ -71,8 +74,9 @@ const incomingRequestsList = computed(() => {
 const suggestedList = computed(() => {
   let list = authStore.suggestedFriends
   if (searchQuery.value.trim()) {
-    const q = searchQuery.value.trim().toLowerCase()
+    const q = searchQuery.value.trim().toLowerCase().replace(/^@/, '')
     list = list.filter(u =>
+      u.id.toLowerCase().includes(q) ||
       u.name.toLowerCase().includes(q) ||
       u.username.toLowerCase().includes(q) ||
       (u.phone && u.phone.includes(q)) ||

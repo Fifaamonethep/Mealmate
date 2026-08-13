@@ -108,8 +108,11 @@ export const useAuthStore = defineStore('auth', () => {
     const exists = users.value.some(u => u.username.toLowerCase() === userData.username.toLowerCase())
     if (exists) throw new Error(i18n.global.t('auth.username_exists'))
 
+    const cleanCode = userData.username.toLowerCase().replace(/[^a-z0-9_]/g, '')
+    const userId = cleanCode ? `u-${cleanCode}` : `u-${Date.now()}`
+
     const newUser = {
-      id: `u-${Date.now()}`,
+      id: userId,
       username: userData.username,
       passwordHash: userData.password,
       name: userData.name || userData.username,

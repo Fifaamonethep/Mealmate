@@ -41,8 +41,11 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: 'Username already exists!' })
     }
 
+    const cleanCode = username.toLowerCase().replace(/[^a-z0-9_]/g, '')
+    const userId = cleanCode ? `u-${cleanCode}` : `u-${Date.now()}`
+
     const newUser = {
-      id: `u-${Date.now()}`,
+      id: userId,
       username,
       passwordHash: password,
       name: name || username,
