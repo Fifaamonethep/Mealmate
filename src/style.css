@@ -44,10 +44,12 @@ html[lang="lo"] h2,
 html[lang="lo"] h3,
 html[lang="lo"] h4,
 html[lang="lo"] h5,
-html[lang="lo"] h6 {
-  font-family: 'Noto Sans Lao', 'Noto Sans Lao Looped', 'Plus Jakarta Sans', sans-serif !important;
-  letter-spacing: 0.01em;
-  line-height: 1.5;
+html[lang="lo"] h6,
+html[lang="lo"] a,
+html[lang="lo"] label {
+  font-family: 'Noto Sans Lao Looped', 'Noto Sans Lao', 'Phetsarath OT', 'Saysettha OT', 'Laos UI', 'Plus Jakarta Sans', sans-serif !important;
+  letter-spacing: 0.02em !important;
+  line-height: 1.65 !important;
 }
 
 html[lang="th"] body,
