@@ -242,18 +242,7 @@ function handleChangePassword() {
           </div>
           <div>
             <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">{{ form.name || authStore.currentUser?.name }}</h3>
-            <div class="flex flex-wrap items-center gap-2 mt-0.5">
-              <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">@{{ authStore.currentUser?.username }}</p>
-              <button
-                type="button"
-                @click="copyUserId"
-                class="px-2 py-0.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30 rounded-lg text-[11px] font-bold flex items-center gap-1 transition-all"
-                title="Sao chép User ID để kết bạn / thêm vào nhóm"
-              >
-                <span>ID: {{ authStore.currentUser?.id }}</span>
-                <Copy class="w-3 h-3 text-indigo-500" />
-              </button>
-            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">@{{ authStore.currentUser?.username }}</p>
           </div>
         </div>
 
