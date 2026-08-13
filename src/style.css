@@ -47,9 +47,15 @@ html[lang="lo"] h5,
 html[lang="lo"] h6,
 html[lang="lo"] a,
 html[lang="lo"] label {
-  font-family: 'Noto Sans Lao Looped', 'Noto Sans Lao', 'Phetsarath OT', 'Saysettha OT', 'Laos UI', 'Plus Jakarta Sans', sans-serif !important;
-  letter-spacing: 0.02em !important;
-  line-height: 1.65 !important;
+  font-family: 'Noto Sans Lao', 'Phetsarath OT', 'Noto Sans Lao Looped', 'Laos UI', 'Saysettha OT', 'Plus Jakarta Sans', sans-serif !important;
+  letter-spacing: 0.01em !important;
+  line-height: 1.6 !important;
+}
+
+/* Lao typography weight cap to maintain crisp, elegant strokes without ink bleeding */
+html[lang="lo"] .font-black,
+html[lang="lo"] .font-extrabold {
+  font-weight: 700 !important;
 }
 
 html[lang="th"] body,

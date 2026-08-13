@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted, nextTick } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Modal from './Modal.vue'
 import { Crop, ZoomIn, ZoomOut, RotateCw, RotateCcw, Check, RefreshCw } from 'lucide-vue-next'
@@ -30,6 +30,8 @@ const isDragging = ref(false)
 const dragStart = ref({ x: 0, y: 0 })
 
 let loadedImage = null
+let baseDrawW = 0
+let baseDrawH = 0
 
 watch(() => props.show, (newVal) => {
   if (newVal && props.imageSrc) {
@@ -48,9 +50,43 @@ function loadImage() {
   loadedImage = new Image()
   loadedImage.crossOrigin = 'anonymous'
   loadedImage.onload = () => {
+    calculateBaseDimensions()
     drawCanvas()
   }
   loadedImage.src = props.imageSrc
+}
+
+function calculateBaseDimensions() {
+  const canvas = canvasRef.value
+  if (!canvas || !loadedImage) return
+  const width = canvas.width
+  const height = canvas.height
+  const cropSize = Math.min(width, height) * 0.75
+
+  const imgAspect = loadedImage.width / loadedImage.height
+
+  // Ensure image covers crop area initially like Facebook cropper
+  if (imgAspect > 1) {
+    baseDrawH = cropSize
+    baseDrawW = cropSize * imgAspect
+  } else {
+    baseDrawW = cropSize
+    baseDrawH = cropSize / imgAspect
+  }
+}
+
+function clampOffsets() {
+  const canvas = canvasRef.value
+  if (!canvas) return
+  const cropSize = Math.min(canvas.width, canvas.height) * 0.75
+  const currentW = baseDrawW * zoomLevel.value
+  const currentH = baseDrawH * zoomLevel.value
+
+  const maxOffsetX = Math.max(0, (currentW - cropSize) / 2)
+  const maxOffsetY = Math.max(0, (currentH - cropSize) / 2)
+
+  offsetX.value = Math.min(maxOffsetX, Math.max(-maxOffsetX, offsetX.value))
+  offsetY.value = Math.min(maxOffsetY, Math.max(-maxOffsetY, offsetY.value))
 }
 
 function drawCanvas() {
@@ -59,62 +95,52 @@ function drawCanvas() {
   const ctx = canvas.getContext('2d')
   const width = canvas.width
   const height = canvas.height
+  const cropSize = Math.min(width, height) * 0.75
+
+  clampOffsets()
 
   // Clear background
   ctx.clearRect(0, 0, width, height)
-  ctx.fillStyle = '#0f172a'
+  ctx.fillStyle = '#090d16'
   ctx.fillRect(0, 0, width, height)
 
+  // Draw transformed image
   ctx.save()
-  // Move to center
   ctx.translate(width / 2 + offsetX.value, height / 2 + offsetY.value)
   ctx.rotate((rotationAngle.value * Math.PI) / 180)
   ctx.scale(zoomLevel.value, zoomLevel.value)
 
-  // Calculate scaled dimensions keeping aspect ratio
-  const imgAspect = loadedImage.width / loadedImage.height
-  let drawW = width
-  let drawH = height
-  if (imgAspect > 1) {
-    drawH = width / imgAspect
-  } else {
-    drawW = height * imgAspect
-  }
-
-  ctx.drawImage(loadedImage, -drawW / 2, -drawH / 2, drawW, drawH)
+  ctx.drawImage(loadedImage, -baseDrawW / 2, -baseDrawH / 2, baseDrawW, baseDrawH)
   ctx.restore()
 
-  // Draw overlay stencil mask (Darken non-cropped area)
+  // Draw dark stencil overlay around crop cutout (Facebook Style)
   ctx.save()
-  ctx.fillStyle = 'rgba(15, 23, 42, 0.65)'
-  ctx.fillRect(0, 0, width, height)
+  ctx.fillStyle = 'rgba(9, 13, 22, 0.75)'
+  ctx.beginPath()
+  ctx.rect(0, 0, width, height)
 
   // Cut out crop circle or square
-  ctx.globalCompositeOperation = 'destination-out'
-  ctx.beginPath()
-  const cropSize = Math.min(width, height) * 0.75
-  const cropX = (width - cropSize) / 2
-  const cropY = (height - cropSize) / 2
-
   if (props.isCircle) {
-    ctx.arc(width / 2, height / 2, cropSize / 2, 0, Math.PI * 2)
+    ctx.arc(width / 2, height / 2, cropSize / 2, 0, Math.PI * 2, true)
   } else {
-    ctx.rect(cropX, cropY, cropSize, cropSize)
+    const cropX = (width - cropSize) / 2
+    const cropY = (height - cropSize) / 2
+    ctx.rect(cropX + cropSize, cropY, -cropSize, cropSize)
   }
   ctx.fill()
   ctx.restore()
 
-  // Draw border line around crop stencil
+  // Draw clean Facebook-style solid white border ring
   ctx.save()
-  ctx.strokeStyle = '#818cf8'
-  ctx.lineWidth = 2
-  ctx.setLineDash([6, 4])
+  ctx.strokeStyle = '#ffffff'
+  ctx.lineWidth = 2.5
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.4)'
+  ctx.shadowBlur = 6
   ctx.beginPath()
+
   if (props.isCircle) {
-    const cropSize = Math.min(width, height) * 0.75
     ctx.arc(width / 2, height / 2, cropSize / 2, 0, Math.PI * 2)
   } else {
-    const cropSize = Math.min(width, height) * 0.75
     const cropX = (width - cropSize) / 2
     const cropY = (height - cropSize) / 2
     ctx.rect(cropX, cropY, cropSize, cropSize)
@@ -166,23 +192,24 @@ function handleWheel(e) {
   if (e.deltaY < 0) {
     zoomLevel.value = Math.min(3, zoomLevel.value + 0.1)
   } else {
-    zoomLevel.value = Math.max(0.5, zoomLevel.value - 0.1)
+    zoomLevel.value = Math.max(1, zoomLevel.value - 0.1)
   }
   drawCanvas()
 }
 
-// Perform Crop & Export DataURL
+// Perform Crop & Export High-Res DataURL
 function cropAndExport() {
   if (!loadedImage) return
 
   const exportCanvas = document.createElement('canvas')
-  const exportSize = 400
+  const exportSize = 480
   exportCanvas.width = exportSize
   exportCanvas.height = exportSize
   const ctx = exportCanvas.getContext('2d')
 
   const previewCanvas = canvasRef.value
   const cropSize = Math.min(previewCanvas.width, previewCanvas.height) * 0.75
+  const scaleRatio = exportSize / cropSize
 
   ctx.save()
   // Clip to circle if requested
@@ -192,48 +219,38 @@ function cropAndExport() {
     ctx.clip()
   }
 
-  // Draw scaled & transformed image onto export canvas
-  const scaleRatio = exportSize / cropSize
+  // Draw transformed image
   ctx.translate(exportSize / 2 + offsetX.value * scaleRatio, exportSize / 2 + offsetY.value * scaleRatio)
   ctx.rotate((rotationAngle.value * Math.PI) / 180)
   ctx.scale(zoomLevel.value * scaleRatio, zoomLevel.value * scaleRatio)
 
-  const imgAspect = loadedImage.width / loadedImage.height
-  let drawW = previewCanvas.width
-  let drawH = previewCanvas.height
-  if (imgAspect > 1) {
-    drawH = previewCanvas.width / imgAspect
-  } else {
-    drawW = previewCanvas.height * imgAspect
-  }
-
-  ctx.drawImage(loadedImage, -drawW / 2, -drawH / 2, drawW, drawH)
+  ctx.drawImage(loadedImage, -baseDrawW / 2, -baseDrawH / 2, baseDrawW, baseDrawH)
   ctx.restore()
 
-  const croppedDataUrl = exportCanvas.toDataURL('image/png', 0.92)
+  const croppedDataUrl = exportCanvas.toDataURL('image/png', 0.95)
   emit('cropComplete', croppedDataUrl)
   emit('close')
 }
 </script>
 
 <template>
-  <Modal :show="show" :title="title || t('cropper.title') || 'Cắt & Chỉnh kích thước ảnh'" maxWidth="max-w-md" @close="emit('close')">
+  <Modal :show="show" :title="title || t('cropper.title') || 'Cắt & ປັບຂະໜາດຮູບພາບ'" maxWidth="max-w-md" @close="emit('close')">
     <template #icon>
       <Crop class="w-5 h-5 text-indigo-500" />
     </template>
 
     <div class="space-y-4 text-center">
       <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">
-        {{ t('cropper.hint') || 'Kéo di chuyển hoặc Phóng to / Xoay để chỉnh góc cắt ảnh hoàn hảo' }}
+        {{ t('cropper.hint') || 'ລາກຍ້າຍ ຫຼື ຂະຫຍາຍ / ໝູນ ເພື່ອປັບມຸມຕັດຮູບໃຫ້ສົມບູນແບບ' }}
       </p>
 
-      <!-- Canvas Box -->
-      <div class="relative inline-block rounded-2xl overflow-hidden shadow-inner border border-slate-300 dark:border-slate-800 touch-none">
+      <!-- Facebook Style Crop Canvas -->
+      <div class="relative inline-block rounded-3xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 touch-none bg-slate-950">
         <canvas
           ref="canvasRef"
           width="320"
           height="320"
-          class="cursor-grab active:cursor-grabbing block mx-auto bg-slate-950"
+          class="cursor-grab active:cursor-grabbing block mx-auto"
           @mousedown="startDrag"
           @mousemove="onDrag"
           @mouseup="endDrag"
@@ -246,29 +263,31 @@ function cropAndExport() {
       </div>
 
       <!-- Controls: Zoom & Rotate Bar -->
-      <div class="p-3 bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
-        <!-- Zoom Slider -->
+      <div class="p-3.5 bg-slate-100/90 dark:bg-slate-900/90 rounded-2xl border border-slate-200/90 dark:border-slate-800/90 space-y-3 shadow-inner">
+        <!-- Facebook Style Zoom Slider -->
         <div class="flex items-center gap-3">
-          <ZoomOut class="w-4 h-4 text-slate-400 shrink-0" />
+          <ZoomOut class="w-4 h-4 text-slate-500 shrink-0" />
           <input
             v-model.number="zoomLevel"
             type="range"
-            min="0.5"
+            min="1"
             max="3"
-            step="0.05"
-            class="w-full accent-indigo-600 cursor-pointer"
+            step="0.02"
+            class="w-full accent-indigo-600 cursor-pointer h-1.5 bg-slate-300 dark:bg-slate-700 rounded-lg appearance-none"
             @input="handleZoomChange"
           />
-          <ZoomIn class="w-4 h-4 text-slate-400 shrink-0" />
-          <span class="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400 w-10 text-right">{{ Math.round(zoomLevel * 100) }}%</span>
+          <ZoomIn class="w-4 h-4 text-slate-500 shrink-0" />
+          <span class="text-xs font-mono font-black text-indigo-600 dark:text-indigo-400 w-12 text-right shrink-0">
+            {{ Math.round(zoomLevel * 100) }}%
+          </span>
         </div>
 
         <!-- Rotate & Reset Buttons -->
-        <div class="flex items-center justify-center gap-2 pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
+        <div class="flex items-center justify-center gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
           <button
             type="button"
             @click="rotate(-1)"
-            class="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-indigo-600 font-bold text-xs flex items-center gap-1 transition-all"
+            class="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-indigo-600 font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all"
           >
             <RotateCcw class="w-3.5 h-3.5" />
             <span>-90°</span>
@@ -277,7 +296,7 @@ function cropAndExport() {
           <button
             type="button"
             @click="rotate(1)"
-            class="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-indigo-600 font-bold text-xs flex items-center gap-1 transition-all"
+            class="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-indigo-600 font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all"
           >
             <RotateCw class="w-3.5 h-3.5" />
             <span>+90°</span>
@@ -286,7 +305,7 @@ function cropAndExport() {
           <button
             type="button"
             @click="resetTransform"
-            class="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold text-xs flex items-center gap-1 transition-all"
+            class="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all"
           >
             <RefreshCw class="w-3.5 h-3.5" />
             <span>{{ t('cropper.btn_reset') || 'Reset' }}</span>
@@ -300,17 +319,17 @@ function cropAndExport() {
         <button
           type="button"
           @click="emit('close')"
-          class="w-1/3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300"
+          class="w-1/3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
         >
           {{ t('common.cancel') }}
         </button>
         <button
           type="button"
           @click="cropAndExport"
-          class="w-2/3 glow-button py-2.5 text-xs font-extrabold flex items-center justify-center gap-1.5"
+          class="w-2/3 glow-button py-2.5 text-xs font-black flex items-center justify-center gap-2 shadow-md shadow-indigo-500/25"
         >
           <Check class="w-4 h-4" />
-          <span>{{ t('cropper.btn_crop') || 'Cắt & Sử dụng ảnh' }}</span>
+          <span>{{ t('cropper.btn_crop') || 'ຕັດ & ນຳໃຊ້ຮູບ' }}</span>
         </button>
       </div>
     </template>
