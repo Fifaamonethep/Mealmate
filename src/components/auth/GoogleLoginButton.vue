@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   clientId: {
@@ -10,6 +11,7 @@ const props = defineProps({
 
 const emit = defineEmits(['success', 'error'])
 const containerRef = ref(null)
+const { locale } = useI18n()
 
 const isConfigured = computed(() => {
   return !!props.clientId && !props.clientId.includes('YOUR_GOOGLE_CLIENT_ID')
@@ -29,6 +31,7 @@ onMounted(() => {
     if (window.google?.accounts?.id) {
       window.google.accounts.id.initialize({
         client_id: props.clientId,
+        locale: locale.value === 'lo' ? 'lo' : (locale.value === 'th' ? 'th' : 'en'),
         callback: (response) => {
           if (response.credential) {
             emit('success', response.credential)
@@ -66,4 +69,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Kanit:wght@300;400;500;600;700;800&family=Noto+Sans+Lao:wght@300;400;500;600;700;800;900&family=Noto+Sans+Lao+Looped:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Kanit:wght@300;400;500;600;700;800&family=Noto+Sans+Lao:wght@300;400;500;600;700;800;900&family=Noto+Sans+Lao+Looped:wght@300;400;500;600;700;800&family=Souliyo&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,7 +7,7 @@
 /* Light & Dark Base Body Styles */
 @layer base {
   body {
-    font-family: 'Noto Sans Lao', 'Noto Sans Lao Looped', 'Plus Jakarta Sans', 'Be Vietnam Pro', 'Prompt', 'Kanit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-family: 'Noto Sans Lao Looped', 'Noto Sans Lao', 'Plus Jakarta Sans', 'Be Vietnam Pro', 'Prompt', 'Kanit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
     line-height: 1.5;
     letter-spacing: -0.01em;
     -webkit-font-smoothing: antialiased;
@@ -32,35 +32,39 @@
 }
 
 /* Language-specific Typography Overrides */
+html[lang="lo"] * {
+  font-family: 'Noto Sans Lao Looped', 'Phetsarath OT', 'Noto Sans Lao', 'Saysettha OT', 'Laos UI', sans-serif !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Strict Lao typography weight cap to maintain crisp, hollow loops and prevent blobby ink bleeding */
 html[lang="lo"] body,
-html[lang="lo"] button,
-html[lang="lo"] input,
-html[lang="lo"] select,
-html[lang="lo"] textarea,
 html[lang="lo"] p,
 html[lang="lo"] span,
 html[lang="lo"] div,
+html[lang="lo"] a,
+html[lang="lo"] label,
+html[lang="lo"] input,
+html[lang="lo"] select,
+html[lang="lo"] textarea {
+  font-weight: 500 !important;
+  line-height: 1.6 !important;
+}
+
+html[lang="lo"] button,
 html[lang="lo"] h1,
 html[lang="lo"] h2,
 html[lang="lo"] h3,
 html[lang="lo"] h4,
 html[lang="lo"] h5,
 html[lang="lo"] h6,
-html[lang="lo"] a,
-html[lang="lo"] label {
-  font-family: 'Noto Sans Lao', 'Phetsarath OT', 'Saysettha OT', 'Laos UI', 'Plus Jakarta Sans', sans-serif !important;
-  letter-spacing: 0.01em !important;
-  line-height: 1.6 !important;
-}
-
-/* Lao typography weight cap to maintain crisp, hollow loops and prevent blobby ink bleeding */
-html[lang="lo"] .font-black,
-html[lang="lo"] .font-extrabold,
-html[lang="lo"] .font-bold,
 html[lang="lo"] b,
 html[lang="lo"] strong,
-html[lang="lo"] button {
+html[lang="lo"] .font-black,
+html[lang="lo"] .font-extrabold,
+html[lang="lo"] .font-bold {
   font-weight: 600 !important;
+  line-height: 1.6 !important;
 }
 
 html[lang="th"] body,

@@ -45,7 +45,7 @@ export default {
         'glass-dark': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
       },
       fontFamily: {
-        sans: ['"Plus Jakarta Sans"', '"Noto Sans Lao"', '"Noto Sans Lao Looped"', '"Be Vietnam Pro"', 'Prompt', 'Kanit', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: ['"Noto Sans Lao Looped"', '"Noto Sans Lao"', '"Plus Jakarta Sans"', '"Be Vietnam Pro"', 'Prompt', 'Kanit', 'system-ui', '-apple-system', 'sans-serif'],
       },
       animation: {
         'pulse-glow': 'pulseGlow 2.5s ease-in-out infinite',
