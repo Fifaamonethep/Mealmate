@@ -1,122 +1,161 @@
 import { db } from '../config/db.js'
 
-export const getDebts = (req, res) => {
-  res.json(db.getDebts())
+export const getDebts = async (req, res) => {
+  try {
+    const debts = await db.getDebts()
+    res.json(debts)
+  } catch (err) {
+    res.status(500).json({ message: err.message || 'Failed to fetch debts' })
+  }
 }
 
-export const sendSlip = (req, res) => {
-  const debtId = req.params.id
-  const { slipUrl } = req.body
+export const sendSlip = async (req, res) => {
+  try {
+    const debtId = req.params.id
+    const { slipUrl, proofImage } = req.body
+    const image = slipUrl || proofImage
 
-  if (!slipUrl) {
-    return res.status(400).json({ message: 'Payment slip URL or image required!' })
-  }
+    if (!image) {
+      return res.status(400).json({ message: 'Payment slip URL or image required!' })
+    }
 
-  const debt = db.getDebtById(debtId)
-  if (!debt) {
-    return res.status(404).json({ message: 'Debt payment record not found!' })
-  }
+    const debt = await db.getDebtById(debtId)
+    if (!debt) {
+      return res.status(404).json({ message: 'Debt payment record not found!' })
+    }
 
-  const updated = db.updateDebt(debtId, {
-    status: 'slip_sent',
-    slipUrl,
-    rejectReason: null
-  })
+    const updated = await db.updateDebt(debtId, {
+      status: 'PAID',
+      slipUrl: image,
+      proofImage: image,
+      rejectReason: null
+    })
 
-  const debtor = db.getUserById(debt.debtorId)
-  const meal = db.getMealById(debt.mealId)
+    const debtorId = debt.fromUser || debt.debtorId
+    const creditorId = debt.toUser || debt.creditorId
 
-  // Notify creditor
-  db.addNotification({
-    id: `n-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-    userId: debt.creditorId,
-    title: 'Bill chuyển khoản mới',
-    message: `${debtor?.name || 'Bạn bè'} vừa gửi ảnh bill chuyển khoản cho khoản nợ ${debt.amount.toLocaleString()} ${meal?.currency || 'VND'}. Vui lòng kiểm tra và xác nhận.`,
-    isRead: false,
-    createdAt: new Date().toISOString()
-  })
+    const debtor = await db.getUserById(debtorId)
+    const meal = debt.mealId ? await db.getMealById(debt.mealId) : null
 
-  res.json(updated)
-}
-
-export const confirmPayment = (req, res) => {
-  const debtId = req.params.id
-  const debt = db.getDebtById(debtId)
-  if (!debt) {
-    return res.status(404).json({ message: 'Debt record not found!' })
-  }
-
-  const updated = db.updateDebt(debtId, { status: 'confirmed' })
-  const meal = db.getMealById(debt.mealId)
-
-  // Notify debtor
-  db.addNotification({
-    id: `n-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-    userId: debt.debtorId,
-    title: 'Thanh toán đã được duyệt! 🎉',
-    message: `Chủ nợ đã xác nhận nhận đủ tiền chuyển khoản (${debt.amount.toLocaleString()} ${meal?.currency || 'LAK'}). Khoản nợ đã hoàn tất.`,
-    isRead: false,
-    createdAt: new Date().toISOString()
-  })
-
-  res.json(updated)
-}
-
-export const rejectPayment = (req, res) => {
-  const debtId = req.params.id
-  const { reason } = req.body
-  const debt = db.getDebtById(debtId)
-  if (!debt) {
-    return res.status(404).json({ message: 'Debt record not found!' })
-  }
-
-  const updated = db.updateDebt(debtId, {
-    status: 'rejected',
-    rejectReason: reason || 'Bị từ chối bởi chủ nợ'
-  })
-
-  // Notify debtor
-  db.addNotification({
-    id: `n-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-    userId: debt.debtorId,
-    title: 'Thanh toán bị từ chối ⚠️',
-    message: `Bill chuyển khoản của bạn bị từ chối với lý do: "${updated.rejectReason}". Vui lòng kiểm tra lại!`,
-    isRead: false,
-    createdAt: new Date().toISOString()
-  })
-
-  res.json(updated)
-}
-
-export const forceAdminAction = (req, res) => {
-  const debtId = req.params.id
-  const { status, reason } = req.body
-
-  const debt = db.getDebtById(debtId)
-  if (!debt) {
-    return res.status(404).json({ message: 'Debt record not found!' })
-  }
-
-  const updates = { status }
-  if (status === 'rejected') {
-    updates.rejectReason = reason || 'Admin action'
-  } else {
-    updates.rejectReason = null
-  }
-
-  const updated = db.updateDebt(debtId, updates)
-
-  // Notify both
-  ['debtorId', 'creditorId'].forEach(field => {
-    db.addNotification({
+    // Notify creditor
+    await db.addNotification({
       id: `n-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-      userId: debt[field],
-      title: 'Admin đã cập nhật trạng thái nợ',
-      message: `Admin đã thay đổi trạng thái khoản nợ sang [${status.toUpperCase()}].`,
+      userId: creditorId,
+      title: 'Bill chuyển khoản mới',
+      message: `${debtor?.name || 'Bạn bè'} vừa gửi ảnh bill chuyển khoản cho khoản nợ ${debt.amount.toLocaleString()} ${meal?.currency || 'LAK'}. Vui lòng kiểm tra và xác nhận.`,
+      type: 'DEBT',
       isRead: false,
       createdAt: new Date().toISOString()
     })
-  })
 
-  res.json(updated)
+    res.json(updated)
+  } catch (err) {
+    res.status(500).json({ message: err.message || 'Failed to send slip' })
+  }
+}
+
+export const confirmPayment = async (req, res) => {
+  try {
+    const debtId = req.params.id
+    const debt = await db.getDebtById(debtId)
+    if (!debt) {
+      return res.status(404).json({ message: 'Debt record not found!' })
+    }
+
+    const updated = await db.updateDebt(debtId, { status: 'VERIFIED' })
+    const meal = debt.mealId ? await db.getMealById(debt.mealId) : null
+
+    const debtorId = debt.fromUser || debt.debtorId
+
+    // Notify debtor
+    await db.addNotification({
+      id: `n-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      userId: debtorId,
+      title: 'Thanh toán đã được duyệt! 🎉',
+      message: `Chủ nợ đã xác nhận nhận đủ tiền chuyển khoản (${debt.amount.toLocaleString()} ${meal?.currency || 'LAK'}). Khoản nợ đã hoàn tất.`,
+      type: 'DEBT',
+      isRead: false,
+      createdAt: new Date().toISOString()
+    })
+
+    res.json(updated)
+  } catch (err) {
+    res.status(500).json({ message: err.message || 'Failed to confirm payment' })
+  }
+}
+
+export const rejectPayment = async (req, res) => {
+  try {
+    const debtId = req.params.id
+    const { reason } = req.body
+    const debt = await db.getDebtById(debtId)
+    if (!debt) {
+      return res.status(404).json({ message: 'Debt record not found!' })
+    }
+
+    const updated = await db.updateDebt(debtId, {
+      status: 'REJECTED',
+      rejectReason: reason || 'Bị từ chối bởi chủ nợ'
+    })
+
+    const debtorId = debt.fromUser || debt.debtorId
+
+    // Notify debtor
+    await db.addNotification({
+      id: `n-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      userId: debtorId,
+      title: 'Thanh toán bị từ chối ⚠️',
+      message: `Bill chuyển khoản của bạn bị từ chối với lý do: "${reason || 'Bị từ chối bởi chủ nợ'}". Vui lòng kiểm tra lại!`,
+      type: 'DEBT',
+      isRead: false,
+      createdAt: new Date().toISOString()
+    })
+
+    res.json(updated)
+  } catch (err) {
+    res.status(500).json({ message: err.message || 'Failed to reject payment' })
+  }
+}
+
+export const forceAdminAction = async (req, res) => {
+  try {
+    const debtId = req.params.id
+    const { status, reason } = req.body
+
+    const debt = await db.getDebtById(debtId)
+    if (!debt) {
+      return res.status(404).json({ message: 'Debt record not found!' })
+    }
+
+    const updates = { status }
+    if (status === 'REJECTED' || status === 'rejected') {
+      updates.rejectReason = reason || 'Admin action'
+    } else {
+      updates.rejectReason = null
+    }
+
+    const updated = await db.updateDebt(debtId, updates)
+
+    const debtorId = debt.fromUser || debt.debtorId
+    const creditorId = debt.toUser || debt.creditorId
+
+    // Notify both
+    for (const uid of [debtorId, creditorId]) {
+      if (uid) {
+        await db.addNotification({
+          id: `n-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+          userId: uid,
+          title: 'Admin đã cập nhật trạng thái nợ',
+          message: `Admin đã thay đổi trạng thái khoản nợ sang [${status.toUpperCase()}].`,
+          type: 'DEBT',
+          isRead: false,
+          createdAt: new Date().toISOString()
+        })
+      }
+    }
+
+    res.json(updated)
+  } catch (err) {
+    res.status(500).json({ message: err.message || 'Failed to update debt' })
+  }
 }

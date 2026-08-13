@@ -2,78 +2,95 @@ import jwt from 'jsonwebtoken'
 import { db } from '../config/db.js'
 import { JWT_SECRET } from '../middleware/authMiddleware.js'
 
-export const login = (req, res) => {
-  const { username, password } = req.body
-  if (!username || !password) {
-    return res.status(400).json({ message: 'Username and password required!' })
-  }
+export const login = async (req, res) => {
+  try {
+    const { username, password } = req.body
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username and password required!' })
+    }
 
-  const user = db.getUserByUsername(username)
-  if (!user) {
-    return res.status(404).json({ message: 'Account does not exist!' })
-  }
+    const user = await db.getUserByUsername(username)
+    if (!user) {
+      return res.status(404).json({ message: 'Account does not exist!' })
+    }
 
-  if (user.isLocked) {
-    return res.status(403).json({ message: 'Account has been locked by Admin!' })
-  }
+    if (user.isLocked) {
+      return res.status(403).json({ message: 'Account has been locked by Admin!' })
+    }
 
-  if (user.passwordHash !== password && password !== '123' && user.passwordHash !== `${username}123`) {
-    return res.status(400).json({ message: 'Incorrect password!' })
-  }
+    if (user.passwordHash !== password && password !== '123' && user.passwordHash !== `${username}123`) {
+      return res.status(400).json({ message: 'Incorrect password!' })
+    }
 
-  const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '7d' })
-  res.json({ token, user })
+    const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '7d' })
+    res.json({ token, user })
+  } catch (err) {
+    res.status(500).json({ message: err.message || 'Login error' })
+  }
 }
 
-export const register = (req, res) => {
-  const { username, password, name, email, phone, currency } = req.body
-  if (!username || !password) {
-    return res.status(400).json({ message: 'Username and password required!' })
-  }
+export const register = async (req, res) => {
+  try {
+    const { username, password, name, email, phone, currency } = req.body
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username and password required!' })
+    }
 
-  const existing = db.getUserByUsername(username)
-  if (existing) {
-    return res.status(400).json({ message: 'Username already exists!' })
-  }
+    const existing = await db.getUserByUsername(username)
+    if (existing) {
+      return res.status(400).json({ message: 'Username already exists!' })
+    }
 
-  const newUser = {
-    id: `u-${Date.now()}`,
-    username,
-    passwordHash: password,
-    name: name || username,
-    email: email || '',
-    phone: phone || '',
-    role: 'user',
-    currency: currency || 'LAK',
-    avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`,
-    qrCodeUrl: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=VIETQR-${username.toUpperCase()}-00000`,
-    isLocked: false,
-    createdAt: new Date().toISOString()
-  }
+    const newUser = {
+      id: `u-${Date.now()}`,
+      username,
+      passwordHash: password,
+      name: name || username,
+      email: email || '',
+      phone: phone || '',
+      role: 'user',
+      currency: currency || 'LAK',
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`,
+      qrCodeUrl: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=VIETQR-${username.toUpperCase()}-00000`,
+      isLocked: false,
+      createdAt: new Date().toISOString()
+    }
 
-  db.addUser(newUser)
-  const token = jwt.sign({ id: newUser.id, username: newUser.username, role: newUser.role }, JWT_SECRET, { expiresIn: '7d' })
-  res.status(201).json({ token, user: newUser })
+    const created = await db.addUser(newUser)
+    const token = jwt.sign({ id: created.id, username: created.username, role: created.role }, JWT_SECRET, { expiresIn: '7d' })
+    res.status(201).json({ token, user: created })
+  } catch (err) {
+    res.status(500).json({ message: err.message || 'Registration error' })
+  }
 }
 
 export const getMe = (req, res) => {
   res.json({ user: req.user })
 }
 
-export const getUsers = (req, res) => {
-  const safeUsers = db.getUsers().map(({ passwordHash, ...u }) => u)
-  res.json(safeUsers)
+export const getUsers = async (req, res) => {
+  try {
+    const users = await db.getUsers()
+    const safeUsers = users.map(({ passwordHash, ...u }) => u)
+    res.json(safeUsers)
+  } catch (err) {
+    res.status(500).json({ message: err.message || 'Failed to fetch users' })
+  }
 }
 
-export const updateProfile = (req, res) => {
-  const userId = req.user.id
-  const updates = req.body
-  delete updates.id
-  delete updates.role
-  delete updates.passwordHash
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id
+    const updates = { ...req.body }
+    delete updates.id
+    delete updates.role
+    delete updates.passwordHash
 
-  const updatedUser = db.updateUser(userId, updates)
-  res.json({ user: updatedUser })
+    const updatedUser = await db.updateUser(userId, updates)
+    res.json({ user: updatedUser })
+  } catch (err) {
+    res.status(500).json({ message: err.message || 'Failed to update profile' })
+  }
 }
 
 export const googleLogin = async (req, res) => {
@@ -124,7 +141,8 @@ export const googleLogin = async (req, res) => {
 
     const { email, name, sub: googleId, picture } = payload
 
-    let user = db.getUsers().find(u => (email && u.email === email) || u.googleId === googleId)
+    const allUsers = await db.getUsers()
+    let user = allUsers.find(u => (email && u.email === email) || u.googleId === googleId)
 
     if (!user) {
       const baseName = email ? email.split('@')[0] : 'google_user'
@@ -144,13 +162,13 @@ export const googleLogin = async (req, res) => {
         isLocked: false,
         createdAt: new Date().toISOString()
       }
-      db.addUser(user)
+      user = await db.addUser(user)
     } else {
       if (user.isLocked) {
         return res.status(403).json({ message: 'Account has been locked by Admin!' })
       }
       if (picture || googleId) {
-        user = db.updateUser(user.id, { avatar: picture || user.avatar, googleId: googleId || user.googleId })
+        user = await db.updateUser(user.id, { avatar: picture || user.avatar, googleId: googleId || user.googleId })
       }
     }
 
