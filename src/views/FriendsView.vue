@@ -18,7 +18,7 @@ import {
   Phone,
   Mail,
   Sparkles,
-  UserClock,
+  Clock,
   CheckCircle2,
   XCircle
 } from 'lucide-vue-next'
@@ -201,7 +201,7 @@ function openQrModal(friend) {
               activeTab === 'requests' ? 'brand-pill-active' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             ]"
           >
-            <UserClock class="w-3.5 h-3.5" />
+            <Clock class="w-3.5 h-3.5" />
             <span>{{ t('friends.tab_requests') }}</span>
             <span v-if="authStore.incomingFriendRequests.length" class="ml-1 px-1.5 py-0.5 text-[10px] bg-rose-500 text-white rounded-full font-black animate-pulse">
               {{ authStore.incomingFriendRequests.length }}
@@ -282,8 +282,8 @@ function openQrModal(friend) {
     <!-- Tab 2: Incoming Friend Requests -->
     <div v-else-if="activeTab === 'requests'" class="space-y-4">
       <div v-if="incomingRequestsList.length === 0" class="glass-card p-12 text-center text-slate-500 dark:text-slate-400 space-y-3">
-        <UserClock class="w-12 h-12 mx-auto text-slate-300 dark:text-slate-700 stroke-[1.5]" />
-        <p class="text-sm font-semibold">Không có lời mời kết bạn nào đang chờ duyệt.</p>
+        <Clock class="w-12 h-12 mx-auto text-slate-300 dark:text-slate-700 stroke-[1.5]" />
+        <p class="text-sm font-semibold">{{ t('friends.empty_requests') }}</p>
       </div>
 
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -347,7 +347,7 @@ function openQrModal(friend) {
           <!-- If already sent friend request -->
           <div v-if="authStore.outgoingFriendRequests.some(u => u.id === user.id)">
             <span class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-xl text-xs font-bold flex items-center gap-1 border border-slate-200 dark:border-slate-700">
-              <UserClock class="w-3.5 h-3.5" />
+              <Clock class="w-3.5 h-3.5" />
               <span>{{ t('friends.status_pending_sent') }}</span>
             </span>
           </div>
@@ -356,10 +356,10 @@ function openQrModal(friend) {
           <button
             v-else
             @click="handleSendFriendRequest(user.id, user.name)"
-            class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all shrink-0"
+            class="px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-2xl text-xs font-black flex items-center justify-center gap-2 shadow-md shadow-indigo-500/20 transition-all shrink-0 whitespace-nowrap"
           >
-            <UserPlus class="w-4 h-4" />
-            <span>{{ t('friends.btn_send_request') }}</span>
+            <UserPlus class="w-4 h-4 shrink-0 text-white" />
+            <span class="whitespace-nowrap">{{ t('friends.btn_send_request') }}</span>
           </button>
         </div>
       </div>
@@ -410,7 +410,7 @@ function openQrModal(friend) {
           <img :src="selectedFriendQr?.qrCodeUrl || 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR'" class="w-48 h-48 object-contain" />
         </div>
         <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          Mã QR thanh toán ngân hàng của {{ selectedFriendQr?.name }}
+          {{ t('friends.qr_modal_sub', { name: selectedFriendQr?.name }) }}
         </p>
       </div>
     </Modal>

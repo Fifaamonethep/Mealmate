@@ -5,15 +5,25 @@ import i18n from '../i18n'
 import api from '../services/api'
 
 export const useAuthStore = defineStore('auth', () => {
-  const loadedUsers = JSON.parse(localStorage.getItem('mealmate_users')) || INITIAL_USERS
-  if (Array.isArray(loadedUsers)) {
-    loadedUsers.forEach(u => {
-      if (!u.currency || u.currency === 'VND') {
-        u.currency = 'LAK'
-      }
-    })
+  let loadedUsers = JSON.parse(localStorage.getItem('mealmate_users'))
+  if (!Array.isArray(loadedUsers) || loadedUsers.length === 0) {
+    loadedUsers = INITIAL_USERS
+  } else {
+    // Remove old mock seed users if requested
+    loadedUsers = loadedUsers.filter(u => !['u-alice', 'u-bob', 'u-charlie'].includes(u.id))
   }
+  
+  loadedUsers.forEach(u => {
+    if (!u.currency || u.currency === 'VND') {
+      u.currency = 'LAK'
+    }
+    if (!Array.isArray(u.friends)) u.friends = []
+    if (!Array.isArray(u.friendRequestsSent)) u.friendRequestsSent = []
+    if (!Array.isArray(u.friendRequestsReceived)) u.friendRequestsReceived = []
+  })
+  
   const users = ref(loadedUsers)
+  localStorage.setItem('mealmate_users', JSON.stringify(users.value))
   const currentUserId = ref(localStorage.getItem('mealmate_session_user_id') || '')
   const token = ref(localStorage.getItem('mealmate_session_token') || '')
 

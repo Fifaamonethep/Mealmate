@@ -27,65 +27,78 @@ const unreadCount = computed(() => {
 <template>
   <div
     v-if="authStore.currentUserId"
-    class="md:hidden fixed bottom-2 left-2 right-2 z-50 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/90 rounded-2xl px-1 py-1.5 shadow-2xl shadow-brand-950/20 transition-all duration-300"
+    class="md:hidden fixed bottom-3 left-3 right-3 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-1.5 shadow-2xl shadow-indigo-950/20 transition-all duration-300"
   >
-    <div class="grid grid-cols-4 gap-1 text-center items-center">
+    <div class="grid grid-cols-5 gap-1 text-center items-center">
       <!-- Dashboard -->
       <router-link
         to="/"
         :class="[
-          'flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl transition-all duration-300 relative',
+          'flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all duration-200 relative',
           route.path === '/'
             ? 'brand-pill-active'
-            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'
+            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold'
         ]"
       >
-        <LayoutDashboard class="w-4 h-4 mb-0.5" />
-        <span class="text-[9.5px] leading-none tracking-tight truncate w-full">{{ t('nav.dashboard') }}</span>
+        <LayoutDashboard class="w-4 h-4 mb-1" />
+        <span class="text-[10px] leading-none tracking-tight truncate w-full font-bold">{{ t('nav.dashboard') }}</span>
       </router-link>
 
       <!-- Meals -->
       <router-link
         to="/meals"
         :class="[
-          'flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl transition-all duration-300 relative',
+          'flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all duration-200 relative',
           route.path.startsWith('/meals')
             ? 'brand-pill-active'
-            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'
+            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold'
         ]"
       >
-        <Receipt class="w-4 h-4 mb-0.5" />
-        <span class="text-[9.5px] leading-none tracking-tight truncate w-full">{{ t('nav.meals') }}</span>
+        <Receipt class="w-4 h-4 mb-1" />
+        <span class="text-[10px] leading-none tracking-tight truncate w-full font-bold">{{ t('nav.meals') }}</span>
       </router-link>
 
       <!-- Debts -->
       <router-link
         to="/debts"
         :class="[
-          'flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl transition-all duration-300 relative',
+          'flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all duration-200 relative',
           route.path === '/debts'
             ? 'brand-pill-active'
-            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'
+            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold'
         ]"
       >
-        <CreditCard class="w-4 h-4 mb-0.5" />
-        <span class="text-[9.5px] leading-none tracking-tight truncate w-full">{{ t('nav.debts') }}</span>
+        <CreditCard class="w-4 h-4 mb-1" />
+        <span class="text-[10px] leading-none tracking-tight truncate w-full font-bold">{{ t('nav.debts') }}</span>
       </router-link>
 
       <!-- Groups -->
       <router-link
         to="/groups"
         :class="[
-          'flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl transition-all duration-300 relative',
+          'flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all duration-200 relative',
           route.path.startsWith('/groups')
             ? 'brand-pill-active'
-            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'
+            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold'
         ]"
       >
-        <Users class="w-4 h-4 mb-0.5" />
-        <span class="text-[9.5px] leading-none tracking-tight truncate w-full">{{ t('nav.groups') }}</span>
+        <Users class="w-4 h-4 mb-1" />
+        <span class="text-[10px] leading-none tracking-tight truncate w-full font-bold">{{ t('nav.groups') }}</span>
       </router-link>
 
+      <!-- Profile -->
+      <router-link
+        to="/profile"
+        :class="[
+          'flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all duration-200 relative',
+          route.path === '/profile'
+            ? 'brand-pill-active'
+            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold'
+        ]"
+      >
+        <User class="w-4 h-4 mb-1" />
+        <span class="text-[10px] leading-none tracking-tight truncate w-full font-bold">{{ t('nav.profile') }}</span>
+      </router-link>
 
     </div>
   </div>

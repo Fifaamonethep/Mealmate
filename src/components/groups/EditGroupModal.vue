@@ -60,7 +60,7 @@ async function handleSubmit() {
     avatar: avatar.value
   })
 
-  toastStore.showToast(t('groups.group_updated_success') || 'Đã cập nhật thông tin nhóm!', 'success')
+  toastStore.showToast(t('groups.group_updated_success'), 'success')
   emit('updated')
   emit('close')
 }

@@ -7,23 +7,26 @@
 /* Light & Dark Base Body Styles */
 @layer base {
   body {
-    font-family: 'Noto Sans Lao', 'Noto Sans Lao Looped', 'Phetsarath OT', 'Laos UI', 'Plus Jakarta Sans', 'Be Vietnam Pro', 'Prompt', 'Kanit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-    line-height: 1.6;
-    letter-spacing: 0em;
+    font-family: 'Noto Sans Lao', 'Noto Sans Lao Looped', 'Plus Jakarta Sans', 'Be Vietnam Pro', 'Prompt', 'Kanit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   html.dark body {
-    background-color: #0f172a;
-    background-image: none !important;
+    background-color: #0b0f19;
+    background-image: radial-gradient(at 50% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 75%),
+                      radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.05) 0px, transparent 50%);
+    background-attachment: fixed;
     color: #f8fafc;
   }
 
   html:not(.dark) body {
     background-color: #f8fafc;
-    background-image: none !important;
+    background-image: radial-gradient(at 50% 0%, rgba(99, 102, 241, 0.04) 0px, transparent 75%);
+    background-attachment: fixed;
     color: #0f172a;
   }
 }
@@ -42,9 +45,9 @@ html[lang="lo"] h3,
 html[lang="lo"] h4,
 html[lang="lo"] h5,
 html[lang="lo"] h6 {
-  font-family: 'Noto Sans Lao', 'Noto Sans Lao Looped', 'Phetsarath OT', 'Laos UI', 'Saysettha OT', 'Plus Jakarta Sans', sans-serif !important;
+  font-family: 'Noto Sans Lao', 'Noto Sans Lao Looped', 'Plus Jakarta Sans', sans-serif !important;
   letter-spacing: 0.01em;
-  line-height: 1.65;
+  line-height: 1.5;
 }
 
 html[lang="th"] body,
@@ -74,28 +77,28 @@ html[lang="en"] textarea {
 
 @layer utilities {
   .glass-card {
-    @apply bg-white border border-slate-200 text-slate-800 shadow-sm dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100 dark:shadow-md rounded-3xl transition-all duration-200;
+    @apply bg-white/90 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 text-slate-800 dark:text-slate-100 shadow-sm dark:shadow-lg rounded-3xl backdrop-blur-xl transition-all duration-300;
   }
   .glass-card-hover {
-    @apply hover:bg-slate-50 hover:border-slate-300 dark:hover:bg-slate-800/80 dark:hover:border-slate-700 transition-all duration-200;
+    @apply hover:bg-slate-50/90 dark:hover:bg-slate-850/90 hover:border-slate-300 dark:hover:border-slate-700/80 transition-all duration-300 hover:shadow-md;
   }
   .glass-input {
-    @apply bg-white border border-slate-200 rounded-2xl px-4 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:bg-slate-950 dark:border-slate-800 dark:text-slate-100 dark:placeholder-slate-500 transition-all duration-200;
+    @apply bg-slate-50/80 border border-slate-200/90 rounded-2xl px-4 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:bg-slate-950/80 dark:border-slate-800 dark:text-slate-100 dark:placeholder-slate-500 transition-all duration-200;
   }
   .glass-nav {
-    @apply bg-white/90 border-b border-slate-200 text-slate-900 dark:bg-slate-950/90 dark:border-slate-800 dark:text-slate-100 backdrop-blur-xl sticky top-0 z-40 shadow-sm transition-colors duration-300;
+    @apply bg-white/80 border-b border-slate-200/80 text-slate-900 dark:bg-slate-950/80 dark:border-slate-800/80 dark:text-slate-100 backdrop-blur-2xl sticky top-0 z-40 shadow-sm transition-colors duration-300;
   }
   .glow-button {
-    @apply bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold px-5 py-2.5 rounded-2xl shadow-sm border border-indigo-500 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200;
+    @apply bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-purple-600 text-white font-extrabold px-5 py-2.5 rounded-2xl shadow-md shadow-indigo-500/25 border border-indigo-400/30 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200;
   }
   .brand-gradient-box {
-    @apply bg-indigo-600 text-white font-extrabold border border-indigo-500 shadow-sm;
+    @apply bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-extrabold border border-indigo-400/30 shadow-md shadow-indigo-500/20;
   }
   .brand-gradient-text {
-    @apply text-indigo-600 dark:text-indigo-400 font-extrabold;
+    @apply bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-400 bg-clip-text text-transparent font-extrabold;
   }
   .brand-pill-active {
-    @apply bg-indigo-600 text-white font-extrabold shadow-sm border border-indigo-500;
+    @apply bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold shadow-md shadow-indigo-500/25 border border-indigo-400/40 whitespace-nowrap;
   }
 }
 

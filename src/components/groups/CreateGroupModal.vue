@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Modal from '../common/Modal.vue'
 import { useAuthStore } from '../../stores/auth'

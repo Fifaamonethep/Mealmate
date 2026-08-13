@@ -269,7 +269,6 @@ function cropAndExport() {
             type="button"
             @click="rotate(-1)"
             class="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-indigo-600 font-bold text-xs flex items-center gap-1 transition-all"
-            title="Xoay trái 90°"
           >
             <RotateCcw class="w-3.5 h-3.5" />
             <span>-90°</span>
@@ -279,7 +278,6 @@ function cropAndExport() {
             type="button"
             @click="rotate(1)"
             class="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-indigo-600 font-bold text-xs flex items-center gap-1 transition-all"
-            title="Xoay phải 90°"
           >
             <RotateCw class="w-3.5 h-3.5" />
             <span>+90°</span>
@@ -289,10 +287,9 @@ function cropAndExport() {
             type="button"
             @click="resetTransform"
             class="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white font-bold text-xs flex items-center gap-1 transition-all"
-            title="Đặt lại"
           >
             <RefreshCw class="w-3.5 h-3.5" />
-            <span>Đặt lại</span>
+            <span>{{ t('cropper.btn_reset') || 'Reset' }}</span>
           </button>
         </div>
       </div>

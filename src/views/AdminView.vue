@@ -86,7 +86,7 @@ const settlementRate = computed(() => {
         <div class="space-y-1.5">
           <div class="flex items-center justify-between text-xs">
             <span class="text-slate-300 font-bold flex items-center gap-1.5">
-              <CheckCircle2 class="w-3.5 h-3.5 text-emerald-400" /> Tỷ lệ quyết toán xong
+              <CheckCircle2 class="w-3.5 h-3.5 text-emerald-400" /> {{ t('admin.settlement_rate_title') || 'Settlement Rate' }}
             </span>
             <span class="font-extrabold text-emerald-400">{{ settlementRate }}%</span>
           </div>
@@ -98,7 +98,7 @@ const settlementRate = computed(() => {
         <div class="space-y-1.5">
           <div class="flex items-center justify-between text-xs">
             <span class="text-slate-300 font-bold flex items-center gap-1.5">
-              <Zap class="w-3.5 h-3.5 text-amber-400" /> Tài khoản hoạt động
+              <Zap class="w-3.5 h-3.5 text-amber-400" /> {{ t('admin.total_users') }}
             </span>
             <span class="font-extrabold text-amber-300">{{ authStore.users.length }} Users</span>
           </div>
@@ -110,7 +110,7 @@ const settlementRate = computed(() => {
         <div class="space-y-1.5">
           <div class="flex items-center justify-between text-xs">
             <span class="text-slate-300 font-bold flex items-center gap-1.5">
-              <Layers class="w-3.5 h-3.5 text-indigo-400" /> Đã quyết toán
+              <Layers class="w-3.5 h-3.5 text-indigo-400" /> {{ t('common.status_confirmed') }}
             </span>
             <span class="font-extrabold text-indigo-300">{{ formatCurrency(settledVolume, 'LAK', locale) }}</span>
           </div>

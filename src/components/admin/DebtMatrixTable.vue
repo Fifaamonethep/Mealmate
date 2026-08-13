@@ -77,7 +77,7 @@ const activeDebtsList = computed(() => {
           ]"
         >
           <Layers class="w-4 h-4" />
-          <span>Thẻ Nợ Trực Quan</span>
+          <span>{{ t('admin.visual_cards') || 'Thẻ Nợ' }}</span>
         </button>
 
         <button
@@ -90,7 +90,7 @@ const activeDebtsList = computed(() => {
           ]"
         >
           <Grid class="w-4 h-4" />
-          <span>Bảng Ma Trận Grid</span>
+          <span>{{ t('admin.matrix_grid') || 'Ma Trận' }}</span>
         </button>
       </div>
     </div>
@@ -110,7 +110,7 @@ const activeDebtsList = computed(() => {
             <div class="flex items-center gap-2 min-w-0">
               <img :src="item.debtor.avatar" class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 object-cover border border-slate-300 dark:border-slate-700 shrink-0" />
               <div class="min-w-0">
-                <span class="text-[10px] uppercase font-extrabold text-rose-500 block">Bên Nợ</span>
+                <span class="text-[10px] uppercase font-extrabold text-rose-500 block">{{ t('admin.debtor') }}</span>
                 <span class="font-bold text-xs text-slate-900 dark:text-white truncate block">{{ item.debtor.name }}</span>
               </div>
             </div>
@@ -123,7 +123,7 @@ const activeDebtsList = computed(() => {
             <!-- Creditor (Thu) -->
             <div class="flex items-center gap-2 min-w-0 text-right">
               <div class="min-w-0">
-                <span class="text-[10px] uppercase font-extrabold text-emerald-500 block">Bên Nhận</span>
+                <span class="text-[10px] uppercase font-extrabold text-emerald-500 block">{{ t('admin.creditor') }}</span>
                 <span class="font-bold text-xs text-slate-900 dark:text-white truncate block">{{ item.creditor.name }}</span>
               </div>
               <img :src="item.creditor.avatar" class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 object-cover border border-slate-300 dark:border-slate-700 shrink-0" />
@@ -134,7 +134,7 @@ const activeDebtsList = computed(() => {
           <div class="pt-3 border-t border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between">
             <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1">
               <AlertCircle class="w-3.5 h-3.5 text-amber-500" />
-              <span>Chưa quyết toán</span>
+              <span>{{ t('debts.status_pending') }}</span>
             </span>
 
             <span class="text-base font-black text-rose-600 dark:text-rose-400 bg-rose-500/10 border border-rose-500/30 px-3 py-1 rounded-xl shadow-sm">
@@ -149,8 +149,8 @@ const activeDebtsList = computed(() => {
         <div class="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/20">
           <CheckCircle2 class="w-7 h-7" />
         </div>
-        <h4 class="font-black text-lg text-slate-900 dark:text-white">Tất cả nợ đã được thanh toán sòng phẳng! 🎉</h4>
-        <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">Không có khoản nợ đọng nào tồn tại giữa các tài khoản trong hệ thống.</p>
+        <h4 class="font-black text-lg text-slate-900 dark:text-white">{{ t('admin.all_settled_title') || 'ທຸກໆໜີ້ສິນໄດ້ຖືກຊຳລະແລ້ວ! 🎉' }}</h4>
+        <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">{{ t('admin.empty_matrix') }}</p>
       </div>
 
     </div>
@@ -161,7 +161,7 @@ const activeDebtsList = computed(() => {
         <thead class="bg-slate-100 dark:bg-slate-900/90 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-800 uppercase tracking-wider">
           <tr>
             <th class="p-4 border-r border-slate-200 dark:border-slate-800 bg-slate-200/50 dark:bg-slate-900 sticky left-0 z-20 font-black text-slate-900 dark:text-slate-200">
-              Nguyên tắc: Nợ ↓ \ Cho vay →
+              {{ t('admin.debtor') }} ↓ \ {{ t('admin.creditor') }} →
             </th>
             <th
               v-for="creditor in authStore.users"

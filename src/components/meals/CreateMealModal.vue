@@ -519,7 +519,7 @@ async function handleSubmit() {
           <input
             v-model="newFriendInput"
             type="text"
-            :placeholder="t('groups.enter_name_placeholder') || 'Nhập tên bạn bè...'"
+            :placeholder="t('groups.enter_name_placeholder')"
             class="w-full glass-input text-xs"
             @keyup.enter="handleQuickAddFriend"
           />
