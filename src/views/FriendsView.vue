@@ -270,7 +270,7 @@ const suggestedUsers = computed(() => {
             <UserCheck class="w-3.5 h-3.5" />
             <span>{{ t('friends.tab_my_friends') }}</span>
             <span class="px-1.5 py-0.5 text-[10px] rounded-full bg-slate-200/70 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-black">
-              {{ friendsStore.friends.length }}
+              {{ (friendsStore.friends || []).length }}
             </span>
           </button>
 
@@ -287,10 +287,10 @@ const suggestedUsers = computed(() => {
             <Clock class="w-3.5 h-3.5" />
             <span>{{ t('friends.tab_requests') }}</span>
             <span 
-              v-if="friendsStore.incomingRequests.length" 
+              v-if="(friendsStore.incomingRequests || []).length" 
               class="px-1.5 py-0.5 text-[10px] bg-rose-500 text-white rounded-full font-black animate-pulse shadow-sm shadow-rose-500/30"
             >
-              {{ friendsStore.incomingRequests.length }}
+              {{ (friendsStore.incomingRequests || []).length }}
             </span>
           </button>
         </div>

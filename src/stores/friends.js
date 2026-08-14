@@ -18,15 +18,16 @@ export const useFriendsStore = defineStore('friends', () => {
       const data = await api.get('/friends')
       if (Array.isArray(data)) {
         friends.value = data
-        // Sync with local authStore
         if (authStore.currentUser) {
           authStore.currentUser.friends = data.map(f => f.id)
           authStore.saveUsers()
         }
+      } else {
+        friends.value = Array.isArray(authStore.myFriends) ? authStore.myFriends : []
       }
     } catch (err) {
       console.warn('Backend friends API unavailable, using authStore myFriends:', err.message)
-      friends.value = authStore.myFriends
+      friends.value = Array.isArray(authStore.myFriends) ? authStore.myFriends : []
     } finally {
       isLoading.value = false
     }
@@ -35,30 +36,37 @@ export const useFriendsStore = defineStore('friends', () => {
   async function fetchRequests() {
     try {
       const data = await api.get('/friends/requests')
-      if (data) {
-        incomingRequests.value = data.incoming || []
-        outgoingRequests.value = data.outgoing || []
+      if (data && typeof data === 'object') {
+        incomingRequests.value = Array.isArray(data.incoming) ? data.incoming : []
+        outgoingRequests.value = Array.isArray(data.outgoing) ? data.outgoing : []
         
-        // Sync with authStore
         if (authStore.currentUser) {
-          authStore.currentUser.friendRequestsReceived = (data.incoming || []).map(r => r.user?.id).filter(Boolean)
-          authStore.currentUser.friendRequestsSent = (data.outgoing || []).map(r => r.user?.id).filter(Boolean)
+          authStore.currentUser.friendRequestsReceived = incomingRequests.value.map(r => r.user?.id).filter(Boolean)
+          authStore.currentUser.friendRequestsSent = outgoingRequests.value.map(r => r.user?.id).filter(Boolean)
           authStore.saveUsers()
         }
+      } else {
+        fallbackRequests()
       }
     } catch (err) {
       console.warn('Backend friend requests API unavailable:', err.message)
-      incomingRequests.value = authStore.incomingFriendRequests.map(u => ({
-        friendshipId: `f-local-${u.id}`,
-        user: u,
-        createdAt: new Date().toISOString()
-      }))
-      outgoingRequests.value = authStore.outgoingFriendRequests.map(u => ({
-        friendshipId: `f-local-${u.id}`,
-        user: u,
-        createdAt: new Date().toISOString()
-      }))
+      fallbackRequests()
     }
+  }
+
+  function fallbackRequests() {
+    const inc = Array.isArray(authStore.incomingFriendRequests) ? authStore.incomingFriendRequests : []
+    const out = Array.isArray(authStore.outgoingFriendRequests) ? authStore.outgoingFriendRequests : []
+    incomingRequests.value = inc.map(u => ({
+      friendshipId: `f-local-${u.id}`,
+      user: u,
+      createdAt: new Date().toISOString()
+    }))
+    outgoingRequests.value = out.map(u => ({
+      friendshipId: `f-local-${u.id}`,
+      user: u,
+      createdAt: new Date().toISOString()
+    }))
   }
 
   async function searchUsers(query = '') {
