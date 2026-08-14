@@ -35,12 +35,17 @@ const debtsStore = useDebtsStore()
 const toastStore = useToastStore()
 
 onMounted(async () => {
-  await Promise.all([
-    friendsStore.fetchFriends(),
-    friendsStore.fetchRequests(),
-    friendsStore.searchUsers(''),
-    authStore.fetchUsers()
-  ])
+  friendsStore.isLoading = true
+  try {
+    await Promise.allSettled([
+      friendsStore.fetchFriends(),
+      friendsStore.fetchRequests(),
+      friendsStore.searchUsers(''),
+      authStore.fetchUsers()
+    ])
+  } finally {
+    friendsStore.isLoading = false
+  }
 })
 
 const activeTab = ref('my_friends') // 'my_friends' | 'requests'

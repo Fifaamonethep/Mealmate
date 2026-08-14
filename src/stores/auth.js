@@ -37,12 +37,16 @@ export const useAuthStore = defineStore('auth', () => {
   async function fetchUsers() {
     try {
       const data = await api.get('/auth/users')
-      if (Array.isArray(data)) {
+      if (Array.isArray(data) && data.length > 0) {
         users.value = data
         saveUsers()
       }
     } catch (err) {
       console.warn('Backend offline or unreachable, using local users state:', err.message)
+      if (!users.value || users.value.length === 0) {
+        users.value = [...INITIAL_USERS]
+        saveUsers()
+      }
     }
   }
 
