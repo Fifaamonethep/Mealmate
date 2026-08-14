@@ -3,27 +3,19 @@ import { ref, computed } from 'vue'
 import { INITIAL_USERS } from '../mock/seedData'
 import i18n from '../i18n'
 import api from '../services/api'
+import { useNotificationsStore } from './notifications'
 
 export const useAuthStore = defineStore('auth', () => {
-  let loadedUsers = JSON.parse(localStorage.getItem('mealmate_users'))
-  if (!Array.isArray(loadedUsers) || loadedUsers.length === 0) {
-    loadedUsers = INITIAL_USERS
-  } else {
-    // Remove old mock seed users if requested
-    loadedUsers = loadedUsers.filter(u => !['u-alice', 'u-bob', 'u-charlie'].includes(u.id))
+  let loadedUsers = []
+  try {
+    const raw = localStorage.getItem('mealmate_users')
+    if (raw) loadedUsers = JSON.parse(raw)
+  } catch (e) {
+    loadedUsers = []
   }
-  
-  loadedUsers.forEach(u => {
-    if (!u.currency || u.currency === 'VND') {
-      u.currency = 'LAK'
-    }
-    if (!Array.isArray(u.friends)) u.friends = []
-    if (!Array.isArray(u.friendRequestsSent)) u.friendRequestsSent = []
-    if (!Array.isArray(u.friendRequestsReceived)) u.friendRequestsReceived = []
-  })
+  if (!Array.isArray(loadedUsers)) loadedUsers = []
   
   const users = ref(loadedUsers)
-  localStorage.setItem('mealmate_users', JSON.stringify(users.value))
   const currentUserId = ref(localStorage.getItem('mealmate_session_user_id') || '')
   const token = ref(localStorage.getItem('mealmate_session_token') || '')
 
@@ -49,9 +41,9 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function login(username, password) {
+  async function login(identifier, password) {
     try {
-      const data = await api.post('/auth/login', { username, password })
+      const data = await api.post('/auth/login', { identifier, username: identifier, phone: identifier, password })
       if (data?.user && data?.token) {
         currentUserId.value = data.user.id
         token.value = data.token
@@ -73,9 +65,15 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     // Local Fallback
-    const user = users.value.find(u => u.username.toLowerCase() === username.toLowerCase())
+    const q = (identifier || '').trim().toLowerCase().replace(/^@/, '')
+    const cleanPhone = (identifier || '').replace(/[^0-9]/g, '')
+    const user = users.value.find(u => {
+      const uPhone = (u.phone || '').replace(/[^0-9]/g, '')
+      const matchPhone = cleanPhone && uPhone && (uPhone === cleanPhone || uPhone.endsWith(cleanPhone) || cleanPhone.endsWith(uPhone))
+      return u.username.toLowerCase() === q || (u.email && u.email.toLowerCase() === q) || matchPhone
+    })
     if (!user) throw new Error(i18n.global.t('auth.user_not_found'))
-    if (user.passwordHash !== password && password !== '123' && user.passwordHash !== `${username}123`) throw new Error(i18n.global.t('auth.incorrect_password'))
+    if (user.passwordHash !== password && password !== '123' && user.passwordHash !== `${user.username}123`) throw new Error(i18n.global.t('auth.incorrect_password'))
     if (user.isLocked) throw new Error(i18n.global.t('auth.account_locked'))
 
     currentUserId.value = user.id
@@ -105,23 +103,38 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     // Local Fallback
-    const exists = users.value.some(u => u.username.toLowerCase() === userData.username.toLowerCase())
-    if (exists) throw new Error(i18n.global.t('auth.username_exists'))
+    const cleanPhone = (userData.phone || '').trim().replace(/[^0-9]/g, '')
+    let userIdentifier = (userData.username || '').trim()
 
-    const cleanCode = userData.username.toLowerCase().replace(/[^a-z0-9_]/g, '')
+    if (cleanPhone) {
+      const phoneExists = users.value.some(u => {
+        const uPhone = (u.phone || '').replace(/[^0-9]/g, '')
+        return uPhone && (uPhone === cleanPhone || uPhone.endsWith(cleanPhone) || cleanPhone.endsWith(uPhone))
+      })
+      if (phoneExists) throw new Error(i18n.global.t('auth.phone_exists') || 'Số điện thoại đã được đăng ký')
+    }
+
+    if (!userIdentifier) {
+      if (cleanPhone) userIdentifier = `user_${cleanPhone.slice(-6)}`
+      else if (userData.name) userIdentifier = `${userData.name.toLowerCase().replace(/[^a-z0-9]/g, '')}_${Math.floor(1000 + Math.random() * 9000)}`
+      else userIdentifier = `user_${Date.now()}`
+    }
+
+    const cleanCode = userIdentifier.toLowerCase().replace(/[^a-z0-9_]/g, '')
     const userId = cleanCode ? `u-${cleanCode}` : `u-${Date.now()}`
+    const displayName = (userData.name || '').trim() || userIdentifier
 
     const newUser = {
       id: userId,
-      username: userData.username,
+      username: userIdentifier,
       passwordHash: userData.password,
-      name: userData.name || userData.username,
+      name: displayName,
       email: userData.email || '',
       phone: userData.phone || '',
       role: 'user',
       currency: userData.currency || 'LAK',
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.username}`,
-      qrCodeUrl: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-${userData.username.toUpperCase()}-00000`
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userIdentifier)}`,
+      qrCodeUrl: userData.qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-${encodeURIComponent(displayName.toUpperCase())}`
     }
 
     users.value.push(newUser)

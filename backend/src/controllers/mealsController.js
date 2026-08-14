@@ -156,7 +156,7 @@ export const createMeal = async (req, res) => {
           debtorId,
           creditorId: payer,
           amount: debtAmount,
-          status: 'PENDING',
+          status: 'pending',
           proofImage: null,
           createdAt: new Date().toISOString()
         })
@@ -165,8 +165,8 @@ export const createMeal = async (req, res) => {
         await db.addNotification({
           id: `n-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
           userId: debtorId,
-          title: 'Bữa ăn mới cần chia tiền',
-          message: `Bạn được thêm vào bữa ăn "${newMeal.title}". Bạn nợ ${debtAmount.toLocaleString()} ${newMeal.currency}.`,
+          title: 'ຄາບອາຫານໃໝ່ຕ້ອງຫານຄ່າໃຊ້ຈ່າຍ',
+          message: `ທ່ານຖືກເພີ່ມເຂົ້າໃນຄາບອາຫານ "${newMeal.title}". ທ່ານຕິດໜີ້ ${debtAmount.toLocaleString()} ${newMeal.currency}.`,
           type: 'MEAL',
           isRead: false,
           createdAt: new Date().toISOString()

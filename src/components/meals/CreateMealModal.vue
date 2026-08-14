@@ -7,6 +7,7 @@ import ReceiptScannerModal from './ReceiptScannerModal.vue'
 import { useAuthStore } from '../../stores/auth'
 import { useGroupsStore } from '../../stores/groups'
 import { useMealsStore } from '../../stores/meals'
+import { useFriendsStore } from '../../stores/friends'
 import { useToastStore } from '../../stores/toast'
 import { PlusCircle, Sparkles, Users, Receipt, DollarSign, Camera, Image, ScanText, UserPlus } from 'lucide-vue-next'
 
@@ -22,6 +23,7 @@ const { t, locale } = useI18n()
 const authStore = useAuthStore()
 const groupsStore = useGroupsStore()
 const mealsStore = useMealsStore()
+const friendsStore = useFriendsStore()
 const toastStore = useToastStore()
 
 const receiptFileInput = ref(null)
@@ -48,57 +50,6 @@ const currencySymbol = computed(() => {
 
 const showInlineGroupInput = ref(false)
 const newGroupName = ref('')
-
-const showInlineAddFriend = ref(false)
-const newFriendInput = ref('')
-const addFriendError = ref('')
-
-function handleQuickAddFriend() {
-  const query = newFriendInput.value.trim()
-  if (!query) return
-  addFriendError.value = ''
-
-  // 1. Search existing users
-  let found = authStore.users.find(
-    u => u.name.toLowerCase() === query.toLowerCase() ||
-         u.username.toLowerCase() === query.toLowerCase() ||
-         (u.email && u.email.toLowerCase() === query.toLowerCase())
-  )
-
-  if (!found) {
-    // 2. Quick create new friend
-    found = {
-      id: `u-${Date.now()}`,
-      username: query.toLowerCase().replace(/\s+/g, '_'),
-      name: query,
-      email: '',
-      phone: '',
-      role: 'user',
-      currency: 'LAK',
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(query)}`,
-      qrCodeUrl: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-${encodeURIComponent(query.toUpperCase())}`
-    }
-    authStore.users.push(found)
-    authStore.saveUsers()
-  }
-
-  // 3. Add to selected participants
-  if (!selectedParticipants.value.includes(found.id)) {
-    selectedParticipants.value.push(found.id)
-  }
-
-  // 4. Add to group if group selected
-  if (groupId.value) {
-    const grp = groupsStore.getGroupById(groupId.value)
-    if (grp && !grp.members.includes(found.id)) {
-      groupsStore.addMember(groupId.value, found.id)
-    }
-  }
-
-  toastStore.showToast(t('groups.member_added_success', { name: found.name }), 'success')
-  newFriendInput.value = ''
-  showInlineAddFriend.value = false
-}
 
 const perPersonEqualAmount = computed(() => {
   if (!totalAmount.value || !selectedParticipants.value.length) return 0
@@ -136,25 +87,26 @@ async function handleCreateInlineGroup() {
   showInlineGroupInput.value = false
 }
 
-// Available members depending on selected group or all users
+// Available members: STRICTLY ONLY accepted friends + current user (or group members if group chosen)
 const availableMembers = computed(() => {
-  let list = authStore.users
+  let list = []
   if (groupId.value) {
     const group = groupsStore.getGroupById(groupId.value)
     if (group) {
       list = authStore.users.filter(u => group.members.includes(u.id))
     }
+  } else {
+    // Only current user + accepted friends!
+    const myFriendsList = friendsStore.friends.length ? friendsStore.friends : authStore.myFriends
+    const myFriendIds = myFriendsList.map(f => f.id)
+    list = authStore.users.filter(u => u.id === authStore.currentUserId || myFriendIds.includes(u.id))
   }
 
-  // Prioritize Friends & Current User
+  // Sort current user first, then friends
   let sortedList = [...list].sort((a, b) => {
     if (a.id === authStore.currentUserId) return -1
     if (b.id === authStore.currentUserId) return 1
-    const aIsFriend = authStore.myFriends.some(f => f.id === a.id)
-    const bIsFriend = authStore.myFriends.some(f => f.id === b.id)
-    if (aIsFriend && !bIsFriend) return -1
-    if (!aIsFriend && bIsFriend) return 1
-    return 0
+    return (a.name || '').localeCompare(b.name || '')
   })
 
   // Hide system admin from member selection if current user is not admin
@@ -169,8 +121,9 @@ const payerType = ref('single') // 'single' | 'multiple'
 const paidAmounts = ref({})
 
 // Reset form fields when modal opens
-watch(() => props.show, (newShow) => {
+watch(() => props.show, async (newShow) => {
   if (newShow) {
+    await friendsStore.fetchFriends()
     title.value = ''
     totalAmount.value = ''
     splitType.value = 'equal'
@@ -503,40 +456,10 @@ async function handleSubmit() {
           <Users class="w-4 h-4 text-brand-600 dark:text-brand-400" />
           {{ t('meals.participants_count') }} ({{ selectedParticipants.length }})
         </label>
-        <button
-          type="button"
-          @click="showInlineAddFriend = !showInlineAddFriend"
-          class="text-xs font-extrabold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 flex items-center gap-1 bg-brand-50 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800 px-2.5 py-1 rounded-lg transition-all"
-        >
-          <UserPlus class="w-3.5 h-3.5 text-brand-500" />
-          <span>+ {{ t('groups.add_members') }}</span>
-        </button>
       </div>
 
-      <!-- Inline Add Friend Input -->
-      <div v-if="showInlineAddFriend" class="p-3 bg-brand-50/60 dark:bg-brand-500/10 rounded-2xl border border-brand-200 dark:border-brand-500/30 space-y-2">
-        <div class="flex gap-2">
-          <input
-            v-model="newFriendInput"
-            type="text"
-            :placeholder="t('groups.enter_name_placeholder')"
-            class="w-full glass-input text-xs"
-            @keyup.enter="handleQuickAddFriend"
-          />
-          <button
-            type="button"
-            @click="handleQuickAddFriend"
-            class="px-3.5 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold text-xs shrink-0 shadow-sm flex items-center gap-1"
-          >
-            <UserPlus class="w-3.5 h-3.5" />
-            <span>{{ t('groups.btn_add') }}</span>
-          </button>
-        </div>
-        <p v-if="addFriendError" class="text-[11px] text-rose-500 font-semibold">{{ addFriendError }}</p>
-      </div>
-
-      <!-- Member Pick Checkboxes -->
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-36 overflow-y-auto p-2 bg-slate-50 dark:bg-slate-950/50 rounded-xl border border-slate-200 dark:border-slate-800">
+      <!-- Member Pick Checkboxes (Strictly Accepted Friends + Current User) -->
+      <div v-if="availableMembers.length > 0" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-36 overflow-y-auto p-2 bg-slate-50 dark:bg-slate-950/50 rounded-xl border border-slate-200 dark:border-slate-800">
         <div
           v-for="u in availableMembers"
           :key="u.id"
@@ -548,9 +471,12 @@ async function handleSubmit() {
               : 'bg-white dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-700'
           ]"
         >
-          <img :src="u.avatar" class="w-5 h-5 rounded-full" />
+          <img :src="u.avatar" class="w-5 h-5 rounded-full object-cover" />
           <span class="truncate">{{ u.name }}</span>
         </div>
+      </div>
+      <div v-else class="p-3 text-center rounded-xl bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 text-xs text-slate-500">
+        {{ t('friends.empty_friends_title') }}
       </div>
 
       <!-- Split Method Tabs -->

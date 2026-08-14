@@ -7,22 +7,17 @@ function getPairKeys(id1, id2) {
 export const searchUsers = async (req, res) => {
   try {
     const q = (req.query.q || '').trim().toLowerCase().replace(/^@/, '')
-    if (!q) {
-      return res.json([])
-    }
-
     const currentUserId = req.user.id
     const allUsers = await db.getUsers()
     const friendships = await db.getFriendships()
 
-    const matchedUsers = allUsers.filter(u =>
-      u.id !== currentUserId &&
-      (
+    let matchedUsers = allUsers.filter(u => u.id !== currentUserId && u.role !== 'admin' && !u.isLocked)
+    if (q) {
+      matchedUsers = matchedUsers.filter(u =>
         u.username.toLowerCase().includes(q) ||
-        (u.email && u.email.toLowerCase().includes(q)) ||
-        (u.name && u.name.toLowerCase().includes(q))
+        (u.email && u.email.toLowerCase().includes(q))
       )
-    )
+    }
 
     const results = matchedUsers.map(u => {
       const { passwordHash, ...safe } = u
@@ -98,8 +93,8 @@ export const sendFriendRequest = async (req, res) => {
     await db.addNotification({
       id: `n-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       userId: targetUserId,
-      title: 'Lời mời kết bạn mới',
-      message: `${req.user.name} đã gửi lời mời kết bạn cho bạn!`,
+      title: 'ຄຳຂໍເປັນໝູ່ໃໝ່ (Friend Request)',
+      message: `${req.user.name} ໄດ້ສົ່ງຄຳຂໍເປັນໝູ່ໃຫ້ທ່ານ!`,
       type: 'FRIEND_REQUEST',
       isRead: false,
       createdAt: new Date().toISOString()
@@ -114,10 +109,14 @@ export const sendFriendRequest = async (req, res) => {
 export const acceptFriendRequest = async (req, res) => {
   try {
     const currentUserId = req.user.id
-    const id = req.params.id // Can be friendshipId or requesterUserId
+    const id = req.params.id // Can be friendshipId or otherUserId
 
+    const pair = getPairKeys(currentUserId, id)
     const friendships = await db.getFriendships()
-    const friendship = friendships.find(f => f.id === id || f.user_id_1 === id || f.user_id_2 === id)
+    const friendship = friendships.find(f =>
+      f.id === id ||
+      (f.user_id_1 === pair.user_id_1 && f.user_id_2 === pair.user_id_2)
+    )
 
     if (!friendship) {
       return res.status(404).json({ message: 'Friend request not found!' })
@@ -141,8 +140,8 @@ export const acceptFriendRequest = async (req, res) => {
     await db.addNotification({
       id: `n-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       userId: requesterId,
-      title: 'Lời mời kết bạn đã được chấp nhận 🎉',
-      message: `${req.user.name} đã chấp nhận lời mời kết bạn của bạn!`,
+      title: 'ຄຳຂໍເປັນໝູ່ໄດ້ຮັບການຍອມຮັບແລ້ວ 🎉',
+      message: `${req.user.name} ໄດ້ຍອມຮັບຄຳຂໍເປັນໝູ່ຂອງທ່ານແລ້ວ!`,
       type: 'FRIEND_ACCEPTED',
       isRead: false,
       createdAt: new Date().toISOString()
@@ -159,8 +158,12 @@ export const declineFriendRequest = async (req, res) => {
     const currentUserId = req.user.id
     const id = req.params.id
 
+    const pair = getPairKeys(currentUserId, id)
     const friendships = await db.getFriendships()
-    const friendship = friendships.find(f => f.id === id || f.user_id_1 === id || f.user_id_2 === id)
+    const friendship = friendships.find(f =>
+      f.id === id ||
+      (f.user_id_1 === pair.user_id_1 && f.user_id_2 === pair.user_id_2)
+    )
 
     if (!friendship) {
       return res.status(404).json({ message: 'Friend request not found!' })
@@ -180,7 +183,10 @@ export const unfriend = async (req, res) => {
 
     const pair = getPairKeys(currentUserId, targetUserId)
     const friendships = await db.getFriendships()
-    const friendship = friendships.find(f => f.id === targetUserId || (f.user_id_1 === pair.user_id_1 && f.user_id_2 === pair.user_id_2))
+    const friendship = friendships.find(f =>
+      f.id === targetUserId ||
+      (f.user_id_1 === pair.user_id_1 && f.user_id_2 === pair.user_id_2)
+    )
 
     if (!friendship) {
       return res.status(404).json({ message: 'Friendship record not found!' })

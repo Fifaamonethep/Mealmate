@@ -15,11 +15,8 @@ import {
   Bell,
   Shield,
   User,
-  LogOut,
   Sun,
   Moon,
-  Menu,
-  X,
   ChevronDown,
   Check
 } from 'lucide-vue-next'
@@ -30,7 +27,6 @@ const { t, locale } = useI18n()
 const authStore = useAuthStore()
 const notificationsStore = useNotificationsStore()
 
-const mobileMenuOpen = ref(false)
 const langMenuOpen = ref(false)
 const isDark = ref(document.documentElement.classList.contains('dark'))
 
@@ -67,11 +63,6 @@ function toggleTheme() {
     localStorage.setItem('mealmate_theme', 'light')
   }
 }
-
-function handleLogout() {
-  authStore.logout()
-  router.push('/auth')
-}
 </script>
 
 <template>
@@ -92,9 +83,6 @@ function handleLogout() {
           <div class="flex items-center gap-2">
             <span class="font-black text-xl tracking-tight text-slate-900 dark:text-white">
               MealMate
-            </span>
-            <span class="hidden sm:inline-block text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-0.5 rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20 shadow-sm whitespace-nowrap">
-              Split & Pay
             </span>
           </div>
         </div>
@@ -246,12 +234,12 @@ function handleLogout() {
             <Moon v-else class="w-4 h-4 text-indigo-500" />
           </button>
 
-          <!-- Profile Badge & Logout (Desktop Only) -->
-          <div v-if="authStore.currentUserId" class="hidden md:flex items-center gap-1.5 pl-2 border-l border-slate-200 dark:border-slate-800 shrink-0">
+          <!-- Profile Badge (Unified for Mobile and Desktop) -->
+          <div v-if="authStore.currentUserId" class="flex items-center shrink-0">
             <router-link
               to="/profile"
               :class="[
-                'flex items-center gap-2 p-1 pr-3 rounded-full transition-all border group shrink-0 shadow-sm',
+                'flex items-center gap-2 p-1 sm:pr-3 rounded-full transition-all border group shrink-0 shadow-sm',
                 route.path === '/profile'
                   ? 'bg-indigo-500/10 text-indigo-600 border-indigo-500/40 dark:bg-indigo-600/20 dark:text-indigo-300'
                   : 'bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-indigo-500/50'
@@ -266,154 +254,14 @@ function handleLogout() {
                 />
                 <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900"></span>
               </div>
-              <span class="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors max-w-[110px] truncate whitespace-nowrap">
+              <span class="hidden sm:inline-block text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors max-w-[110px] truncate whitespace-nowrap">
                 {{ authStore.currentUser?.name }}
               </span>
             </router-link>
-
-            <button
-              @click="handleLogout"
-              class="p-2.5 text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-all shrink-0"
-              title="Logout"
-            >
-              <LogOut class="w-4 h-4" />
-            </button>
           </div>
-
-          <!-- Mobile Hamburger Toggle -->
-          <button
-            v-if="authStore.currentUserId"
-            @click="mobileMenuOpen = !mobileMenuOpen"
-            class="md:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all shrink-0"
-          >
-            <Menu v-if="!mobileMenuOpen" class="w-5 h-5" />
-            <X v-else class="w-5 h-5" />
-          </button>
 
         </div>
       </div>
     </div>
-
-    <!-- Mobile Floating Drawer Overlay (No Page Push) -->
-    <Teleport to="body">
-      <div v-if="mobileMenuOpen && authStore.currentUserId" class="md:hidden">
-        <!-- Backdrop Overlay -->
-        <div 
-          @click="mobileMenuOpen = false"
-          class="fixed inset-0 top-16 bg-slate-950/40 backdrop-blur-sm z-40 animate-fadeIn"
-        ></div>
-
-        <!-- Floating Glass Menu -->
-        <div class="fixed top-16 left-0 right-0 z-50 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl px-5 py-4 space-y-1 shadow-2xl rounded-b-3xl max-h-[85vh] overflow-y-auto animate-slideDown">
-          <router-link
-            to="/"
-            @click="mobileMenuOpen = false"
-            :class="[
-              'flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-extrabold transition-all',
-              route.path === '/'
-                ? 'bg-brand-500/10 text-brand-600 dark:bg-brand-600/20 dark:text-brand-300'
-                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-            ]"
-          >
-            <LayoutDashboard class="w-4.5 h-4.5" />
-            <span>{{ t('nav.dashboard') }}</span>
-          </router-link>
-
-          <router-link
-            to="/meals"
-            @click="mobileMenuOpen = false"
-            :class="[
-              'flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-extrabold transition-all',
-              route.path.startsWith('/meals')
-                ? 'bg-brand-500/10 text-brand-600 dark:bg-brand-600/20 dark:text-brand-300'
-                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-            ]"
-          >
-            <Receipt class="w-4.5 h-4.5" />
-            <span>{{ t('nav.meals') }}</span>
-          </router-link>
-
-          <router-link
-            to="/debts"
-            @click="mobileMenuOpen = false"
-            :class="[
-              'flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-extrabold transition-all',
-              route.path === '/debts'
-                ? 'bg-brand-500/10 text-brand-600 dark:bg-brand-600/20 dark:text-brand-300'
-                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-            ]"
-          >
-            <CreditCard class="w-4.5 h-4.5" />
-            <span>{{ t('nav.debts') }}</span>
-          </router-link>
-
-          <router-link
-            to="/groups"
-            @click="mobileMenuOpen = false"
-            :class="[
-              'flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-extrabold transition-all',
-              route.path.startsWith('/groups')
-                ? 'bg-brand-500/10 text-brand-600 dark:bg-brand-600/20 dark:text-brand-300'
-                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-            ]"
-          >
-            <Users class="w-4.5 h-4.5" />
-            <span>{{ t('nav.groups') }}</span>
-          </router-link>
-
-          <router-link
-            to="/friends"
-            @click="mobileMenuOpen = false"
-            :class="[
-              'flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-extrabold transition-all',
-              route.path === '/friends'
-                ? 'bg-brand-500/10 text-brand-600 dark:bg-brand-600/20 dark:text-brand-300'
-                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-            ]"
-          >
-            <UserCheck class="w-4.5 h-4.5" />
-            <span>{{ t('friends.title') }}</span>
-          </router-link>
-
-          <router-link
-            v-if="authStore.isAdmin"
-            to="/admin"
-            @click="mobileMenuOpen = false"
-            :class="[
-              'flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-extrabold transition-all',
-              route.path === '/admin'
-                ? 'bg-amber-500/20 text-amber-700 dark:text-amber-300'
-                : 'text-amber-600 dark:text-amber-400 hover:bg-amber-500/10'
-            ]"
-          >
-            <Shield class="w-4.5 h-4.5 text-amber-500" />
-            <span>{{ t('nav.admin') }}</span>
-          </router-link>
-
-          <!-- Profile & Logout inside Mobile Menu Drawer -->
-          <div class="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-1">
-            <router-link
-              to="/profile"
-              @click="mobileMenuOpen = false"
-              class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-extrabold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
-            >
-              <img
-                :src="authStore.currentUser?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${authStore.currentUser?.username || 'user'}`"
-                class="w-6 h-6 rounded-full object-cover shrink-0 border border-slate-200 dark:border-slate-700"
-              />
-              <span class="truncate">{{ authStore.currentUser?.name }} (@{{ authStore.currentUser?.username }})</span>
-            </router-link>
-
-            <button
-              @click="handleLogout(); mobileMenuOpen = false;"
-              class="w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-extrabold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all"
-            >
-              <LogOut class="w-4.5 h-4.5" />
-              <span>{{ t('nav.logout') }}</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </Teleport>
   </header>
 </template>

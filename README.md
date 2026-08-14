@@ -32,11 +32,9 @@ Bạn có thể đăng nhập bằng các tài khoản mẫu sau (mật khẩu m
 
 | Username | Password | Tên Hiển Thị | Vai Trò (Role) |
 | :--- | :--- | :--- | :--- |
-| `alice` | `alice123` | Alice Nguyễn | User (Creditor chính) |
-| `bob` | `bob123` | Bob Trần | User |
-| `charlie` | `charlie123` | Charlie Phạm | User |
-| `david` | `david123` | David Lê | User (Tiền THB) |
-| `admin` | `admin123` | Quản trị viên (Admin) | **Admin System** |
+| `admin` | `123` | ຜູ້ດູແລລະບົບ (Admin) | **Admin System** |
+| `alice` | `123` | Alice Vongxay | User (Chủ nợ / Quản lý nhóm) |
+| `bob` | `123` | Bob Soukthavy | User |
 
 *Mẹo: Bạn có thể chọn nhanh tài khoản trên thanh **Test Accounts** ở đầu giao diện để chuyển đổi giữa các tài khoản tức thì mà không cần thoát ra!*
 

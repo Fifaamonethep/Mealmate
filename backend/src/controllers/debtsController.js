@@ -4,10 +4,21 @@ import { uploadSlipImage, getSignedSlipUrl } from '../config/supabase.js'
 async function formatDebtWithSignedUrl(debt) {
   if (!debt) return null
   const signedUrl = await getSignedSlipUrl(debt.proofImage || debt.slipUrl)
+  let normStatus = debt.status || 'pending'
+  if (normStatus === 'PAID') normStatus = 'slip_sent'
+  if (normStatus === 'VERIFIED') normStatus = 'confirmed'
+  if (normStatus === 'REJECTED') normStatus = 'rejected'
+  if (normStatus === 'PENDING') normStatus = 'pending'
+
   return {
     ...debt,
-    proofImage: signedUrl || debt.proofImage,
-    slipUrl: signedUrl || debt.slipUrl
+    debtorId: debt.debtorId || debt.fromUser,
+    creditorId: debt.creditorId || debt.toUser,
+    fromUser: debt.fromUser || debt.debtorId,
+    toUser: debt.toUser || debt.creditorId,
+    status: normStatus,
+    proofImage: signedUrl || debt.proofImage || debt.slipUrl,
+    slipUrl: signedUrl || debt.slipUrl || debt.proofImage
   }
 }
 
@@ -109,7 +120,7 @@ export const sendSlip = async (req, res) => {
     const storedPath = await uploadSlipImage(image, `${debtId}_${Date.now()}.png`)
 
     const updated = await db.updateDebt(debtId, {
-      status: 'PAID',
+      status: 'slip_sent',
       slipUrl: storedPath,
       proofImage: storedPath,
       rejectReason: null,
@@ -123,8 +134,8 @@ export const sendSlip = async (req, res) => {
     await db.addNotification({
       id: `n-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       userId: creditorId,
-      title: 'Bill chuyển khoản mới',
-      message: `${debtor?.name || 'Bạn bè'} vừa gửi ảnh bill chuyển khoản cho khoản nợ ${debt.amount.toLocaleString()} ${meal?.currency || 'LAK'}. Vui lòng kiểm tra và xác nhận.`,
+      title: 'ໃບໂອນເງິນໃໝ່ (New Payment Slip)',
+      message: `${debtor?.name || 'Friend'} ໄດ້ສົ່ງໃບໂອນເງິນຈຳນວນ ${debt.amount.toLocaleString()} ${meal?.currency || 'LAK'}. ກະລຸນາກວດສອບ.`,
       type: 'DEBT',
       isRead: false,
       createdAt: new Date().toISOString()
@@ -164,7 +175,7 @@ export const confirmPayment = async (req, res) => {
     }
 
     const updated = await db.updateDebt(debtId, {
-      status: 'VERIFIED',
+      status: 'confirmed',
       updatedAt: new Date().toISOString()
     })
     const meal = debt.mealId ? await db.getMealById(debt.mealId) : null
@@ -174,8 +185,8 @@ export const confirmPayment = async (req, res) => {
     await db.addNotification({
       id: `n-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       userId: debtorId,
-      title: 'Thanh toán đã được duyệt! 🎉',
-      message: `Chủ nợ đã xác nhận nhận đủ tiền chuyển khoản (${debt.amount.toLocaleString()} ${meal?.currency || 'LAK'}). Khoản nợ đã hoàn tất.`,
+      title: 'ການຊຳລະເງິນໄດ້ຮັບການຢືນຢັນແລ້ວ! 🎉',
+      message: `ເຈົ້າໜີ້ໄດ້ຢືນຢັນການຮັບເງິນ (${debt.amount.toLocaleString()} ${meal?.currency || 'LAK'}). ໜີ້ສິນສຳເລັດແລ້ວ.`,
       type: 'DEBT',
       isRead: false,
       createdAt: new Date().toISOString()
@@ -216,8 +227,8 @@ export const rejectPayment = async (req, res) => {
     }
 
     const updated = await db.updateDebt(debtId, {
-      status: 'REJECTED',
-      rejectReason: reason || 'Bị từ chối bởi chủ nợ',
+      status: 'rejected',
+      rejectReason: reason || 'Rejected by creditor',
       updatedAt: new Date().toISOString()
     })
 
@@ -227,8 +238,8 @@ export const rejectPayment = async (req, res) => {
     await db.addNotification({
       id: `n-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       userId: debtorId,
-      title: 'Thanh toán bị từ chối ⚠️',
-      message: `Bill chuyển khoản của bạn bị từ chối với lý do: "${reason || 'Bị từ chối bởi chủ nợ'}". Vui lòng kiểm tra lại!`,
+      title: 'ການຊຳລະຖືກປະຕິເສດ ⚠️',
+      message: `ໃບໂອນເງິນຂອງທ່ານຖືກປະຕິເສດຍ້ອນ: "${reason || 'Rejected by creditor'}". ກະລຸນາກວດສອບຄືນ!`,
       type: 'DEBT',
       isRead: false,
       createdAt: new Date().toISOString()
@@ -269,8 +280,8 @@ export const forceAdminAction = async (req, res) => {
         await db.addNotification({
           id: `n-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
           userId: uid,
-          title: 'Admin đã cập nhật trạng thái nợ',
-          message: `Admin đã thay đổi trạng thái khoản nợ sang [${status.toUpperCase()}].`,
+          title: 'Admin updated debt status',
+          message: `Admin changed debt status to [${status.toUpperCase()}].`,
           type: 'DEBT',
           isRead: false,
           createdAt: new Date().toISOString()

@@ -214,6 +214,20 @@ class JsonDB {
   getUserByUsername(username) {
     return this.data.users.find(u => u.username.toLowerCase() === username.toLowerCase())
   }
+  getUserByIdentifier(identifier) {
+    if (!identifier) return null
+    const q = identifier.trim().toLowerCase().replace(/^@/, '')
+    const cleanPhone = identifier.replace(/[^0-9]/g, '')
+    return this.data.users.find(u => {
+      const uPhone = (u.phone || '').replace(/[^0-9]/g, '')
+      const matchPhone = cleanPhone && uPhone && (uPhone === cleanPhone || uPhone.endsWith(cleanPhone) || cleanPhone.endsWith(uPhone))
+      return (
+        u.username?.toLowerCase() === q ||
+        (u.email && u.email.toLowerCase() === q) ||
+        matchPhone
+      )
+    })
+  }
   addUser(user) {
     this.data.users.push(user)
     this.save()
@@ -360,6 +374,24 @@ export const db = {
       return toAppUser(data)
     }
     return localJsonDb.getUserByUsername(username)
+  },
+
+  async getUserByIdentifier(identifier) {
+    if (supabase) {
+      const users = await this.getUsers()
+      const q = (identifier || '').trim().toLowerCase().replace(/^@/, '')
+      const cleanPhone = (identifier || '').replace(/[^0-9]/g, '')
+      return users.find(u => {
+        const uPhone = (u.phone || '').replace(/[^0-9]/g, '')
+        const matchPhone = cleanPhone && uPhone && (uPhone === cleanPhone || uPhone.endsWith(cleanPhone) || cleanPhone.endsWith(uPhone))
+        return (
+          u.username?.toLowerCase() === q ||
+          (u.email && u.email.toLowerCase() === q) ||
+          matchPhone
+        )
+      }) || null
+    }
+    return localJsonDb.getUserByIdentifier(identifier)
   },
 
   async addUser(user) {

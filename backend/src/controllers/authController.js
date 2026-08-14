@@ -5,12 +5,13 @@ import { JWT_SECRET } from '../middleware/authMiddleware.js'
 
 export const login = async (req, res) => {
   try {
-    const { username, password } = req.body
-    if (!username || !password) {
-      return res.status(400).json({ message: 'Username and password required!' })
+    const { username, phone, identifier, password } = req.body
+    const loginKey = (identifier || phone || username || '').trim()
+    if (!loginKey || !password) {
+      return res.status(400).json({ message: 'Phone number / Username and password required!' })
     }
 
-    const user = await db.getUserByUsername(username)
+    const user = await db.getUserByIdentifier(loginKey) || await db.getUserByUsername(loginKey)
     if (!user) {
       return res.status(404).json({ message: 'Account does not exist!' })
     }
@@ -23,7 +24,7 @@ export const login = async (req, res) => {
     if (user.passwordHash && (user.passwordHash.startsWith('$2a$') || user.passwordHash.startsWith('$2b$'))) {
       isMatch = await bcrypt.compare(password, user.passwordHash)
     } else {
-      isMatch = (user.passwordHash === password || password === '123' || user.passwordHash === `${username}123`)
+      isMatch = (user.passwordHash === password || password === '123' || user.passwordHash === `${user.username}123`)
     }
 
     if (!isMatch) {
@@ -40,38 +41,69 @@ export const login = async (req, res) => {
 
 export const register = async (req, res) => {
   try {
-    const { username, password, name, email, phone, currency } = req.body
-    if (!username || !password) {
-      return res.status(400).json({ message: 'Username and password required!' })
+    const { username, password, name, email, phone, currency, qrCodeUrl } = req.body
+    if (!password) {
+      return res.status(400).json({ message: 'Password is required!' })
     }
 
-    const existing = await db.getUserByUsername(username)
+    const cleanPhone = (phone || '').trim().replace(/[^0-9]/g, '')
+    let userIdentifier = (username || '').trim()
+
+    // Check duplicate phone if provided
+    if (cleanPhone) {
+      const allUsers = await db.getUsers()
+      const phoneExists = allUsers.some(u => {
+        const uPhone = (u.phone || '').replace(/[^0-9]/g, '')
+        return uPhone && (uPhone === cleanPhone || uPhone.endsWith(cleanPhone) || cleanPhone.endsWith(uPhone))
+      })
+      if (phoneExists) {
+        return res.status(400).json({ message: 'Phone number already registered!' })
+      }
+    }
+
+    if (!userIdentifier) {
+      if (cleanPhone) {
+        userIdentifier = `user_${cleanPhone.slice(-6)}`
+      } else if (name) {
+        const base = name.toLowerCase().replace(/[^a-z0-9]/g, '') || 'user'
+        userIdentifier = `${base}_${Math.floor(1000 + Math.random() * 9000)}`
+      } else {
+        return res.status(400).json({ message: 'Phone number or Username required!' })
+      }
+    }
+
+    // Check if username taken
+    let existing = await db.getUserByUsername(userIdentifier)
     if (existing) {
-      return res.status(400).json({ message: 'Username already exists!' })
+      if (username) {
+        return res.status(400).json({ message: 'Username already exists!' })
+      }
+      userIdentifier = `${userIdentifier}_${Math.floor(100 + Math.random() * 900)}`
     }
 
-    const cleanCode = username.toLowerCase().replace(/[^a-z0-9_]/g, '')
+    const cleanCode = userIdentifier.toLowerCase().replace(/[^a-z0-9_]/g, '')
     const userId = cleanCode ? `u-${cleanCode}` : `u-${Date.now()}`
     const hashedPassword = await bcrypt.hash(password, 10)
+    const displayName = (name || '').trim() || userIdentifier
 
     const newUser = {
       id: userId,
-      username,
+      username: userIdentifier,
       passwordHash: hashedPassword,
-      name: name || username,
+      name: displayName,
       email: email || '',
       phone: phone || '',
       role: 'user',
       currency: currency || 'LAK',
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`,
-      qrCodeUrl: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=VIETQR-${username.toUpperCase()}-00000`,
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userIdentifier)}`,
+      qrCodeUrl: qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-${encodeURIComponent(displayName.toUpperCase())}`,
       isLocked: false,
       createdAt: new Date().toISOString()
     }
 
     const created = await db.addUser(newUser)
     const token = jwt.sign({ id: created.id, username: created.username, role: created.role }, JWT_SECRET, { expiresIn: '7d' })
-    const { passwordHash, ...safeUser } = created
+    const { passwordHash: _, ...safeUser } = created
     res.status(201).json({ token, user: safeUser })
   } catch (err) {
     res.status(500).json({ message: err.message || 'Registration error' })
@@ -116,7 +148,7 @@ export const updateProfile = async (req, res) => {
 
 export const googleLogin = async (req, res) => {
   const { idToken } = req.body
-  if (!idToken) return res.status(400).json({ message: 'Google ID Token là bắt buộc.' })
+  if (!idToken) return res.status(400).json({ message: 'Google ID Token is required.' })
 
   try {
     let payload = null
@@ -148,7 +180,7 @@ export const googleLogin = async (req, res) => {
     }
 
     if (!payload) {
-      return res.status(400).json({ message: 'Token Google không hợp lệ.' })
+      return res.status(400).json({ message: 'Invalid Google token.' })
     }
 
     const DEFAULT_CLIENT_ID = '286935273027-r7da4lss8asctpfa1as3l418jp5e11p8.apps.googleusercontent.com'
@@ -157,7 +189,7 @@ export const googleLogin = async (req, res) => {
       : DEFAULT_CLIENT_ID
 
     if (GOOGLE_CLIENT_ID && payload.aud && payload.aud !== GOOGLE_CLIENT_ID && payload.aud !== DEFAULT_CLIENT_ID) {
-      return res.status(401).json({ message: 'Google Token không đúng ứng dụng.' })
+      return res.status(401).json({ message: 'Google token does not match client ID.' })
     }
 
     const { email, name, sub: googleId, picture } = payload
@@ -197,9 +229,9 @@ export const googleLogin = async (req, res) => {
 
     const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '7d' })
     const { passwordHash, ...safeUser } = user
-    return res.status(200).json({ message: 'Thành công', token, user: safeUser })
+    return res.status(200).json({ message: 'Success', token, user: safeUser })
   } catch (error) {
     console.error('Google Auth Controller Error:', error)
-    return res.status(500).json({ message: 'Lỗi server khi xác thực với Google: ' + error.message })
+    return res.status(500).json({ message: 'Server error during Google auth: ' + error.message })
   }
 }

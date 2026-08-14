@@ -3,25 +3,17 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../../stores/auth'
-import { useNotificationsStore } from '../../stores/notifications'
 import {
   LayoutDashboard,
   Receipt,
   CreditCard,
   Users,
-  User,
-  Shield,
-  Bell
+  UserCheck
 } from 'lucide-vue-next'
 
 const route = useRoute()
 const { t } = useI18n()
 const authStore = useAuthStore()
-const notificationsStore = useNotificationsStore()
-
-const unreadCount = computed(() => {
-  return notificationsStore.notifications.filter(n => n.userId === authStore.currentUserId && !n.isRead).length
-})
 </script>
 
 <template>
@@ -86,20 +78,19 @@ const unreadCount = computed(() => {
         <span class="text-[10px] leading-none tracking-tight truncate w-full font-bold">{{ t('nav.groups') }}</span>
       </router-link>
 
-      <!-- Profile -->
+      <!-- Friends -->
       <router-link
-        to="/profile"
+        to="/friends"
         :class="[
           'flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all duration-200 relative',
-          route.path === '/profile'
+          route.path === '/friends'
             ? 'brand-pill-active'
             : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold'
         ]"
       >
-        <User class="w-4 h-4 mb-1" />
-        <span class="text-[10px] leading-none tracking-tight truncate w-full font-bold">{{ t('nav.profile') }}</span>
+        <UserCheck class="w-4 h-4 mb-1" />
+        <span class="text-[10px] leading-none tracking-tight truncate w-full font-bold">{{ t('friends.title') }}</span>
       </router-link>
-
     </div>
   </div>
 </template>

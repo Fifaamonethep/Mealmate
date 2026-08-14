@@ -15,6 +15,7 @@ const router = express.Router()
 router.use(authenticateToken)
 
 router.get('/', getFriends)
+router.get('/search', searchUsers)
 router.get('/requests', getFriendRequests)
 router.post('/request', sendFriendRequest)
 router.post('/:id/accept', acceptFriendRequest)

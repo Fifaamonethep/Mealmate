@@ -1,14 +1,21 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { useToastStore } from '../stores/toast'
 import ImageCropperModal from '../components/common/ImageCropperModal.vue'
-import { User, Key, Save, Check, Lock, Camera, Image, Upload, Copy } from 'lucide-vue-next'
+import { User, Key, Save, Check, Lock, Camera, Image, Upload, Copy, LogOut } from 'lucide-vue-next'
 
+const router = useRouter()
 const { t } = useI18n()
 const authStore = useAuthStore()
 const toastStore = useToastStore()
+
+function handleLogout() {
+  authStore.logout()
+  router.push('/auth')
+}
 
 function copyUserId() {
   const userId = authStore.currentUser?.id || ''
@@ -301,7 +308,6 @@ function handleChangePassword() {
             <option value="LAK">{{ t('common.currency_lak') }}</option>
             <option value="THB">{{ t('common.currency_thb') }}</option>
             <option value="USD">{{ t('common.currency_usd') }}</option>
-            <option value="VND">{{ t('common.currency_vnd') }}</option>
           </select>
         </div>
 
@@ -388,6 +394,18 @@ function handleChangePassword() {
           </button>
         </div>
       </form>
+    </div>
+
+    <!-- Logout Button Section -->
+    <div class="pt-2">
+      <button
+        type="button"
+        @click="handleLogout"
+        class="w-full py-3.5 px-4 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 hover:border-rose-500/50 font-extrabold text-xs flex items-center justify-center gap-2 shadow-sm active:scale-[0.99] transition-all cursor-pointer"
+      >
+        <LogOut class="w-4 h-4" />
+        <span>{{ t('nav.logout') }}</span>
+      </button>
     </div>
 
     <!-- Image Cropper & Resizer Modal -->
