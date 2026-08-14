@@ -180,6 +180,16 @@ function openQrModal(friend) {
   selectedFriendQr.value = friend
   showQrModal.value = true
 }
+const suggestedUsers = computed(() => {
+  const friendIds = new Set((friendsStore.friends || []).map(f => f.id))
+  const sentIds = new Set((authStore.currentUser?.friendRequestsSent || []))
+  return (authStore.users || []).filter(u =>
+    u.id !== authStore.currentUserId &&
+    u.role !== 'admin' &&
+    !friendIds.has(u.id) &&
+    !sentIds.has(u.id)
+  )
+})
 </script>
 
 <template>
@@ -276,28 +286,64 @@ function openQrModal(friend) {
     </div>
 
     <!-- Loading indicator -->
-    <div v-if="friendsStore.isLoading" class="py-16 flex flex-col items-center justify-center gap-2 text-indigo-600">
-      <Loader2 class="w-8 h-8 animate-spin" />
-      <span class="text-xs text-slate-400 font-medium">{{ t('friends.loading_friends') }}</span>
+    <div v-if="friendsStore.isLoading" class="py-16 flex flex-col items-center justify-center gap-3 text-indigo-400">
+      <Loader2 class="w-10 h-10 animate-spin text-indigo-500" />
+      <span class="text-xs font-bold text-slate-300">{{ t('friends.loading_friends') }}</span>
     </div>
 
     <!-- Tab 1: My Friends Grid -->
-    <div v-else-if="activeTab === 'my_friends'" class="space-y-4">
-      <div v-if="myFriendsList.length === 0" class="glass-card p-12 text-center text-slate-500 dark:text-slate-400 space-y-4 border border-dashed border-slate-300 dark:border-slate-800">
-        <div class="w-16 h-16 rounded-3xl bg-indigo-500/10 border border-indigo-500/20 mx-auto flex items-center justify-center text-indigo-500">
-          <Users class="w-8 h-8 stroke-[1.5]" />
+    <div v-else-if="activeTab === 'my_friends'" class="space-y-6">
+      <div v-if="myFriendsList.length === 0" class="space-y-6">
+        <div class="glass-card p-8 text-center text-slate-500 dark:text-slate-400 space-y-4 border border-dashed border-slate-300 dark:border-slate-800">
+          <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 mx-auto flex items-center justify-center text-indigo-500">
+            <Users class="w-7 h-7 stroke-[1.5]" />
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-sm font-extrabold text-slate-900 dark:text-white">{{ t('friends.empty_friends') }}</h3>
+            <p class="text-xs text-slate-400 max-w-sm mx-auto">{{ t('friends.empty_friends_sub') }}</p>
+          </div>
+          <button 
+            @click="showAddFriendModal = true" 
+            class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black rounded-xl shadow-lg shadow-indigo-500/25 transition-all active:scale-95"
+          >
+            <UserPlus class="w-4 h-4" />
+            <span>{{ t('friends.btn_add_new') }}</span>
+          </button>
         </div>
-        <div class="space-y-1">
-          <h3 class="text-sm font-extrabold text-slate-900 dark:text-white">{{ t('friends.empty_friends') }}</h3>
-          <p class="text-xs text-slate-400 max-w-sm mx-auto">{{ t('friends.empty_friends_sub') }}</p>
+
+        <!-- Suggested Users list -->
+        <div v-if="suggestedUsers.length > 0" class="space-y-3 pt-2">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-black uppercase tracking-wider text-slate-400 dark:text-slate-400 flex items-center gap-1.5">
+              <Sparkles class="w-3.5 h-3.5 text-indigo-400" />
+              <span>ผู้คนที่คุณอาจรู้จัก (Suggested People)</span>
+            </h3>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div
+              v-for="user in suggestedUsers"
+              :key="user.id"
+              class="glass-card p-3.5 border border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between gap-3 hover:border-indigo-500/40 transition-all"
+            >
+              <div class="flex items-center gap-3 min-w-0">
+                <img :src="user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`" class="w-10 h-10 rounded-2xl object-cover shrink-0 border border-indigo-500/30" />
+                <div class="min-w-0 space-y-0.5">
+                  <p class="text-xs font-extrabold text-slate-900 dark:text-white truncate">{{ user.name }}</p>
+                  <p class="text-[11px] text-indigo-600 dark:text-indigo-400 font-mono font-bold truncate">@{{ user.username }}</p>
+                </div>
+              </div>
+              <button
+                @click="handleSendFriendRequest(user.id, user.name)"
+                :disabled="actionLoadingId === user.id"
+                class="glow-button px-3 py-1.5 text-xs font-black shrink-0 flex items-center gap-1 shadow-md shadow-indigo-500/20 active:scale-95 transition-all"
+              >
+                <Loader2 v-if="actionLoadingId === user.id" class="w-3.5 h-3.5 animate-spin" />
+                <UserPlus v-else class="w-3.5 h-3.5" />
+                <span>+ เพิ่มเพื่อน</span>
+              </button>
+            </div>
+          </div>
         </div>
-        <button 
-          @click="showAddFriendModal = true" 
-          class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-md transition-all active:scale-95"
-        >
-          <UserPlus class="w-3.5 h-3.5" />
-          <span>{{ t('friends.btn_add_new') }}</span>
-        </button>
       </div>
 
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
