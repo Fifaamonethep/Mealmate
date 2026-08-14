@@ -80,56 +80,88 @@ async function handleExecuteModalSearch() {
 }
 
 const modalSearchResults = computed(() => {
-  if (!modalSearchQuery.value.trim()) return []
-  const q = modalSearchQuery.value.trim().toLowerCase().replace(/^@/, '')
-  const friendIds = new Set((friendsStore.friends || []).map(f => f.id))
-  
-  let sourceList = friendsStore.searchResults.length > 0 ? friendsStore.searchResults : authStore.users
-  return sourceList.filter(u =>
-    u.id !== authStore.currentUserId &&
-    u.role !== 'admin' &&
-    !friendIds.has(u.id) &&
-    (
-      u.username?.toLowerCase().includes(q) ||
-      (u.email && u.email.toLowerCase().includes(q))
+  try {
+    if (!modalSearchQuery.value || !modalSearchQuery.value.trim()) return []
+    const q = modalSearchQuery.value.trim().toLowerCase().replace(/^@/, '')
+    const friendList = Array.isArray(friendsStore.friends) ? friendsStore.friends : []
+    const friendIds = new Set(friendList.map(f => f?.id).filter(Boolean))
+    
+    const storeSearch = Array.isArray(friendsStore.searchResults) ? friendsStore.searchResults : []
+    const userList = (Array.isArray(authStore.users) && authStore.users.length > 0) ? authStore.users : INITIAL_USERS
+    let sourceList = storeSearch.length > 0 ? storeSearch : userList
+
+    return sourceList.filter(u =>
+      u &&
+      u.id &&
+      u.id !== authStore.currentUserId &&
+      !friendIds.has(u.id) &&
+      (
+        (u.username && u.username.toLowerCase().includes(q)) ||
+        (u.email && u.email.toLowerCase().includes(q)) ||
+        (u.name && u.name.toLowerCase().includes(q))
+      )
     )
-  )
+  } catch (err) {
+    console.warn('modalSearchResults error:', err)
+    return []
+  }
 })
 
 const myFriendsList = computed(() => {
-  let list = friendsStore.friends || []
-  if (searchQuery.value.trim()) {
-    const q = searchQuery.value.trim().toLowerCase().replace(/^@/, '')
-    list = list.filter(u =>
-      u.username?.toLowerCase().includes(q) ||
-      (u.email && u.email.toLowerCase().includes(q))
-    )
+  try {
+    let list = Array.isArray(friendsStore.friends) ? friendsStore.friends : []
+    if (searchQuery.value && searchQuery.value.trim()) {
+      const q = searchQuery.value.trim().toLowerCase().replace(/^@/, '')
+      list = list.filter(u =>
+        u && (
+          (u.username && u.username.toLowerCase().includes(q)) ||
+          (u.email && u.email.toLowerCase().includes(q)) ||
+          (u.name && u.name.toLowerCase().includes(q))
+        )
+      )
+    }
+    return list
+  } catch (err) {
+    console.warn('myFriendsList error:', err)
+    return []
   }
-  return list
 })
 
 const incomingRequestsList = computed(() => {
-  let list = (friendsStore.incomingRequests || []).map(r => ({
-    ...r.user,
-    friendshipId: r.friendshipId,
-    requestCreatedAt: r.createdAt
-  })).filter(u => Boolean(u.id))
+  try {
+    let raw = Array.isArray(friendsStore.incomingRequests) ? friendsStore.incomingRequests : []
+    let list = raw.map(r => ({
+      ...((r && r.user) || {}),
+      friendshipId: r?.friendshipId || `req-${Date.now()}`,
+      requestCreatedAt: r?.createdAt || new Date().toISOString()
+    })).filter(u => Boolean(u && u.id))
 
-  if (searchQuery.value.trim()) {
-    const q = searchQuery.value.trim().toLowerCase().replace(/^@/, '')
-    list = list.filter(u =>
-      u.username?.toLowerCase().includes(q) ||
-      (u.email && u.email?.toLowerCase().includes(q))
-    )
+    if (searchQuery.value && searchQuery.value.trim()) {
+      const q = searchQuery.value.trim().toLowerCase().replace(/^@/, '')
+      list = list.filter(u =>
+        u && (
+          (u.username && u.username.toLowerCase().includes(q)) ||
+          (u.email && u.email.toLowerCase().includes(q)) ||
+          (u.name && u.name.toLowerCase().includes(q))
+        )
+      )
+    }
+    return list
+  } catch (err) {
+    console.warn('incomingRequestsList error:', err)
+    return []
   }
-  return list
 })
 
 function isPendingSent(userId) {
-  const isInOutgoing = (friendsStore.outgoingRequests || []).some(r => (r.user?.id || r.user_id) === userId)
-  const isSearchPending = (friendsStore.searchResults || []).some(u => u.id === userId && u.friendshipStatus === 'PENDING_SENT')
-  const isAuthPending = (authStore.currentUser?.friendRequestsSent || []).includes(userId)
-  return isInOutgoing || isSearchPending || isAuthPending
+  try {
+    const isInOutgoing = (Array.isArray(friendsStore.outgoingRequests) ? friendsStore.outgoingRequests : []).some(r => (r?.user?.id || r?.user_id) === userId)
+    const isSearchPending = (Array.isArray(friendsStore.searchResults) ? friendsStore.searchResults : []).some(u => u?.id === userId && u?.friendshipStatus === 'PENDING_SENT')
+    const isAuthPending = (Array.isArray(authStore.currentUser?.friendRequestsSent) ? authStore.currentUser.friendRequestsSent : []).includes(userId)
+    return isInOutgoing || isSearchPending || isAuthPending
+  } catch (e) {
+    return false
+  }
 }
 
 async function handleSendFriendRequest(userId, userName) {
@@ -186,16 +218,27 @@ function openQrModal(friend) {
   selectedFriendQr.value = friend
   showQrModal.value = true
 }
+
 const suggestedUsers = computed(() => {
-  const friendIds = new Set((friendsStore.friends || []).map(f => f.id))
-  const sentIds = new Set((authStore.currentUser?.friendRequestsSent || []))
-  const allUsers = (authStore.users && authStore.users.length > 0) ? authStore.users : INITIAL_USERS
-  return allUsers.filter(u =>
-    u.id !== authStore.currentUserId &&
-    u.role !== 'admin' &&
-    !friendIds.has(u.id) &&
-    !sentIds.has(u.id)
-  )
+  try {
+    const friendList = Array.isArray(friendsStore.friends) ? friendsStore.friends : []
+    const friendIds = new Set(friendList.map(f => f?.id).filter(Boolean))
+    
+    const sentList = Array.isArray(authStore.currentUser?.friendRequestsSent) ? authStore.currentUser.friendRequestsSent : []
+    const sentIds = new Set(sentList)
+
+    const allUsers = (Array.isArray(authStore.users) && authStore.users.length > 0) ? authStore.users : INITIAL_USERS
+    return allUsers.filter(u =>
+      u &&
+      u.id &&
+      u.id !== authStore.currentUserId &&
+      !friendIds.has(u.id) &&
+      !sentIds.has(u.id)
+    )
+  } catch (err) {
+    console.warn('suggestedUsers error:', err)
+    return INITIAL_USERS.filter(u => u && u.id !== authStore.currentUserId)
+  }
 })
 </script>
 

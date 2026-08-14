@@ -21,6 +21,10 @@ document.documentElement.setAttribute('lang', savedLocale)
 
 const app = createApp(App)
 
+app.config.errorHandler = (err, instance, info) => {
+  console.error('⚠️ Vue Global Error caught:', err, info)
+}
+
 app.use(createPinia())
 app.use(router)
 app.use(i18n)
