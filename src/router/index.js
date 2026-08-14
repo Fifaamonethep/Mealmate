@@ -12,6 +12,7 @@ import FriendsView from '../views/FriendsView.vue'
 import NotificationsView from '../views/NotificationsView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import AdminView from '../views/AdminView.vue'
+import CustomSplitView from '../views/CustomSplitView.vue'
 
 const routes = [
   {
@@ -24,6 +25,12 @@ const routes = [
     path: '/',
     name: 'Dashboard',
     component: DashboardView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/custom-split',
+    name: 'CustomSplit',
+    component: CustomSplitView,
     meta: { requiresAuth: true }
   },
   {
