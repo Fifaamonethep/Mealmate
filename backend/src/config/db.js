@@ -351,65 +351,103 @@ export const db = {
   // USERS
   async getUsers() {
     if (supabase) {
-      const { data, error } = await supabase.from('users').select('*').order('created_at', { ascending: true })
-      if (error) throw error
-      return (data || []).map(toAppUser)
+      try {
+        const { data, error } = await supabase.from('users').select('*').order('created_at', { ascending: true })
+        if (error) {
+          console.warn('⚠️ Supabase getUsers warning (fallback to JsonDB):', error.message || error)
+          return localJsonDb.getUsers()
+        }
+        return (data || []).map(toAppUser)
+      } catch (err) {
+        console.warn('⚠️ Supabase getUsers error (fallback to JsonDB):', err.message || err)
+        return localJsonDb.getUsers()
+      }
     }
     return localJsonDb.getUsers()
   },
 
   async getUserById(id) {
     if (supabase) {
-      const { data, error } = await supabase.from('users').select('*').eq('id', id).single()
-      if (error && error.code !== 'PGRST116') throw error
-      return toAppUser(data)
+      try {
+        const { data, error } = await supabase.from('users').select('*').eq('id', id).single()
+        if (error && error.code !== 'PGRST116') {
+          console.warn('⚠️ Supabase getUserById warning (fallback to JsonDB):', error.message || error)
+          return localJsonDb.getUserById(id)
+        }
+        return toAppUser(data)
+      } catch (err) {
+        return localJsonDb.getUserById(id)
+      }
     }
     return localJsonDb.getUserById(id)
   },
 
   async getUserByUsername(username) {
     if (supabase) {
-      const { data, error } = await supabase.from('users').select('*').ilike('username', username).single()
-      if (error && error.code !== 'PGRST116') throw error
-      return toAppUser(data)
+      try {
+        const { data, error } = await supabase.from('users').select('*').ilike('username', username).single()
+        if (error && error.code !== 'PGRST116') {
+          return localJsonDb.getUserByUsername(username)
+        }
+        return toAppUser(data)
+      } catch (err) {
+        return localJsonDb.getUserByUsername(username)
+      }
     }
     return localJsonDb.getUserByUsername(username)
   },
 
   async getUserByIdentifier(identifier) {
     if (supabase) {
-      const users = await this.getUsers()
-      const q = (identifier || '').trim().toLowerCase().replace(/^@/, '')
-      const cleanPhone = (identifier || '').replace(/[^0-9]/g, '')
-      return users.find(u => {
-        const uPhone = (u.phone || '').replace(/[^0-9]/g, '')
-        const matchPhone = cleanPhone && uPhone && (uPhone === cleanPhone || uPhone.endsWith(cleanPhone) || cleanPhone.endsWith(uPhone))
-        return (
-          u.username?.toLowerCase() === q ||
-          (u.email && u.email.toLowerCase() === q) ||
-          matchPhone
-        )
-      }) || null
+      try {
+        const users = await this.getUsers()
+        const q = (identifier || '').trim().toLowerCase().replace(/^@/, '')
+        const cleanPhone = (identifier || '').replace(/[^0-9]/g, '')
+        return users.find(u => {
+          const uPhone = (u.phone || '').replace(/[^0-9]/g, '')
+          const matchPhone = cleanPhone && uPhone && (uPhone === cleanPhone || uPhone.endsWith(cleanPhone) || cleanPhone.endsWith(uPhone))
+          return (
+            u.username?.toLowerCase() === q ||
+            (u.email && u.email.toLowerCase() === q) ||
+            matchPhone
+          )
+        }) || null
+      } catch (err) {
+        return localJsonDb.getUserByIdentifier(identifier)
+      }
     }
     return localJsonDb.getUserByIdentifier(identifier)
   },
 
   async addUser(user) {
     if (supabase) {
-      const dbRow = toDbUser(user)
-      const { data, error } = await supabase.from('users').insert([dbRow]).select().single()
-      if (error) throw error
-      return toAppUser(data)
+      try {
+        const dbRow = toDbUser(user)
+        const { data, error } = await supabase.from('users').insert([dbRow]).select().single()
+        if (error) {
+          console.warn('⚠️ Supabase addUser error (fallback to JsonDB):', error.message || error)
+          return localJsonDb.addUser(user)
+        }
+        return toAppUser(data)
+      } catch (err) {
+        return localJsonDb.addUser(user)
+      }
     }
     return localJsonDb.addUser(user)
   },
 
   async updateUser(id, updates) {
     if (supabase) {
-      const dbRow = toDbUser(updates)
-      const { data, error } = await supabase.from('users').update(dbRow).eq('id', id).select().single()
-      if (error) throw error
-      return toAppUser(data)
+      try {
+        const dbRow = toDbUser(updates)
+        const { data, error } = await supabase.from('users').update(dbRow).eq('id', id).select().single()
+        if (error) {
+          return localJsonDb.updateUser(id, updates)
+        }
+        return toAppUser(data)
+      } catch (err) {
+        return localJsonDb.updateUser(id, updates)
+      }
     }
     return localJsonDb.updateUser(id, updates)
   },
@@ -417,47 +455,72 @@ export const db = {
   // GROUPS
   async getGroups() {
     if (supabase) {
-      const { data, error } = await supabase.from('groups').select('*').order('created_at', { ascending: false })
-      if (error) throw error
-      return (data || []).map(toAppGroup)
+      try {
+        const { data, error } = await supabase.from('groups').select('*').order('created_at', { ascending: false })
+        if (error) {
+          console.warn('⚠️ Supabase getGroups warning (fallback to JsonDB):', error.message || error)
+          return localJsonDb.getGroups()
+        }
+        return (data || []).map(toAppGroup)
+      } catch (err) {
+        return localJsonDb.getGroups()
+      }
     }
     return localJsonDb.getGroups()
   },
 
   async getGroupById(id) {
     if (supabase) {
-      const { data, error } = await supabase.from('groups').select('*').eq('id', id).single()
-      if (error && error.code !== 'PGRST116') throw error
-      return toAppGroup(data)
+      try {
+        const { data, error } = await supabase.from('groups').select('*').eq('id', id).single()
+        if (error && error.code !== 'PGRST116') {
+          return localJsonDb.getGroupById(id)
+        }
+        return toAppGroup(data)
+      } catch (err) {
+        return localJsonDb.getGroupById(id)
+      }
     }
     return localJsonDb.getGroupById(id)
   },
 
   async addGroup(group) {
     if (supabase) {
-      const dbRow = toDbGroup(group)
-      const { data, error } = await supabase.from('groups').insert([dbRow]).select().single()
-      if (error) throw error
-      return toAppGroup(data)
+      try {
+        const dbRow = toDbGroup(group)
+        const { data, error } = await supabase.from('groups').insert([dbRow]).select().single()
+        if (error) return localJsonDb.addGroup(group)
+        return toAppGroup(data)
+      } catch (err) {
+        return localJsonDb.addGroup(group)
+      }
     }
     return localJsonDb.addGroup(group)
   },
 
   async updateGroup(id, updates) {
     if (supabase) {
-      const dbRow = toDbGroup(updates)
-      const { data, error } = await supabase.from('groups').update(dbRow).eq('id', id).select().single()
-      if (error) throw error
-      return toAppGroup(data)
+      try {
+        const dbRow = toDbGroup(updates)
+        const { data, error } = await supabase.from('groups').update(dbRow).eq('id', id).select().single()
+        if (error) return localJsonDb.updateGroup(id, updates)
+        return toAppGroup(data)
+      } catch (err) {
+        return localJsonDb.updateGroup(id, updates)
+      }
     }
     return localJsonDb.updateGroup(id, updates)
   },
 
   async deleteGroup(id) {
     if (supabase) {
-      const { error } = await supabase.from('groups').delete().eq('id', id)
-      if (error) throw error
-      return true
+      try {
+        const { error } = await supabase.from('groups').delete().eq('id', id)
+        if (error) return localJsonDb.deleteGroup(id)
+        return true
+      } catch (err) {
+        return localJsonDb.deleteGroup(id)
+      }
     }
     return localJsonDb.deleteGroup(id)
   },
@@ -465,39 +528,58 @@ export const db = {
   // MEALS
   async getMeals() {
     if (supabase) {
-      const { data, error } = await supabase.from('meals').select('*').order('created_at', { ascending: false })
-      if (error) throw error
-      return (data || []).map(toAppMeal)
+      try {
+        const { data, error } = await supabase.from('meals').select('*').order('created_at', { ascending: false })
+        if (error) {
+          console.warn('⚠️ Supabase getMeals warning (fallback to JsonDB):', error.message || error)
+          return localJsonDb.getMeals()
+        }
+        return (data || []).map(toAppMeal)
+      } catch (err) {
+        return localJsonDb.getMeals()
+      }
     }
     return localJsonDb.getMeals()
   },
 
   async getMealById(id) {
     if (supabase) {
-      const { data, error } = await supabase.from('meals').select('*').eq('id', id).single()
-      if (error && error.code !== 'PGRST116') throw error
-      return toAppMeal(data)
+      try {
+        const { data, error } = await supabase.from('meals').select('*').eq('id', id).single()
+        if (error && error.code !== 'PGRST116') return localJsonDb.getMealById(id)
+        return toAppMeal(data)
+      } catch (err) {
+        return localJsonDb.getMealById(id)
+      }
     }
     return localJsonDb.getMealById(id)
   },
 
   async addMeal(meal) {
     if (supabase) {
-      const dbRow = toDbMeal(meal)
-      const { data, error } = await supabase.from('meals').insert([dbRow]).select().single()
-      if (error) throw error
-      return toAppMeal(data)
+      try {
+        const dbRow = toDbMeal(meal)
+        const { data, error } = await supabase.from('meals').insert([dbRow]).select().single()
+        if (error) return localJsonDb.addMeal(meal)
+        return toAppMeal(data)
+      } catch (err) {
+        return localJsonDb.addMeal(meal)
+      }
     }
     return localJsonDb.addMeal(meal)
   },
 
   async deleteMeal(id) {
     if (supabase) {
-      const { error: debtErr } = await supabase.from('debts').delete().eq('meal_id', id)
-      if (debtErr) console.warn('Warning deleting meal debts:', debtErr.message)
-      const { error } = await supabase.from('meals').delete().eq('id', id)
-      if (error) throw error
-      return true
+      try {
+        const { error: debtErr } = await supabase.from('debts').delete().eq('meal_id', id)
+        if (debtErr) console.warn('Warning deleting meal debts:', debtErr.message)
+        const { error } = await supabase.from('meals').delete().eq('id', id)
+        if (error) return localJsonDb.deleteMeal(id)
+        return true
+      } catch (err) {
+        return localJsonDb.deleteMeal(id)
+      }
     }
     return localJsonDb.deleteMeal(id)
   },
@@ -505,38 +587,57 @@ export const db = {
   // DEBTS
   async getDebts() {
     if (supabase) {
-      const { data, error } = await supabase.from('debts').select('*').order('created_at', { ascending: false })
-      if (error) throw error
-      return (data || []).map(toAppDebt)
+      try {
+        const { data, error } = await supabase.from('debts').select('*').order('created_at', { ascending: false })
+        if (error) {
+          console.warn('⚠️ Supabase getDebts warning (fallback to JsonDB):', error.message || error)
+          return localJsonDb.getDebts()
+        }
+        return (data || []).map(toAppDebt)
+      } catch (err) {
+        return localJsonDb.getDebts()
+      }
     }
     return localJsonDb.getDebts()
   },
 
   async getDebtById(id) {
     if (supabase) {
-      const { data, error } = await supabase.from('debts').select('*').eq('id', id).single()
-      if (error && error.code !== 'PGRST116') throw error
-      return toAppDebt(data)
+      try {
+        const { data, error } = await supabase.from('debts').select('*').eq('id', id).single()
+        if (error && error.code !== 'PGRST116') return localJsonDb.getDebtById(id)
+        return toAppDebt(data)
+      } catch (err) {
+        return localJsonDb.getDebtById(id)
+      }
     }
     return localJsonDb.getDebtById(id)
   },
 
   async addDebt(debt) {
     if (supabase) {
-      const dbRow = toDbDebt(debt)
-      const { data, error } = await supabase.from('debts').insert([dbRow]).select().single()
-      if (error) throw error
-      return toAppDebt(data)
+      try {
+        const dbRow = toDbDebt(debt)
+        const { data, error } = await supabase.from('debts').insert([dbRow]).select().single()
+        if (error) return localJsonDb.addDebt(debt)
+        return toAppDebt(data)
+      } catch (err) {
+        return localJsonDb.addDebt(debt)
+      }
     }
     return localJsonDb.addDebt(debt)
   },
 
   async updateDebt(id, updates) {
     if (supabase) {
-      const dbRow = toDbDebt(updates)
-      const { data, error } = await supabase.from('debts').update(dbRow).eq('id', id).select().single()
-      if (error) throw error
-      return toAppDebt(data)
+      try {
+        const dbRow = toDbDebt(updates)
+        const { data, error } = await supabase.from('debts').update(dbRow).eq('id', id).select().single()
+        if (error) return localJsonDb.updateDebt(id, updates)
+        return toAppDebt(data)
+      } catch (err) {
+        return localJsonDb.updateDebt(id, updates)
+      }
     }
     return localJsonDb.updateDebt(id, updates)
   },
@@ -544,32 +645,44 @@ export const db = {
   // NOTIFICATIONS
   async getNotifications(userId) {
     if (supabase) {
-      let query = supabase.from('notifications').select('*').order('created_at', { ascending: false })
-      if (userId) query = query.eq('user_id', userId)
-      const { data, error } = await query
-      if (error) throw error
-      return (data || []).map(toAppNotification)
+      try {
+        let query = supabase.from('notifications').select('*').order('created_at', { ascending: false })
+        if (userId) query = query.eq('user_id', userId)
+        const { data, error } = await query
+        if (error) return localJsonDb.getNotifications(userId)
+        return (data || []).map(toAppNotification)
+      } catch (err) {
+        return localJsonDb.getNotifications(userId)
+      }
     }
     return localJsonDb.getNotifications(userId)
   },
 
   async addNotification(notif) {
     if (supabase) {
-      const dbRow = toDbNotification(notif)
-      const { data, error } = await supabase.from('notifications').insert([dbRow]).select().single()
-      if (error) throw error
-      return toAppNotification(data)
+      try {
+        const dbRow = toDbNotification(notif)
+        const { data, error } = await supabase.from('notifications').insert([dbRow]).select().single()
+        if (error) return localJsonDb.addNotification(notif)
+        return toAppNotification(data)
+      } catch (err) {
+        return localJsonDb.addNotification(notif)
+      }
     }
     return localJsonDb.addNotification(notif)
   },
 
   async markNotificationsRead(userId) {
     if (supabase) {
-      let query = supabase.from('notifications').update({ is_read: true })
-      if (userId) query = query.eq('user_id', userId)
-      const { error } = await query
-      if (error) throw error
-      return true
+      try {
+        let query = supabase.from('notifications').update({ is_read: true })
+        if (userId) query = query.eq('user_id', userId)
+        const { error } = await query
+        if (error) return localJsonDb.markNotificationsRead(userId)
+        return true
+      } catch (err) {
+        return localJsonDb.markNotificationsRead(userId)
+      }
     }
     return localJsonDb.markNotificationsRead(userId)
   },
@@ -577,37 +690,54 @@ export const db = {
   // FRIENDSHIPS
   async getFriendships() {
     if (supabase) {
-      const { data, error } = await supabase.from('friendships').select('*')
-      if (error) throw error
-      return data || []
+      try {
+        const { data, error } = await supabase.from('friendships').select('*')
+        if (error) return localJsonDb.getFriendships()
+        return data || []
+      } catch (err) {
+        return localJsonDb.getFriendships()
+      }
     }
     return localJsonDb.getFriendships()
   },
 
   async addFriendship(friendship) {
     if (supabase) {
-      const { data, error } = await supabase.from('friendships').insert([friendship]).select().single()
-      if (error) throw error
-      return data
+      try {
+        const { data, error } = await supabase.from('friendships').insert([friendship]).select().single()
+        if (error) return localJsonDb.addFriendship(friendship)
+        return data
+      } catch (err) {
+        return localJsonDb.addFriendship(friendship)
+      }
     }
     return localJsonDb.addFriendship(friendship)
   },
 
   async updateFriendship(id, updates) {
     if (supabase) {
-      const { data, error } = await supabase.from('friendships').update(updates).eq('id', id).select().single()
-      if (error) throw error
-      return data
+      try {
+        const { data, error } = await supabase.from('friendships').update(updates).eq('id', id).select().single()
+        if (error) return localJsonDb.updateFriendship(id, updates)
+        return data
+      } catch (err) {
+        return localJsonDb.updateFriendship(id, updates)
+      }
     }
     return localJsonDb.updateFriendship(id, updates)
   },
 
   async deleteFriendship(id) {
     if (supabase) {
-      const { error } = await supabase.from('friendships').delete().eq('id', id)
-      if (error) throw error
-      return true
+      try {
+        const { error } = await supabase.from('friendships').delete().eq('id', id)
+        if (error) return localJsonDb.deleteFriendship(id)
+        return true
+      } catch (err) {
+        return localJsonDb.deleteFriendship(id)
+      }
     }
     return localJsonDb.deleteFriendship(id)
   }
 }
+
