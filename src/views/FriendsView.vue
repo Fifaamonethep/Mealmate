@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
+import { INITIAL_USERS } from '../mock/seedData'
 import { useFriendsStore } from '../stores/friends'
 import { useMealsStore } from '../stores/meals'
 import { useDebtsStore } from '../stores/debts'
@@ -188,7 +189,8 @@ function openQrModal(friend) {
 const suggestedUsers = computed(() => {
   const friendIds = new Set((friendsStore.friends || []).map(f => f.id))
   const sentIds = new Set((authStore.currentUser?.friendRequestsSent || []))
-  return (authStore.users || []).filter(u =>
+  const allUsers = (authStore.users && authStore.users.length > 0) ? authStore.users : INITIAL_USERS
+  return allUsers.filter(u =>
     u.id !== authStore.currentUserId &&
     u.role !== 'admin' &&
     !friendIds.has(u.id) &&
@@ -199,6 +201,11 @@ const suggestedUsers = computed(() => {
 
 <template>
   <div class="space-y-6 pb-12">
+    <!-- Non-blocking top progress bar -->
+    <div v-if="friendsStore.isLoading" class="w-full h-1 bg-indigo-500/20 overflow-hidden rounded-full">
+      <div class="h-full bg-indigo-500 animate-pulse w-2/3"></div>
+    </div>
+
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
@@ -290,14 +297,8 @@ const suggestedUsers = computed(() => {
       </div>
     </div>
 
-    <!-- Loading indicator -->
-    <div v-if="friendsStore.isLoading" class="py-16 flex flex-col items-center justify-center gap-3 text-indigo-400">
-      <Loader2 class="w-10 h-10 animate-spin text-indigo-500" />
-      <span class="text-xs font-bold text-slate-300">{{ t('friends.loading_friends') }}</span>
-    </div>
-
-    <!-- Tab 1: My Friends Grid -->
-    <div v-else-if="activeTab === 'my_friends'" class="space-y-6">
+    <!-- Tab 1: My Friends Grid (Rendered Instantly) -->
+    <div v-if="activeTab === 'my_friends'" class="space-y-6">
       <div v-if="myFriendsList.length === 0" class="space-y-6">
         <div class="glass-card p-8 text-center text-slate-500 dark:text-slate-400 space-y-4 border border-dashed border-slate-300 dark:border-slate-800">
           <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 mx-auto flex items-center justify-center text-indigo-500">
