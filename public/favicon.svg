@@ -1,10 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <rect width="24" height="24" rx="6" fill="#6366f1" />
-  <path d="M7 2v10" stroke="#ffffff" />
-  <path d="M5 4h4" stroke="#ffffff" />
-  <path d="M7 6h2" stroke="#ffffff" />
-  <path d="M17 2v10" stroke="#ffffff" />
-  <path d="M15 4h4" stroke="#ffffff" />
-  <path d="M12 12l5 10" stroke="#ffffff" />
-  <path d="M12 22l5-10" stroke="#ffffff" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="mealmateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="50%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#6366f1"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#7c3aed" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="url(#mealmateGrad)" filter="url(#shadow)"/>
+  <!-- Crossed Fork and Knife Icon -->
+  <g transform="translate(106, 106) scale(0.585)" stroke="#ffffff" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Knife -->
+    <path d="M120 400 L392 128 C416 104 430 70 430 30 L430 20 L420 20 C380 20 346 34 322 58 L50 330 C35 345 35 370 50 385 L65 400 C80 415 105 415 120 400 Z" fill="#ffffff" fill-opacity="0.95" stroke="#ffffff"/>
+    <!-- Fork -->
+    <path d="M400 400 L270 270" stroke="#ffffff" stroke-width="32"/>
+    <path d="M210 210 L150 150 C120 120 120 70 150 40 L160 30" stroke="#ffffff" stroke-width="28"/>
+    <path d="M240 180 L200 140" stroke="#ffffff" stroke-width="24"/>
+    <path d="M270 150 L230 110" stroke="#ffffff" stroke-width="24"/>
+    <path d="M300 120 L260 80" stroke="#ffffff" stroke-width="24"/>
+  </g>
 </svg>
