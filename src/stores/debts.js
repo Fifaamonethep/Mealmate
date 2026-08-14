@@ -223,10 +223,51 @@ export const useDebtsStore = defineStore('debts', () => {
     savePayments()
   }
 
+  // Optimistic UI Action to mark debt as paid
+  async function payDebt(debtId) {
+    const toastStore = useToastStore()
+    const debt = payments.value.find(p => p.id === debtId)
+    if (!debt) return
+
+    // Store previous status for rollback
+    const previousStatus = debt.status || 'Pending'
+
+    /* 
+     * OPTIMISTIC UI PATTERN:
+     * 1. Instantly update local state to 'Paid' for zero-latency UI responsiveness.
+     * 2. Execute the asynchronous API call in the background.
+     * 3. If the network call fails, catch the error, roll back local state to 'Pending',
+     *    and trigger a toast error notification to notify the user.
+     */
+    debt.status = 'Paid'
+    savePayments()
+
+    try {
+      // Simulate async API call with delay
+      await new Promise((resolve) => setTimeout(resolve, 800))
+
+      // Simulate a random failure rate of 20%
+      if (Math.random() < 0.2) {
+        throw new Error('Network error: Unable to reach backend server')
+      }
+
+      toastStore.showToast('Debt marked as paid successfully!', 'success')
+    } catch (err) {
+      // Revert state back to previous status ('Pending') on failure
+      debt.status = previousStatus
+      savePayments()
+
+      // Trigger error toast notification
+      toastStore.showToast('Failed to mark debt as paid. Reverting changes.', 'error')
+      console.error('[Optimistic UI Revert] Pay debt failed:', err.message)
+    }
+  }
+
   return {
     payments,
     fetchDebts,
     createPayment,
+    payDebt,
     sendSlip,
     confirmPayment,
     rejectPayment,

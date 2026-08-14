@@ -113,7 +113,7 @@ async function handleSendSlip() {
           class="text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-1.5 text-slate-700 dark:text-slate-300 font-semibold shadow-sm"
         >
           <component :is="copied ? Check : Copy" class="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-          <span>{{ copied ? t('debts.copied_acc') : t('debts.copy_acc') }}</span>
+          <span>{{ copied ? t('debts.copied_acc') : t('debts.copy_acc') }}</span> 
         </button>
       </div>
 
