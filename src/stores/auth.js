@@ -13,7 +13,9 @@ export const useAuthStore = defineStore('auth', () => {
   } catch (e) {
     loadedUsers = []
   }
-  if (!Array.isArray(loadedUsers)) loadedUsers = []
+  if (!Array.isArray(loadedUsers) || loadedUsers.length === 0) {
+    loadedUsers = [...INITIAL_USERS]
+  }
   
   const users = ref(loadedUsers)
   const currentUserId = ref(localStorage.getItem('mealmate_session_user_id') || '')
@@ -21,6 +23,9 @@ export const useAuthStore = defineStore('auth', () => {
 
   function saveUsers() {
     localStorage.setItem('mealmate_users', JSON.stringify(users.value))
+  }
+  if (loadedUsers.length > 0 && !localStorage.getItem('mealmate_users')) {
+    saveUsers()
   }
 
   const currentUser = computed(() => {
