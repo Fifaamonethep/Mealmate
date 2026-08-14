@@ -10,7 +10,33 @@ export const INITIAL_USERS = [
     currency: 'LAK',
     avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Admin',
     qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-ADMIN-2098667856',
-    friends: []
+    friends: ['u-alice', 'u-bob']
+  },
+  {
+    id: 'u-alice',
+    username: 'alice',
+    passwordHash: '123',
+    name: 'Alice Vongxay',
+    email: 'alice@gmail.com',
+    phone: '2055667788',
+    role: 'user',
+    currency: 'LAK',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alice',
+    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-ALICE-55667788',
+    friends: ['u-admin', 'u-bob']
+  },
+  {
+    id: 'u-bob',
+    username: 'bob',
+    passwordHash: '123',
+    name: 'Bob Soukthavy',
+    email: 'bob@gmail.com',
+    phone: '2099887766',
+    role: 'user',
+    currency: 'LAK',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Bob',
+    qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-BOB-99887766',
+    friends: ['u-admin', 'u-alice']
   }
 ]
 

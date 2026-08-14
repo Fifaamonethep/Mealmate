@@ -13,10 +13,15 @@ export const useAuthStore = defineStore('auth', () => {
   } catch (e) {
     loadedUsers = []
   }
-  if (!Array.isArray(loadedUsers) || loadedUsers.length === 0) {
-    loadedUsers = [...INITIAL_USERS]
-  }
+  if (!Array.isArray(loadedUsers)) loadedUsers = []
   
+  // Ensure default seed users (admin, alice, bob) exist on every device
+  INITIAL_USERS.forEach(initU => {
+    if (!loadedUsers.some(u => u.id === initU.id || u.username === initU.username)) {
+      loadedUsers.push({ ...initU })
+    }
+  })
+
   const users = ref(loadedUsers)
   const currentUserId = ref(localStorage.getItem('mealmate_session_user_id') || '')
   const token = ref(localStorage.getItem('mealmate_session_token') || '')
