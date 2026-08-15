@@ -296,6 +296,7 @@
     "search_placeholder": "ຄົ້ນຫາຕາມ @username ຫຼື ອີເມວ...",
     "tab_my_friends": "ລາຍຊື່ໝູ່",
     "tab_requests": "ຄຳຮ້ອງຂໍເປັນໝູ່",
+    "suggested_people_title": "ຄົນທີ່ທ່ານອາດຈະຮູ້ຈັກ (Suggested People)",
     "empty_friends": "ຍັງບໍ່ມີໝູ່ໃນລາຍຊື່",
     "empty_friends_sub": "ເຊື່ອມຕໍ່ກັບໝູ່ເພື່ອນດ້ວຍ @username ຫຼື ອີເມວ ເພື່ອຫານຄ່າອາຫານ ແລະ ຢືນຢັນບິນອັດຕະໂນມັດ.",
     "empty_requests": "ບໍ່ມີຄຳຮ້ອງຂໍເປັນໝູ່ໃນລາຍຊື່ລໍຖ້າ",

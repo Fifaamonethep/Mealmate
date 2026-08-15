@@ -365,7 +365,7 @@ const suggestedUsers = computed(() => {
           <div class="flex items-center justify-between">
             <h3 class="text-xs font-black uppercase tracking-wider text-slate-400 dark:text-slate-400 flex items-center gap-1.5">
               <Sparkles class="w-3.5 h-3.5 text-indigo-400" />
-              <span>ผู้คนที่คุณอาจรู้จัก (Suggested People)</span>
+              <span>{{ t('friends.suggested_people_title') || 'Suggested People' }}</span>
             </h3>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -388,7 +388,7 @@ const suggestedUsers = computed(() => {
               >
                 <Loader2 v-if="actionLoadingId === user.id" class="w-3.5 h-3.5 animate-spin" />
                 <UserPlus v-else class="w-3.5 h-3.5" />
-                <span>+ เพิ่มเพื่อน</span>
+                <span>{{ t('friends.btn_add_friend') }}</span>
               </button>
             </div>
           </div>
