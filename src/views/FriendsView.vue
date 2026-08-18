@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, onErrorCaptured } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { INITIAL_USERS } from '../mock/seedData'
@@ -34,6 +34,13 @@ const friendsStore = useFriendsStore()
 const mealsStore = useMealsStore()
 const debtsStore = useDebtsStore()
 const toastStore = useToastStore()
+const componentError = ref(null)
+
+onErrorCaptured((err, instance, info) => {
+  console.error('💥 [FriendsView] Unhandled Render Error:', err, info)
+  componentError.value = err.message || 'Render Error'
+  return false
+})
 
 onMounted(async () => {
   friendsStore.isLoading = true
@@ -81,25 +88,22 @@ async function handleExecuteModalSearch() {
 
 const modalSearchResults = computed(() => {
   try {
-    if (!modalSearchQuery.value || !modalSearchQuery.value.trim()) return []
-    const q = modalSearchQuery.value.trim().toLowerCase().replace(/^@/, '')
     const friendList = Array.isArray(friendsStore.friends) ? friendsStore.friends : []
     const friendIds = new Set(friendList.map(f => f?.id).filter(Boolean))
     
-    const storeSearch = Array.isArray(friendsStore.searchResults) ? friendsStore.searchResults : []
     const userList = (Array.isArray(authStore.users) && authStore.users.length > 0) ? authStore.users : INITIAL_USERS
-    let sourceList = storeSearch.length > 0 ? storeSearch : userList
+    const candidates = userList.filter(u => u && u.id && u.id !== authStore.currentUserId && u.role !== 'admin' && !friendIds.has(u.id))
 
-    return sourceList.filter(u =>
-      u &&
-      u.id &&
-      u.id !== authStore.currentUserId &&
-      !friendIds.has(u.id) &&
-      (
-        (u.username && u.username.toLowerCase().includes(q)) ||
-        (u.email && u.email.toLowerCase().includes(q)) ||
-        (u.name && u.name.toLowerCase().includes(q))
-      )
+    if (!modalSearchQuery.value || !modalSearchQuery.value.trim()) {
+      return candidates
+    }
+
+    const q = modalSearchQuery.value.trim().toLowerCase().replace(/^@/, '')
+
+    return candidates.filter(u =>
+      (u.username && u.username.toLowerCase().includes(q)) ||
+      (u.email && u.email.toLowerCase().includes(q)) ||
+      (u.name && u.name.toLowerCase().includes(q))
     )
   } catch (err) {
     console.warn('modalSearchResults error:', err)
@@ -110,6 +114,18 @@ const modalSearchResults = computed(() => {
 const myFriendsList = computed(() => {
   try {
     let list = Array.isArray(friendsStore.friends) ? friendsStore.friends : []
+    if (list.length === 0 && Array.isArray(authStore.myFriends) && authStore.myFriends.length > 0) {
+      list = authStore.myFriends
+    }
+    
+    const allUsers = (Array.isArray(authStore.users) && authStore.users.length > 0) ? authStore.users : INITIAL_USERS
+    list = list.map(item => {
+      if (typeof item === 'string') {
+        return allUsers.find(u => u.id === item) || null
+      }
+      return item
+    }).filter(Boolean)
+
     if (searchQuery.value && searchQuery.value.trim()) {
       const q = searchQuery.value.trim().toLowerCase().replace(/^@/, '')
       list = list.filter(u =>
@@ -130,11 +146,19 @@ const myFriendsList = computed(() => {
 const incomingRequestsList = computed(() => {
   try {
     let raw = Array.isArray(friendsStore.incomingRequests) ? friendsStore.incomingRequests : []
-    let list = raw.map(r => ({
-      ...((r && r.user) || {}),
-      friendshipId: r?.friendshipId || `req-${Date.now()}`,
-      requestCreatedAt: r?.createdAt || new Date().toISOString()
-    })).filter(u => Boolean(u && u.id))
+    const allUsers = (Array.isArray(authStore.users) && authStore.users.length > 0) ? authStore.users : INITIAL_USERS
+    
+    let list = raw.map(r => {
+      let uObj = r?.user
+      if (typeof uObj === 'string') {
+        uObj = allUsers.find(u => u.id === uObj)
+      }
+      return {
+        ...(uObj || {}),
+        friendshipId: r?.friendshipId || `req-${Date.now()}`,
+        requestCreatedAt: r?.createdAt || new Date().toISOString()
+      }
+    }).filter(u => Boolean(u && u.id))
 
     if (searchQuery.value && searchQuery.value.trim()) {
       const q = searchQuery.value.trim().toLowerCase().replace(/^@/, '')
@@ -155,7 +179,7 @@ const incomingRequestsList = computed(() => {
 
 function isPendingSent(userId) {
   try {
-    const isInOutgoing = (Array.isArray(friendsStore.outgoingRequests) ? friendsStore.outgoingRequests : []).some(r => (r?.user?.id || r?.user_id) === userId)
+    const isInOutgoing = (Array.isArray(friendsStore.outgoingRequests) ? friendsStore.outgoingRequests : []).some(r => (r?.user?.id || r?.user_id || r?.user) === userId)
     const isSearchPending = (Array.isArray(friendsStore.searchResults) ? friendsStore.searchResults : []).some(u => u?.id === userId && u?.friendshipStatus === 'PENDING_SENT')
     const isAuthPending = (Array.isArray(authStore.currentUser?.friendRequestsSent) ? authStore.currentUser.friendRequestsSent : []).includes(userId)
     return isInOutgoing || isSearchPending || isAuthPending
@@ -222,7 +246,7 @@ function openQrModal(friend) {
 const suggestedUsers = computed(() => {
   try {
     const friendList = Array.isArray(friendsStore.friends) ? friendsStore.friends : []
-    const friendIds = new Set(friendList.map(f => f?.id).filter(Boolean))
+    const friendIds = new Set(friendList.map(f => typeof f === 'string' ? f : f?.id).filter(Boolean))
     
     const sentList = Array.isArray(authStore.currentUser?.friendRequestsSent) ? authStore.currentUser.friendRequestsSent : []
     const sentIds = new Set(sentList)
@@ -232,12 +256,13 @@ const suggestedUsers = computed(() => {
       u &&
       u.id &&
       u.id !== authStore.currentUserId &&
+      u.role !== 'admin' &&
       !friendIds.has(u.id) &&
       !sentIds.has(u.id)
     )
   } catch (err) {
     console.warn('suggestedUsers error:', err)
-    return INITIAL_USERS.filter(u => u && u.id !== authStore.currentUserId)
+    return INITIAL_USERS.filter(u => u && u.id !== authStore.currentUserId && u.role !== 'admin')
   }
 })
 </script>
@@ -538,8 +563,8 @@ const suggestedUsers = computed(() => {
         </form>
 
         <!-- Search Results Section -->
-        <div v-if="modalSearchQuery.trim()" class="space-y-2 pt-1">
-          <div v-if="modalSearchResults.length > 0" class="max-h-64 overflow-y-auto space-y-2 p-1 border border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50/50 dark:bg-slate-900/50">
+        <div class="space-y-2 pt-1">
+          <div v-if="modalSearchResults.length > 0" class="max-h-72 overflow-y-auto space-y-2 p-1 border border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50/50 dark:bg-slate-900/50">
             <div
               v-for="user in modalSearchResults"
               :key="user.id"
@@ -580,19 +605,6 @@ const suggestedUsers = computed(() => {
             <p class="text-xs font-extrabold text-slate-800 dark:text-slate-200">{{ t('friends.search_not_found_title') }}</p>
             <p class="text-[11px] text-slate-400 max-w-xs mx-auto">
               {{ t('friends.search_not_found_sub', { query: modalSearchQuery }) }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Initial hint when input is empty -->
-        <div v-else class="p-8 text-center text-slate-500 dark:text-slate-400 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl space-y-2.5 bg-slate-50/30 dark:bg-slate-900/30">
-          <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto text-indigo-500">
-            <Search class="w-6 h-6 stroke-[1.5]" />
-          </div>
-          <div class="space-y-1">
-            <p class="text-xs font-extrabold text-slate-800 dark:text-slate-200">{{ t('friends.search_hint_title') }}</p>
-            <p class="text-[11px] text-slate-400 max-w-xs mx-auto leading-relaxed">
-              {{ t('friends.search_hint_sub') }}
             </p>
           </div>
         </div>

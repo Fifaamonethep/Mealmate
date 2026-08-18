@@ -42,9 +42,7 @@ onMounted(async () => {
     <!-- Main Content Container (Mobile-First Optimized Padding) -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-6 pb-28 md:pb-6">
       <router-view v-slot="{ Component }">
-        <transition name="fade" mode="out-in">
-          <component :is="Component" :key="route.path" />
-        </transition>
+        <component :is="Component" :key="route.path" />
       </router-view>
     </main>
 

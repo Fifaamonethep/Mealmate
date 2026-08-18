@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 import api from '../services/api'
 import { useAuthStore } from './auth'
+import { INITIAL_USERS } from '../mock/seedData'
 
 export const useFriendsStore = defineStore('friends', () => {
   const authStore = useAuthStore()
@@ -15,7 +16,9 @@ export const useFriendsStore = defineStore('friends', () => {
   async function fetchFriends() {
     isLoading.value = true
     try {
+      console.log('🔍 [FriendsStore] GET /api/friends requesting...')
       const data = await api.get('/friends')
+      console.log('✅ [FriendsStore] GET /api/friends response:', data)
       if (Array.isArray(data)) {
         friends.value = data
         if (authStore.currentUser) {
@@ -26,7 +29,7 @@ export const useFriendsStore = defineStore('friends', () => {
         friends.value = Array.isArray(authStore.myFriends) ? authStore.myFriends : []
       }
     } catch (err) {
-      console.warn('Backend friends API unavailable, using authStore myFriends:', err.message)
+      console.warn('⚠️ [FriendsStore] GET /api/friends failed, fallback to local state:', err.message)
       friends.value = Array.isArray(authStore.myFriends) ? authStore.myFriends : []
     } finally {
       isLoading.value = false
@@ -35,7 +38,9 @@ export const useFriendsStore = defineStore('friends', () => {
 
   async function fetchRequests() {
     try {
+      console.log('🔍 [FriendsStore] GET /api/friends/requests requesting...')
       const data = await api.get('/friends/requests')
+      console.log('✅ [FriendsStore] GET /api/friends/requests response:', data)
       if (data && typeof data === 'object') {
         incomingRequests.value = Array.isArray(data.incoming) ? data.incoming : []
         outgoingRequests.value = Array.isArray(data.outgoing) ? data.outgoing : []
@@ -49,7 +54,7 @@ export const useFriendsStore = defineStore('friends', () => {
         fallbackRequests()
       }
     } catch (err) {
-      console.warn('Backend friend requests API unavailable:', err.message)
+      console.warn('⚠️ [FriendsStore] GET /api/friends/requests failed, using local fallback:', err.message)
       fallbackRequests()
     }
   }
@@ -73,21 +78,26 @@ export const useFriendsStore = defineStore('friends', () => {
     try {
       const q = (query || '').trim()
       const url = q ? `/friends/search?q=${encodeURIComponent(q)}` : '/friends/search'
+      console.log(`🔍 [FriendsStore] GET ${url} requesting...`)
       const data = await api.get(url)
+      console.log('✅ [FriendsStore] Search API response:', data)
       if (Array.isArray(data)) {
         searchResults.value = data
       }
     } catch (err) {
-      console.warn('Backend search API unavailable, using local users filtering:', err.message)
+      console.warn('⚠️ [FriendsStore] Search API failed, applying local filter fallback:', err.message)
       const q = (query || '').trim().toLowerCase().replace(/^@/, '')
       const myFriendIds = (authStore.currentUser?.friends || [])
       const mySentIds = (authStore.currentUser?.friendRequestsSent || [])
       const myRecvIds = (authStore.currentUser?.friendRequestsReceived || [])
 
-      searchResults.value = (authStore.users || [])
-        .filter(u => u.id !== authStore.currentUserId && u.role !== 'admin' && (
+      const userList = (Array.isArray(authStore.users) && authStore.users.length > 0) ? authStore.users : INITIAL_USERS
+
+      searchResults.value = userList
+        .filter(u => u && u.id !== authStore.currentUserId && u.role !== 'admin' && (
           !q ||
-          u.username.toLowerCase().includes(q) ||
+          (u.username && u.username.toLowerCase().includes(q)) ||
+          (u.name && u.name.toLowerCase().includes(q)) ||
           (u.email && u.email.toLowerCase().includes(q))
         ))
         .map(u => {
@@ -106,10 +116,11 @@ export const useFriendsStore = defineStore('friends', () => {
 
   async function sendRequest(targetUserId) {
     try {
+      console.log(`🔍 [FriendsStore] POST /api/friends/request for target: ${targetUserId}`)
       await api.post('/friends/request', { targetUserId })
       await Promise.all([fetchFriends(), fetchRequests(), searchUsers()])
     } catch (err) {
-      console.warn('Backend sendRequest failed, applying local fallback:', err.message)
+      console.warn('⚠️ [FriendsStore] sendRequest API failed, applying local fallback:', err.message)
       authStore.sendFriendRequest(targetUserId)
       await Promise.all([fetchFriends(), fetchRequests(), searchUsers()])
     }
@@ -117,10 +128,11 @@ export const useFriendsStore = defineStore('friends', () => {
 
   async function acceptRequest(friendshipIdOrUserId) {
     try {
+      console.log(`🔍 [FriendsStore] POST /api/friends/${friendshipIdOrUserId}/accept`)
       await api.post(`/friends/${friendshipIdOrUserId}/accept`)
       await Promise.all([fetchFriends(), fetchRequests(), searchUsers()])
     } catch (err) {
-      console.warn('Backend acceptRequest failed, applying local fallback:', err.message)
+      console.warn('⚠️ [FriendsStore] acceptRequest API failed, applying local fallback:', err.message)
       authStore.acceptFriendRequest(friendshipIdOrUserId)
       await Promise.all([fetchFriends(), fetchRequests(), searchUsers()])
     }
@@ -128,10 +140,11 @@ export const useFriendsStore = defineStore('friends', () => {
 
   async function declineRequest(friendshipIdOrUserId) {
     try {
+      console.log(`🔍 [FriendsStore] POST /api/friends/${friendshipIdOrUserId}/decline`)
       await api.post(`/friends/${friendshipIdOrUserId}/decline`)
       await Promise.all([fetchFriends(), fetchRequests(), searchUsers()])
     } catch (err) {
-      console.warn('Backend declineRequest failed, applying local fallback:', err.message)
+      console.warn('⚠️ [FriendsStore] declineRequest API failed, applying local fallback:', err.message)
       authStore.declineFriendRequest(friendshipIdOrUserId)
       await Promise.all([fetchFriends(), fetchRequests(), searchUsers()])
     }
@@ -139,16 +152,17 @@ export const useFriendsStore = defineStore('friends', () => {
 
   async function removeFriend(targetUserId) {
     try {
+      console.log(`🔍 [FriendsStore] DELETE /api/friends/${targetUserId}`)
       await api.delete(`/friends/${targetUserId}`)
       await Promise.all([fetchFriends(), fetchRequests(), searchUsers()])
     } catch (err) {
-      console.warn('Backend removeFriend failed, applying local fallback:', err.message)
+      console.warn('⚠️ [FriendsStore] removeFriend API failed, applying local fallback:', err.message)
       authStore.removeFriend(targetUserId)
       await Promise.all([fetchFriends(), fetchRequests(), searchUsers()])
     }
   }
 
-  // Refresh friends when switching users
+  // Refresh friends state when switching logged-in user
   watch(() => authStore.currentUserId, (newId) => {
     if (newId) {
       fetchFriends()

@@ -16,7 +16,7 @@ if (savedTheme === 'dark') {
 }
 
 // Set initial html lang attribute for font styling
-const savedLocale = localStorage.getItem('mealmate_locale') || 'vi'
+const savedLocale = localStorage.getItem('mealmate_locale') || 'lo'
 document.documentElement.setAttribute('lang', savedLocale)
 
 const app = createApp(App)
