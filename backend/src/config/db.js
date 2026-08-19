@@ -6,7 +6,7 @@ import { supabase } from './supabase.js'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const DB_DIR = path.join(__dirname, '../../database')
+const DB_DIR = (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) ? '/tmp' : path.join(__dirname, '../../database')
 const DB_FILE = path.join(DB_DIR, 'mealmate_db.json')
 
 if (!fs.existsSync(DB_DIR)) {

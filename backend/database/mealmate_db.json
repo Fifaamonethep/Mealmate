@@ -39,7 +39,6 @@
       "qrCodeUrl": "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LAOQR-BOB-99887766",
       "isLocked": false
     },
-
     {
       "id": "u-1786500577280",
       "username": "soke",
